@@ -1,0 +1,1 @@
+The Clock application shows the implementation of a digital clock. Using a frame out of a bitmap stripe draws all digits of the clock.

@@ -1,0 +1,201 @@
+﻿$version 15.00
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,70,240,110>
+unit Core
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,110,240,150>
+unit Resources
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,150,240,190>
+unit Graphics
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,190,240,230>
+unit Effects
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,230,240,270>
+unit Views
+{
+  attr Directory = $Mosaic;
+}
+
+$rect <40,270,240,310>
+unit WidgetSet
+{
+  attr Directory = $Mosaic\;
+}
+
+$rect <290,190,490,230>
+unit Application
+{
+  attr Directory = .\;
+}
+
+// This is a unit.
+$rect <540,630,740,670>
+unit GenStrings
+{
+  attr Directory = .\;
+}
+
+// The 'default' Language. Each project has to contain at least one language brick \
+// called 'Default'
+$rect <540,70,740,110>
+language Default;
+
+// Language supported by this application.
+$rect <540,110,740,150>
+language German;
+
+// Language supported by this application.
+$rect <540,150,740,190>
+language Spanish;
+
+// Language supported by this application.
+$rect <540,190,740,230>
+language Arabic;
+
+// Language supported by this application.
+$rect <540,230,740,270>
+language Hebrew;
+
+// Language supported by this application.
+$rect <540,390,740,430>
+language Japanese;
+
+// Language supported by this application.
+$rect <540,270,740,310>
+language Greek;
+
+// Language supported by this application.
+$rect <540,430,740,470>
+language Korean;
+
+// Language supported by this application.
+$rect <540,470,740,510>
+language Chinese;
+
+// Language supported by this application.
+$rect <540,310,740,350>
+language Russian;
+
+// Language supported by this application.
+$rect <540,350,740,390>
+language Turkish;
+
+// Language supported by this application.
+$rect <540,510,740,550>
+language Vietnamese;
+
+// Mosaic Framework
+note group Note1
+{
+  attr Bounds = <20,20,260,330>;
+}
+
+// Project Units
+note group Note5
+{
+  attr Bounds = <270,140,510,250>;
+}
+
+// Profile Configuration
+note group Note2
+{
+  attr Bounds = <270,20,510,130>;
+}
+
+// Languages
+note group Note3
+{
+  attr Bounds = <520,20,760,570>;
+}
+
+// Generated Strings
+note group Note6
+{
+  attr Bounds = <520,580,760,690>;
+}
+
+// The sample application 'StringTable' shows the implementation of a multi-lingual \
+// UI application, displaying the days of a week.
+// 
+// The application is prepared to show the user interface in 12 different languages.
+// 
+// The strings of the application are managed within an Excel string table, that \
+// is converted into the unit 'GenStrings'.
+// 
+// In order to maintain all strings of an UI application in a comfortable way, it \
+// is quite customary, to collect and store language variants of all required strings \
+// within an Excel sheet during development. This makes it easy to exchange the document \
+// between the developers and the different translator offices that might be involved.
+// 
+// You can double-click on the 'Application' or 'GenStrings' bricks to open the unit \
+// within the Composer and to analyze the implementation.
+// 
+// To start the application within the Prototyper, press 'Ctrl'+'F5'.
+note legend Note
+{
+  attr Bounds = <20,340,510,690>;
+}
+
+note arrow Note4
+{
+  attr Point1 = <740,650>;
+  attr Point2 = <830,650>;
+}
+
+// The unit 'GenStrings' (or the file GenStrings.ewu more precisely) was generated \
+// by an Excel macro.
+// 
+// This macro is implemented in Visual Basic Script and stored within the Excel sheet.
+// 
+// You will find the file GenStrings.xls included in the project directory.
+note legend Note7
+{
+  attr Bounds = <830,510,1130,690>;
+}
+
+// How to develop multi-lingual applications?
+// https://doc.embedded-wizard.de/managing-localization
+note legend Note8
+{
+  attr Bounds = <20,700,400,760>;
+}
+
+// This is the 'default' profile for the new project. This profile will be used for \
+// test, prototyping, etc.
+$rect <290,70,490,110>
+profile Win32 : Windows.Software.RGBA8888
+{
+  attr ScreenSize = <480,272>;
+  attr Optimization = High;
+  attr ApplicationClass = Application::Application;
+  attr ApplicationTitle = "String Table Import";
+  attr CleanOutputDirectories = false;
+  attr Verbose = false;
+  attr ScreenOrientation = Normal;
+  attr FontConversion = Windows;
+  attr OutputFileNameExtension = c;
+  attr StorageOfResources = Code;
+  attr StorageOfConstants = Code;
+
+  $rect <10,10,154,50>
+  macro Author = "Dipl. Ing. Paul Banach and Dipl. Ing. Manfred Schweyer, Copyright (C) TARA Systems GmbH";
+}

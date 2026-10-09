@@ -1,0 +1,1 @@
+This demo shows the usage of the class Resources::ExternBitmap and the implementation of an extern bitmap loader. An extern bitmap loader can be used to provide your GUI application with dynamically loaded images from an external image decoder (e.g. a PNG or JPG decoder).

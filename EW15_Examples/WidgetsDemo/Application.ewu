@@ -1,0 +1,1153 @@
+﻿$version 15.00
+
+// This is the root component of the entire GUI application.
+$rect <20,20,220,60>
+$output false
+class Application : Core::Root
+{
+  $rect <890,370,1090,410>
+  inherited property Bounds = <0,0,640,480>;
+
+  $rect <690,200,890,240>
+  inherited method DriveCursorHitting()
+  {
+    idlesignal ResetDemo;
+
+    return  super( aDown, aFinger, aPos );
+
+  }
+
+  // Timer object to drive the auto demo mode.
+  $rect <690,250,890,290>
+  object Core::Timer AutoTimer
+  {
+    preset OnTrigger = AutoDemo;
+    preset Period = 1000;
+    preset Begin = 15000;
+    preset Enabled = true;
+  }
+
+  // This is a slot method to trigger the next phase of the auto demo.
+  $rect <890,250,1090,290>
+  slot AutoDemo
+  {
+    sender; /* the method is called from the sender object */
+
+    postsignal Device.AutoDemoOn;
+
+    if ( AutoState == 0 )
+      ChangePage( 0 );
+    else if ( AutoState == 10 )
+      ChangePage( 1 );
+    else if ( AutoState == 20 )
+      ChangePage( 2 );
+    else if ( AutoState == 30 )
+      ChangePage( 3 );
+
+    AutoState = AutoState + 1;
+    if ( AutoState > 40 )
+      AutoState = 0;
+
+
+  }
+
+  $rect <890,290,1090,330>
+  var int32 AutoState = 0;
+
+  $rect <690,290,890,330>
+  slot ResetDemo
+  {
+    sender; /* the method is called from the sender object */
+
+    AutoState = 0;
+    AutoTimer.Enabled = false;
+    AutoTimer.Enabled = true;
+
+    postsignal Device.AutoDemoOff;
+  }
+
+  // This is a generic touch handler.
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler LeftTouch
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToRight, AlignToTop, ResizeVert];
+    preset Point4 = <0,480>;
+    preset Point3 = <40,480>;
+    preset Point2 = <40,0>;
+    preset Point1 = <0,0>;
+    preset OnPress = OnLeft;
+  }
+
+  // This is a generic touch handler.
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler RightTouch
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToRight, AlignToTop, ResizeVert];
+    preset Point4 = <600,480>;
+    preset Point3 = <640,480>;
+    preset Point2 = <640,0>;
+    preset Point1 = <600,0>;
+    preset OnPress = OnRight;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle RectangleLeft
+  {
+    preset Bounds = <0,0,40,480>;
+    preset Color = #444444FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle RectangleRight
+  {
+    preset Bounds = <600,0,640,480>;
+    preset Color = #444444FF;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image ImageLeft
+  {
+    preset Bounds = <0,210,40,255>;
+    preset FrameNumber = 2;
+    preset Bitmap = Resources::NavigationIconsLarge;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image ImageRight
+  {
+    preset Bounds = <600,210,640,255>;
+    preset FrameNumber = 3;
+    preset Bitmap = Resources::NavigationIconsLarge;
+  }
+
+  // Variable to keep the device class within the memory.
+  $rect <690,420,890,460>
+  var Application::DeviceClass Device = Application::Device;
+
+  // Slot method to start action when user has pressed the open history button.
+  $rect <690,50,890,90>
+  slot OnLeft
+  {
+    sender; /* the method is called from the sender object */
+
+    ChangePage( pageNo - 1 );
+
+  }
+
+  $rect <890,50,1090,90>
+  var int32 pageNo = -1;
+
+  // Slot method to start action when user has pressed the open history button.
+  $rect <690,90,890,130>
+  slot OnRight
+  {
+    sender; /* the method is called from the sender object */
+
+    ChangePage( pageNo + 1 );
+
+  }
+
+  // Auto demo mode
+  note group Note
+  {
+    attr Bounds = <670,160,1110,350>;
+  }
+
+  // User navigation
+  note group Note1
+  {
+    attr Bounds = <670,10,1110,150>;
+  }
+
+  $rect <890,90,1090,130>
+  method void ChangePage( arg int32 aPageNo )
+  {
+    var Core::Group dialog;
+
+    /* limit given page number */
+    if ( aPageNo > 3 )
+      aPageNo = 0;
+    if ( aPageNo < 0 )
+      aPageNo = 3;
+
+    /* check for news */
+    if ( pageNo == aPageNo )
+      return;
+
+    /* store the new value */
+    pageNo = aPageNo;
+
+    /* create the desired page */
+    switch ( pageNo )
+    {
+      case 1: dialog = new Application::PageFlat;
+      case 2: dialog = new Application::PageSteel;
+      case 3: dialog = new Application::PageOrange;
+      default: dialog = new Application::PageDefault;
+    }
+
+    /* and switch to the new page */
+    SwitchToDialog( dialog, null, null, null, null, null, null, null, null, null, false );
+
+  }
+
+  $rect <690,370,890,410>
+  inherited method Init()
+  {
+    ChangePage( 0 );
+
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder GetIndexOfView 1
+  $reorder GetViewAtIndex 1
+  $reorder CountViews 1
+  $reorder FindViewInDirection 1
+  $reorder FindViewWithinArea 1
+  $reorder FindViewAtPosition 1
+  $reorder FindPrevView 1
+  $reorder FindNextView 1
+  $reorder FindSiblingView 1
+  $reorder GetContentArea 1
+  $reorder FadeGroup 1
+  $reorder RestackBehind 1
+  $reorder RestackBack 1
+  $reorder RestackTop 1
+  $reorder Restack 1
+  $reorder Remove 1
+  $reorder AddBehind 1
+  $reorder Add 1
+  $reorder Focus 1
+  $reorder Buffered 1
+  $reorder Enabled 1
+  $reorder Opacity 1
+  $reorder Embedded 1
+  $reorder AlphaBlended 1
+  $reorder Visible 1
+  $reorder keyLastLocked 1
+  $reorder keyLastCharCode 1
+  $reorder keyLastCode 1
+  $reorder keyLastTarget 1
+  $reorder hasRootFocus 1
+  $reorder updateLock 1
+  $reorder animationLock 1
+  $reorder modalGroups 1
+  $reorder currentEventTimestamp 1
+  $reorder createDragEvent 1
+  $reorder createCursorEvent 1
+  $reorder createCursorGrabEvent 1
+  $reorder cursorHoldTimerProc 1
+  $reorder cursorHoldTimer 1
+  $reorder cursorSequelCounter 1
+  $reorder cursorSequelArea 1
+  $reorder cursorHoldPeriod 1
+  $reorder cursorHittingPos 1
+  $reorder cursorHittingTime 1
+  $reorder cursorCaptureView 1
+  $reorder cursorCurrentPos 1
+  $reorder cursorTargetView 1
+  $reorder cursorHitOffset 1
+  $reorder cursorLastPos 1
+  $reorder cursorFirstPos 1
+  $reorder cursorFinger 1
+  $reorder fpsTime 1
+  $reorder fpsCounter 1
+  $reorder lastRegions 1
+  $reorder noOfLastRegions 1
+  $reorder canvas 1
+  $reorder regionsArea 1
+  $reorder regions 1
+  $reorder noOfRegions 1
+  $reorder GetFPS 1
+  $reorder Update 1
+  $reorder UpdateGE20 1
+  $reorder EndUpdate 1
+  $reorder UpdateCanvas 1
+  $reorder GetUpdateRegion 1
+  $reorder BeginUpdate 1
+  $reorder DoesNeedUpdate 1
+  $reorder Initialize 1
+  $reorder SetRootFocus 1
+  $reorder SetUserInputTimestamp 1
+  $reorder DriveKeyboardHitting 1
+  $reorder DriveCursorMovement 1
+  $reorder DriveMultiTouchMovement 1
+  $reorder DriveCursorHitting 1
+  $reorder DriveMultiTouchHitting 1
+  $reorder OnSetVirtualKeyboard 1
+  $reorder OnSetCursorDragLimit 1
+  $reorder OnSetCursorSequelDelay 1
+  $reorder OnGetStyles 1
+  $reorder OnSetStyles 1
+  $reorder OnGetLanguage 1
+  $reorder OnSetLanguage 1
+  $reorder EndAnimation 1
+  $reorder BeginAnimation 1
+  $reorder CaptureCursor 1
+  $reorder RetargetCursorWithReason 1
+  $reorder RetargetCursor 1
+  $reorder DeflectCursor 1
+  $reorder GetModalGroup 1
+  $reorder EndModal 1
+  $reorder BeginModal 1
+  $reorder VirtualKeyboard 1
+  $reorder CursorDragLimit 1
+  $reorder CursorSequelDelay 1
+  $reorder Styles 1
+  $reorder Language 1
+  $reorder AutoTimer 1
+  $reorder AutoDemo 1
+  $reorder AutoState 1
+  $reorder ResetDemo 1
+  $reorder LeftTouch 1
+  $reorder RightTouch 1
+  $reorder RectangleLeft 1
+  $reorder RectangleRight 1
+  $reorder ImageLeft 1
+  $reorder ImageRight 1
+  $reorder Device 1
+  $reorder OnLeft 1
+  $reorder pageNo 1
+  $reorder OnRight 1
+  $reorder Note 1
+  $reorder Note1 1
+  $reorder ChangePage 1
+}
+
+// This class implements the interface between the GUI application and the device.
+$rect <20,290,220,330>
+$output false
+class DeviceClass
+{
+  $rect <220,20,420,60>
+  onset Int32Value
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure Int32Value == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure Int32Value = value;
+
+    // For target code generation you will use your specific device API 
+    // to change the affected value.
+    $if !$prototyper
+      native ( value )
+      {
+        /*
+           TO DO:
+
+           You can call a function of your own device API or you simply
+           modify a variable existing in your middleware to reflect the
+           new value:
+
+           YourDevice_SetSomeValue( value );
+
+           or
+
+           YourDevice_SomeVariable = value;
+        */
+      }
+    $endif
+
+    // Notify all associated property observers.
+    notifyobservers ^Int32Value;
+  }
+
+  // This property represents an individual setting or state value existing within \
+  // the device.
+  $rect <20,20,220,60>
+  property int32 Int32Value = 60;
+
+  // This property represents an individual setting or state value existing within \
+  // the device.
+  $rect <20,70,220,110>
+  property bool BoolValue = false;
+
+  $rect <220,70,420,110>
+  onset BoolValue
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure BoolValue == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure BoolValue = value;
+
+    // For target code generation you will use your specific device API 
+    // to change the affected value.
+    $if !$prototyper
+      native ( value )
+      {
+        /*
+           TO DO:
+
+           You can call a function of your own device API or you simply
+           modify a variable existing in your middleware to reflect the
+           new value:
+
+           YourDevice_SetSomeValue( value );
+
+           or
+
+           YourDevice_SomeVariable = value;
+        */
+      }
+    $endif
+
+    // Notify all associated property observers.
+    notifyobservers ^BoolValue;
+  }
+
+  // This is a bool change effect.
+  $rect <440,70,640,110>
+  object Effects::BoolEffect BoolEffect
+  {
+    preset Outlet = ^BoolValue;
+  }
+
+  // This is an int32 change effect.
+  $rect <440,20,640,60>
+  object Effects::Int32Effect Int32Effect
+  {
+    preset Symmetric = true;
+    preset CycleDuration = 10000;
+    preset Value2 = 90;
+    preset Value1 = 10;
+    preset Outlet = ^Int32Value;
+  }
+
+  // Slot method to activate the automatic animation of the device properties.
+  $rect <20,130,220,170>
+  slot AutoDemoOn
+  {
+    sender; /* the method is called from the sender object */   
+
+    Int32Effect.Enabled = true;
+    BoolEffect.Enabled = true;
+
+  }
+
+  // Slot method to deactivate the automatic animation of the device properties.
+  $rect <20,170,220,210>
+  slot AutoDemoOff
+  {
+    sender; /* the method is called from the sender object */
+
+    Int32Effect.Enabled = false;
+    BoolEffect.Enabled = false;
+
+  }
+
+  // This is a simple device class for demo purposes. It just contains two values: \
+  // One int32 value and one bool value. All widgets of this demo application refer \
+  // to this two device properties. As a result, all widgets will show or interact \
+  // with the same data.
+  note legend Note
+  {
+    attr Bounds = <230,130,640,250>;
+  }
+}
+
+// This object represents an instance of the device interface implemented in the \
+// class Application::DeviceClass.
+$rect <230,290,430,330>
+autoobject Application::DeviceClass Device;
+
+// The class 'Application::DeviceClass' implements the interface between the GUI \
+// application and the device. Within this demo, the device contains just one int32 \
+// and one bool value.
+// The object 'Device' represents the instance of the device interface. It exists \
+// for convenience. As an autoobject it is globaly available for all GUI components \
+// within your project.
+note legend Note
+{
+  attr Bounds = <450,290,1050,400>;
+}
+
+// This is a GUI component.
+$rect <230,70,430,110>
+$output false
+class PageFlat : Core::Group
+{
+  $rect <10,500,210,540>
+  inherited property Bounds = <0,0,560,480>;
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <-100,0,640,480>;
+    preset Bitmap = FlatWidgets::FlatBackground;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton Switch
+  {
+    preset Bounds = <373,30,433,60>;
+    preset Outlet = ^Application::Device.BoolValue;
+    preset Appearance = FlatWidgets::Switch;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton CheckBox
+  {
+    preset Bounds = <210,80,360,110>;
+    preset Enabled = true;
+    preset Outlet = ^Application::Device.BoolValue;
+    preset Label = "CheckBox";
+    preset Appearance = FlatWidgets::CheckBox;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Caption
+  {
+    preset Bounds = <240,430,540,470>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "Widget Design \"Flat\"";
+    preset Font = Resources::FontLarge;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorzSlider
+  {
+    preset Bounds = <30,350,190,380>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = FlatWidgets::HorizontalSlider;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalValueBar HorzBar
+  {
+    preset Bounds = <30,300,190,320>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = FlatWidgets::HorizontalValueBar;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::VerticalSlider VertSlider
+  {
+    preset Bounds = <60,100,90,262>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = FlatWidgets::VerticalSlider;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::VerticalValueBar VertBar
+  {
+    preset Bounds = <120,100,140,262>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = FlatWidgets::VerticalValueBar;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::Gauge AnalogDisplay
+  {
+    preset Bounds = <210,130,330,250>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = FlatWidgets::AnalogDisplay;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RotaryKnob RotaryKnob
+  {
+    preset Bounds = <210,280,330,400>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = FlatWidgets::RotaryKnob;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::Gauge Gauge
+  {
+    preset Bounds = <373,280,493,400>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = FlatWidgets::Gauge;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RadioButton RadioButton
+  {
+    preset Bounds = <373,80,513,110>;
+    preset OutletSelector = 40;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Label = "Value 40";
+    preset Appearance = FlatWidgets::RadioButton;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton ActionButton
+  {
+    preset Bounds = <30,30,150,60>;
+    preset OnActivate = ResetSlot;
+    preset Label = "Reset";
+    preset Appearance = FlatWidgets::PushButton;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton ToggleButton
+  {
+    preset Bounds = <210,30,350,60>;
+    preset Outlet = ^Application::Device.BoolValue;
+    preset IconOnFrameActive = 7;
+    preset IconOnFrameFocused = 7;
+    preset IconOnFrameDisabled = 7;
+    preset IconOnFrameDefault = 7;
+    preset IconOffFrameActive = 7;
+    preset IconOffFrameFocused = 7;
+    preset IconOffFrameDisabled = 7;
+    preset IconOffFrameDefault = 7;
+    preset Icon = Resources::SymbolIconsSmall;
+    preset Label = "Button";
+    preset Appearance = FlatWidgets::ToggleButton;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ValueDisplay DigitalDisplay
+  {
+    preset Bounds = <350,180,560,242>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Unit = "mV";
+    preset Precision = 2;
+    preset CurrentFactor = 1;
+    preset Appearance = FlatWidgets::ValueDisplay;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RadioButton RadioButton0
+  {
+    preset Bounds = <373,120,513,150>;
+    preset OutletSelector = 80;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Label = "Value 80";
+    preset Appearance = FlatWidgets::RadioButton;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ValueDisplay ValueDisplay2
+  {
+    preset Bounds = <220,150,320,225>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Unit = "mV";
+    preset Appearance = FlatWidgets::ValueDisplayCentered;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ValueDisplay DigitalDisplay1
+  {
+    preset Bounds = <398,340,566,398>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Unit = "mV";
+    preset Appearance = FlatWidgets::ValueDisplay;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image0
+  {
+    preset Bounds = <20,430,170,470>;
+    preset Alignment = Views::ImageAlignment[AlignHorzLeft, AlignVertCenter];
+    preset Bitmap = Application::LogoEmWi;
+  }
+
+  $rect <590,10,790,50>
+  slot ResetSlot
+  {
+    sender; /* the method is called from the sender object */
+
+    /* just clear the values of the device */
+    Application::Device.Int32Value = 0;
+    Application::Device.BoolValue = false;
+
+  }
+}
+
+// This is a GUI component.
+$rect <230,120,430,160>
+$output false
+class PageSteel : Core::Group
+{
+  $rect <10,500,210,540>
+  inherited property Bounds = <0,0,560,480>;
+
+  $rect <20,20,160,60>
+  object Views::Wallpaper Wallpaper
+  {
+    preset Bounds = <0,0,560,480>;
+    preset Bitmap = SteelWidgets::SteelBackground;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Caption
+  {
+    preset Bounds = <240,430,540,470>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "Widget Design \"Steel\"";
+    preset Font = Resources::FontLarge;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton Button
+  {
+    preset Bounds = <30,30,100,140>;
+    preset OnActivate = ResetSlot;
+    preset Label = "Reset";
+    preset Appearance = SteelWidgets::PushButton;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::VerticalSlider VertSlider0
+  {
+    preset Bounds = <45,210,85,410>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = SteelWidgets::VerticalSlider;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorzSlider
+  {
+    preset Bounds = <140,150,340,200>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = SteelWidgets::HorizontalSlider;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RotaryKnob RotaryKnob0
+  {
+    preset Bounds = <360,200,470,300>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = SteelWidgets::RotaryKnob;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton Switch
+  {
+    preset Bounds = <20,150,110,200>;
+    preset Outlet = ^Application::Device.BoolValue;
+    preset Appearance = SteelWidgets::Switch;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton Switch0
+  {
+    preset Bounds = <370,320,460,370>;
+    preset Outlet = ^Application::Device.BoolValue;
+    preset Appearance = SteelWidgets::Switch;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image0
+  {
+    preset Bounds = <20,430,170,470>;
+    preset Alignment = Views::ImageAlignment[AlignHorzLeft, AlignVertCenter];
+    preset Bitmap = Application::LogoEmWi;
+  }
+
+  $rect <590,10,790,50>
+  slot ResetSlot
+  {
+    sender; /* the method is called from the sender object */
+
+    /* just clear the values of the device */
+    Application::Device.Int32Value = 0;
+    Application::Device.BoolValue = false;
+
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::Gauge Gauge
+  {
+    preset Bounds = <160,250,332,372>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = SteelWidgets::Gauge;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::VerticalSlider VertSlider1
+  {
+    preset Bounds = <490,20,530,400>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = SteelWidgets::VerticalSlider;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorzSlider1
+  {
+    preset Bounds = <140,40,460,90>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = SteelWidgets::HorizontalSlider;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RotaryKnob RotaryKnob1
+  {
+    preset Bounds = <360,100,470,200>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = SteelWidgets::RotaryKnob;
+  }
+}
+
+$rect <20,70,220,110>
+$output false
+resource Resources::Bitmap LogoEmWi
+{
+  attr bitmapfile FileName = .\LogoEmbeddedWizard.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,20,430,60>
+$output false
+class PageDefault : Core::Group
+{
+  $rect <10,500,210,540>
+  inherited property Bounds = <0,0,560,480>;
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <-20,0,560,480>;
+    preset Color = #DDDDDDFF;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton PushButton
+  {
+    preset Bounds = <20,20,170,70>;
+    preset OnActivate = ResetSlot;
+    preset Label = "Reset";
+    preset Appearance = WidgetSet::PushButton_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton ToggleButton
+  {
+    preset Bounds = <20,85,170,135>;
+    preset Outlet = ^Application::Device.BoolValue;
+    preset Label = "Switch";
+    preset Appearance = WidgetSet::Switch_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RadioButton RadioButton
+  {
+    preset Bounds = <200,20,350,70>;
+    preset OutletSelector = 40;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Label = "Value 40";
+    preset Appearance = WidgetSet::RadioButton_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RadioButton RadioButton1
+  {
+    preset Bounds = <200,70,350,120>;
+    preset OutletSelector = 80;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Label = "Value 80";
+    preset Appearance = WidgetSet::RadioButton_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton ToggleButton1
+  {
+    preset Bounds = <380,20,535,70>;
+    preset Outlet = ^Application::Device.BoolValue;
+    preset Label = "CheckBox";
+    preset Appearance = WidgetSet::CheckBox_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorizontalSlider
+  {
+    preset Bounds = <20,305,220,355>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalValueBar HorizontalValueBar
+  {
+    preset Bounds = <20,365,220,415>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = WidgetSet::HorizontalValueBar_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RotaryKnob RotaryKnob
+  {
+    preset Bounds = <360,250,550,420>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = WidgetSet::RotaryKnob_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::Gauge Gauge
+  {
+    preset Bounds = <370,90,541,241>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = WidgetSet::Gauge_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ValueDisplay ValueDisplay
+  {
+    preset Bounds = <170,380,370,412>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Unit = "mV";
+    preset Precision = 1;
+    preset Appearance = WidgetSet::ValueDisplay_Mono_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::VerticalValueBar VerticalValueBar
+  {
+    preset Bounds = <290,150,340,350>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = WidgetSet::VerticalValueBar_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::VerticalSlider VerticalSlider
+  {
+    preset Bounds = <230,150,280,350>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = WidgetSet::VerticalSlider_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Caption
+  {
+    preset Bounds = <240,430,540,470>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "Default Widgets";
+    preset Font = Resources::FontLarge;
+    preset Color = #404040FF;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image0
+  {
+    preset Bounds = <20,430,140,470>;
+    preset Alignment = Views::ImageAlignment[AlignHorzLeft, AlignVertCenter];
+    preset Bitmap = Application::LogoEmWi;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::Gauge Gauge1
+  {
+    preset Bounds = <20,155,151,271>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = WidgetSet::MiniGauge_Lime_Medium;
+  }
+
+  $rect <590,10,790,50>
+  slot ResetSlot
+  {
+    sender; /* the method is called from the sender object */
+
+    /* just clear the values of the device */
+    Application::Device.Int32Value = 0;
+    Application::Device.BoolValue = false;
+
+  }
+}
+
+// The class 'PageDefault' contains a set of default widgets - as they appear as \
+// soon as you take widgets from the Gallery.
+// 
+// The class 'PageFlat' presents the widget design 'Flat'. The unit 'FlatWidgets' \
+// contains the necessary resources and configurations for this widget style.
+// 
+// The class 'PageSteel' presents the widget design 'Steel'. The unit 'SteelWidgets' \
+// contains the necessary resources and configurations for this widget style.
+// 
+// The class 'PageOrange' presents the widget design 'Orange'. The unit 'OrangeWidgets' \
+// contains the necessary resources and configurations for this widget style.
+// 
+// This class 'Application' shows the widget pages and let the user navigate between \
+// them.
+note legend Note1
+{
+  attr Bounds = <450,20,1050,280>;
+}
+
+// This is a GUI component.
+$rect <230,170,430,210>
+$output false
+class PageOrange : Core::Group
+{
+  $rect <10,500,210,540>
+  inherited property Bounds = <0,0,560,480>;
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,640,480>;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton PushButton
+  {
+    preset Bounds = <10,20,190,65>;
+    preset OnActivate = ResetSlot;
+    preset Label = "Reset";
+    preset Appearance = OrangeWidgets::PushButton_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Caption
+  {
+    preset Bounds = <210,430,540,470>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "Widget Design \"Orange\"";
+    preset Font = Resources::FontLarge;
+    preset Color = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorzSlider
+  {
+    preset Bounds = <350,370,530,415>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = OrangeWidgets::HorzSlider_Small;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::VerticalSlider VertSlider0
+  {
+    preset Bounds = <90,240,135,420>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = OrangeWidgets::VerticalSlider_Small;
+  }
+
+  $rect <590,10,790,50>
+  slot ResetSlot
+  {
+    sender; /* the method is called from the sender object */
+
+    /* just clear the values of the device */
+    Application::Device.Int32Value = 0;
+    Application::Device.BoolValue = false;
+
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorzSlider2
+  {
+    preset Bounds = <60,180,300,225>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = OrangeWidgets::HorzSlider_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RotaryKnob RotaryKnob
+  {
+    preset Bounds = <150,220,360,430>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = OrangeWidgets::RotaryKnob_Large;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::Gauge Gauge
+  {
+    preset Bounds = <370,160,550,340>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = OrangeWidgets::Gauge_Large;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalValueBar HorizontalValueBar
+  {
+    preset Bounds = <20,440,200,461>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = OrangeWidgets::HorizontalValueBar_Small;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::VerticalValueBar VerticalValueBar
+  {
+    preset Bounds = <20,120,41,420>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = OrangeWidgets::VerticalValueBar_Large;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ValueDisplay ValueDisplay
+  {
+    preset Bounds = <390,220,530,280>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Unit = "mV";
+    preset Precision = 1;
+    preset Appearance = OrangeWidgets::ValueDisplay;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton ToggleButton
+  {
+    preset Bounds = <40,70,190,120>;
+    preset Outlet = ^Application::Device.BoolValue;
+    preset Label = "Switch";
+    preset Appearance = OrangeWidgets::Switch;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RadioButton RadioButton
+  {
+    preset Bounds = <240,20,390,70>;
+    preset OutletSelector = 40;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Label = "Value 40";
+    preset Appearance = OrangeWidgets::RadioButton;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RadioButton RadioButton1
+  {
+    preset Bounds = <240,70,390,120>;
+    preset OutletSelector = 80;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Label = "Value 80";
+    preset Appearance = OrangeWidgets::RadioButton;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton ToggleButton1
+  {
+    preset Bounds = <60,130,215,180>;
+    preset Outlet = ^Application::Device.BoolValue;
+    preset LabelOn = "CheckBox";
+    preset LabelOff = "CheckBox";
+    preset Appearance = OrangeWidgets::CheckBox;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::VerticalValueBar VerticalValueBar1
+  {
+    preset Bounds = <60,240,81,420>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = OrangeWidgets::VerticalValueBar_Small;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::Gauge Gauge1
+  {
+    preset Bounds = <420,20,540,140>;
+    preset Outlet = ^Application::Device.Int32Value;
+    preset Appearance = OrangeWidgets::Gauge_Small;
+  }
+}

@@ -1,0 +1,2 @@
+This sample application implements a user interface for a loboratory power supply. A couple of ready-to-use widgets are taken to create the main panel of the power supply application, e.g. to control the output voltage and the current limit. The data of the power supply application is accessed via a device class.
+

@@ -1,0 +1,541 @@
+﻿$version 15.00
+
+$rect <250,340,450,380>
+$output false
+resource Resources::Bitmap BackPanel
+{
+  attr bitmapfile FileName = .\Res\SteelBackground.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <450,60,650,100>
+$output false
+resource Resources::Bitmap PushButton
+{
+  attr bitmapfile FileName = .\Res\SteelPushButton.png;
+  attr framesize FrameSize = <70,70>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <450,100,650,140>
+$output false
+resource Resources::Bitmap Switch
+{
+  attr bitmapfile FileName = .\Res\SteelSwitch.png;
+  attr framesize FrameSize = <90,50>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <250,380,450,420>
+$output false
+resource Resources::Bitmap IndicatorRed
+{
+  attr bitmapfile FileName = .\Res\SteelIndicatorRed.png;
+  attr framesize FrameSize = <50,50>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <450,380,650,420>
+$output false
+resource Resources::Bitmap IndicatorGreen
+{
+  attr bitmapfile FileName = .\Res\SteelIndicatorGreen.png;
+  attr framesize FrameSize = <50,50>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <650,380,850,420>
+$output false
+resource Resources::Bitmap IndicatorYellow
+{
+  attr bitmapfile FileName = .\Res\SteelIndicatorYellow.png;
+  attr framesize FrameSize = <50,50>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <850,380,1050,420>
+$output false
+resource Resources::Bitmap IndicatorBlue
+{
+  attr bitmapfile FileName = .\Res\SteelIndicatorBlue.png;
+  attr framesize FrameSize = <50,50>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <450,140,650,180>
+$output false
+resource Resources::Bitmap RotaryKnobBack
+{
+  attr bitmapfile FileName = .\Res\SteelRotaryKnob.png;
+  attr framesize FrameSize = <100,100>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <650,140,850,180>
+$output false
+resource Resources::Bitmap RotaryKnobMark
+{
+  attr bitmapfile FileName = .\Res\SteelRotaryMark.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Additional Steel Widgets
+note group NoteGroup2
+{
+  attr Bounds = <20,290,1070,440>;
+}
+
+$rect <850,340,1050,380>
+$output false
+enum LedType
+{
+  $rect <10,10,150,50>
+  item Red;
+
+  $rect <160,10,300,50>
+  item Green;
+
+  $rect <310,10,450,50>
+  item Yellow;
+
+  $rect <460,10,600,50>
+  item Blue;
+}
+
+$rect <40,60,450,100>
+$output false
+autoobject WidgetSet::PushButtonConfig PushButtonConfig
+{
+  preset LabelColorActive = #FFFFFFFF;
+  preset LabelColorFocused = #FFFFFFFF;
+  preset LabelColorDisabled = #A8ABABFF;
+  preset LabelColorDefault = #FFFFFFFF;
+  preset LabelMarginTop = 70;
+  preset IconTintDisabled = #FFFFFF88;
+  preset LabelAlignment = Views::TextAlignment[AlignHorzCenter, AlignVertTop];
+  preset LabelFont = Resources::FontMedium;
+  preset FaceLayout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop];
+  preset FaceFrameActive = 4;
+  preset FaceFrameFocused = 3;
+  preset FaceFrameDisabled = 0;
+  preset FaceFrameDefault = 1;
+  preset FaceBitmapActive = SteelWidgets::PushButton;
+  preset FaceBitmapFocused = SteelWidgets::PushButton;
+  preset FaceBitmapDisabled = SteelWidgets::PushButton;
+  preset FaceBitmapDefault = SteelWidgets::PushButton;
+  preset WidgetMinSize = <70,70>;
+}
+
+$rect <40,100,450,140>
+$output false
+autoobject WidgetSet::ToggleButtonConfig SwitchConfig
+{
+  preset LabelOnColorActive = #6C6E70FF;
+  preset LabelOnColorFocused = #6C6E70FF;
+  preset LabelOnColorDisabled = #A8ABABFF;
+  preset LabelOnColorDefault = #6C6E70FF;
+  preset LabelOffColorActive = #6C6E70FF;
+  preset LabelOffColorFocused = #6C6E70FF;
+  preset LabelOffColorDisabled = #A8ABABFF;
+  preset LabelOffColorDefault = #6C6E70FF;
+  preset LabelMarginTop = 50;
+  preset LabelAlignment = Views::TextAlignment[AlignHorzCenter, AlignVertTop];
+  preset LabelOnFont = Resources::FontMedium;
+  preset LabelOffFont = Resources::FontMedium;
+  preset FaceLayout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop];
+  preset FaceOnFrameActive = 7;
+  preset FaceOnFrameFocused = 5;
+  preset FaceOnFrameDisabled = 1;
+  preset FaceOnFrameDefault = 3;
+  preset FaceOnBitmapActive = SteelWidgets::Switch;
+  preset FaceOnBitmapFocused = SteelWidgets::Switch;
+  preset FaceOnBitmapDisabled = SteelWidgets::Switch;
+  preset FaceOnBitmapDefault = SteelWidgets::Switch;
+  preset FaceOffFrameActive = 6;
+  preset FaceOffFrameFocused = 4;
+  preset FaceOffFrameDisabled = 0;
+  preset FaceOffFrameDefault = 2;
+  preset FaceOffBitmapActive = SteelWidgets::Switch;
+  preset FaceOffBitmapFocused = SteelWidgets::Switch;
+  preset FaceOffBitmapDisabled = SteelWidgets::Switch;
+  preset FaceOffBitmapDefault = SteelWidgets::Switch;
+  preset WidgetMinSize = <90,50>;
+}
+
+$rect <40,140,450,180>
+$output false
+autoobject WidgetSet::RotaryKnobConfig RotaryKnobConfig
+{
+  preset ThumbMaxAngle = -135;
+  preset ThumbMinAngle = 135;
+  preset ThumbPivot = <2,25>;
+  preset ThumbBitmapActive = SteelWidgets::RotaryKnobMark;
+  preset ThumbBitmapFocused = SteelWidgets::RotaryKnobMark;
+  preset ThumbBitmapDefault = SteelWidgets::RotaryKnobMark;
+  preset ScaleFrameActive = 2;
+  preset ScaleFrameFocused = 2;
+  preset ScaleFrameDisabled = 0;
+  preset ScaleFrameDefault = 1;
+  preset ScaleBitmapActive = SteelWidgets::RotaryKnobBack;
+  preset ScaleBitmapFocused = SteelWidgets::RotaryKnobBack;
+  preset ScaleBitmapDisabled = SteelWidgets::RotaryKnobBack;
+  preset ScaleBitmapDefault = SteelWidgets::RotaryKnobBack;
+}
+
+// Steel Widgets as customized default widgets
+note group NoteGroup3
+{
+  attr Bounds = <20,10,1070,280>;
+}
+
+// Indicator widget with a LED design. The widget is used to display a boolean value.
+$rect <40,380,240,420>
+$output false
+class Indicator : Core::Group
+{
+  $rect <0,180,200,220>
+  inherited property Bounds = <0,0,50,50>;
+
+  $rect <0,220,200,260>
+  inherited method UpdateViewState()
+  {
+    /* avoid Chora warnings due to unused parameters */
+    aState;
+
+    /* select the frame number in order to indicate the corresponding state */
+    if ( Active )
+      Image.FrameNumber = 1;
+    else
+      Image.FrameNumber = 0;
+
+    /* in case the indicator should appear flashing, activate the effect */
+    if ( Active && Flashing )
+      FlashEffect.Enabled = true;
+    else
+      FlashEffect.Enabled = false;
+  }
+
+  $rect <0,260,200,300>
+  inherited property Enabled = false;
+
+  $rect <400,130,600,170>
+  onset Type
+  {
+    /* check if the new type differs from the current type */
+    if ( pure Type == value )
+      return;
+
+    /* store the new value */
+    pure Type = value;
+
+    /* change the bitmap depending on the selected type of indicator */
+    switch ( value )
+    {
+      case SteelWidgets::LedType.Red:
+        Image.Bitmap = SteelWidgets::IndicatorRed;
+      case SteelWidgets::LedType.Green:
+        Image.Bitmap = SteelWidgets::IndicatorGreen;
+      case SteelWidgets::LedType.Yellow:
+        Image.Bitmap = SteelWidgets::IndicatorYellow;
+      case SteelWidgets::LedType.Blue:
+        Image.Bitmap = SteelWidgets::IndicatorBlue;
+      default:
+        ;
+    }
+  }
+
+  // The property 'Type' determines the graphical appearance of the indicator widget: \
+  // a red, green, yellow or blue LED can be selected.
+  $rect <400,90,600,130>
+  property SteelWidgets::LedType Type = SteelWidgets::LedType.Red;
+
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,50,50>;
+    preset AutoSize = true;
+    preset Bitmap = SteelWidgets::IndicatorRed;
+  }
+
+  $rect <400,40,600,80>
+  onset Flashing
+  {
+    /* check if the given value differs from the current value */
+    if ( pure Flashing == value )
+      return;
+
+    /* store the new value */
+    pure Flashing = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The property 'Flashing' stores the flashing mode of the indicator. If the property \
+  // is set to true, the simulated LED will flash automatically, as long as the indicator \
+  // is active.
+  $rect <400,0,600,40>
+  property bool Flashing = false;
+
+  $rect <200,220,400,260>
+  object Effects::Int32Effect FlashEffect
+  {
+    preset Symmetric = false;
+    preset CycleDuration = 500;
+    preset InterCycleDelay = 100;
+    preset Enabled = true;
+    preset Value2 = 1;
+    preset Outlet = ^Image.FrameNumber;
+  }
+
+  $rect <200,40,400,80>
+  onset Active
+  {
+    /* check if the given value differs from the current value */
+    if ( pure Active == value )
+      return;
+
+    /* store the new value */
+    pure Active = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The property 'Active' stores the current state of the indicator. As long as \
+  // the property is 'false', the widget represents the status 'off' and the LED \
+  // should appear switched-off. As long as the property is 'true', the widget represents \
+  // the status 'on' and the LED should appear illuminated.
+  $rect <200,0,400,40>
+  property bool Active = false;
+
+  // This slot method will receive a signal, if the value of the property assigned \
+  // to @Outlet has been changed by another widget or by the application logic. In \
+  // response to this notification, the widget will update itself.
+  $rect <200,180,400,220>
+  slot outletSlot
+  {
+    /* update the current state of the widget */
+    if ( Outlet != null )
+      Active = Outlet^;
+  }
+
+  $rect <200,130,400,170>
+  onset Outlet
+  {
+    /* check if the new outlet differs from the currently used outlet */
+    if ( pure Outlet == value )
+      return;
+
+    /* detach from the previous outlet */
+    if ( pure Outlet != null )
+      detachobserver outletSlot, pure Outlet;
+
+    /* store the new outlet */
+    pure Outlet = value;
+
+    /* ... and attach to the new one */
+    if ( value != null )
+      attachobserver outletSlot, value;
+
+    /* finally, update the current state of the widget by posting a signal to the outlet slot */
+    if ( value != null )
+      postsignal outletSlot;
+  }
+
+  // The property 'Outlet' provides an interface for the Model-View-Controller (MVC). \
+  // In the MVC, the widgets (views) and the application logic (model) are always \
+  // kept apart. An automatism behind this model ensures, that widgets are notified \
+  // automatically as soon as the affected model has changed its state. On the other \
+  // hand, user interactions on a widget cause the affected model to execute the \
+  // application logic. Usually, a model is a simple Chora object containing several \
+  // properties and the implementation of onget/onset method.
+  // By assigning a property reference, Outlet establishes a connection between the \
+  // widget and the model object, the affected property belongs to. After this, the \
+  // widget is able to read and modify the referred property in response to the user \
+  // interactions. It is also able to adapt the widget appearance, if the value of \
+  // the referred property has been modified by another widget or by the application \
+  // logic itself.
+  $rect <200,90,400,130>
+  property ^bool Outlet = null;
+
+  // The class 'Indicator' implements a widget to display a boolean value. The widget \
+  // simulates a LED and appears illuminated as soon as the property 'Active' is \
+  // true.
+  // The property 'Type' is used to select the color of the LED. When the property \
+  // 'Flashing' is set to true, the LED will flash during the active state.
+  // The widget can be connected with a boolean 'Outlet' property in order to illustrate \
+  // the current state.
+  note legend Note
+  {
+    attr Bounds = <10,310,730,440>;
+  }
+}
+
+// Background component that appears as brushed steel.
+$rect <40,340,240,380>
+$output false
+class Background : Core::Group
+{
+  $rect <10,220,210,260>
+  inherited property Bounds = <0,0,350,200>;
+
+  $rect <10,260,210,300>
+  inherited property Enabled = false;
+
+  $rect <20,20,160,60>
+  object Views::Wallpaper Wallpaper
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,350,200>;
+    preset Bitmap = SteelWidgets::BackPanel;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Line Line
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Point2 = <340,10>;
+    preset Point1 = <10,10>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Line Line0
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, ResizeHorz];
+    preset Point2 = <340,190>;
+    preset Point1 = <10,190>;
+  }
+}
+
+$rect <40,180,450,220>
+$output false
+autoobject WidgetSet::GaugeConfig GaugeVoltageConfig
+{
+  preset SwingElastic = false;
+  preset SwingDuration = 1000;
+  preset CoverBitmap = SteelWidgets::GaugeFront;
+  preset NeedleMaxAngle = -50;
+  preset NeedleMinAngle = 50;
+  preset NeedlePivot = <3,89>;
+  preset NeedleBitmap = SteelWidgets::GaugeNeedle;
+  preset CenterOffset = <0,42>;
+  preset ScaleBitmap = SteelWidgets::GaugeVoltageBack;
+  preset WidgetMaxSize = <172,122>;
+  preset WidgetMinSize = <172,122>;
+}
+
+$rect <450,180,650,220>
+$output false
+resource Resources::Bitmap GaugeVoltageBack
+{
+  attr bitmapfile FileName = .\Res\SteelGaugeVoltageBack.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <650,180,850,220>
+$output false
+resource Resources::Bitmap GaugeFront
+{
+  attr bitmapfile FileName = .\Res\SteelGaugeFront.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <850,180,1050,220>
+$output false
+resource Resources::Bitmap GaugeNeedle
+{
+  attr bitmapfile FileName = .\Res\SteelGaugeNeedle.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <40,220,450,260>
+$output false
+autoobject WidgetSet::GaugeConfig GaugeCurrentConfig
+{
+  preset SwingElastic = false;
+  preset SwingDuration = 1000;
+  preset CoverBitmap = SteelWidgets::GaugeFront;
+  preset NeedleMaxAngle = -50;
+  preset NeedleMinAngle = 50;
+  preset NeedlePivot = <3,89>;
+  preset NeedleBitmap = SteelWidgets::GaugeNeedle;
+  preset CenterOffset = <0,42>;
+  preset ScaleBitmap = SteelWidgets::GaugeCurrentBack;
+  preset WidgetMaxSize = <172,122>;
+  preset WidgetMinSize = <172,122>;
+}
+
+$rect <450,220,650,260>
+$output false
+resource Resources::Bitmap GaugeCurrentBack
+{
+  attr bitmapfile FileName = .\Res\SteelGaugeCurrentBack.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Demo widgets in a steel design.
+// 
+// This unit contains the configuration and resources to create a couple of widgets \
+// used to control the power supply application.
+// 
+// This is not a universal widget set - only the widgets needed within the demo are \
+// defined here. 
+note legend Note
+{
+  attr Bounds = <20,450,420,650>;
+}
+
+// How to use and customize widgets?
+// 
+// https://doc.embedded-wizard.de/using-widgets
+note legend Note9
+{
+  attr Bounds = <430,450,880,520>;
+}

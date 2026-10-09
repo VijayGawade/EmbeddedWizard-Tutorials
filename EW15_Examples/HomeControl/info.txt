@@ -1,0 +1,1 @@
+The Home Control demo presents control panels for a home control system (heater, lightning and weather) and provides a menu system for making user settings. Additionally, the application implements two themes: a light mode and a dark mode.

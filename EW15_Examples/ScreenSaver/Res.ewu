@@ -1,0 +1,422 @@
+﻿$version 15.00
+
+// This is a bitmap resource.
+$rect <30,60,230,100>
+$output false
+resource Resources::Bitmap Logo
+{
+  attr bitmapfile FileName = .\Res\EmWiLogo.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,170,230,210>
+$output false
+resource Resources::Bitmap Bitmap0
+{
+  attr bitmapfile FileName = .\Res\IMG_00.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,210,230,250>
+$output false
+resource Resources::Bitmap Bitmap1
+{
+  attr bitmapfile FileName = .\Res\IMG_01.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,250,230,290>
+$output false
+resource Resources::Bitmap Bitmap2
+{
+  attr bitmapfile FileName = .\Res\IMG_02.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,290,230,330>
+$output false
+resource Resources::Bitmap Bitmap3
+{
+  attr bitmapfile FileName = .\Res\IMG_03.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,330,230,370>
+$output false
+resource Resources::Bitmap Bitmap4
+{
+  attr bitmapfile FileName = .\Res\IMG_04.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,370,230,410>
+$output false
+resource Resources::Bitmap Bitmap5
+{
+  attr bitmapfile FileName = .\Res\IMG_05.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,410,230,450>
+$output false
+resource Resources::Bitmap Bitmap6
+{
+  attr bitmapfile FileName = .\Res\IMG_06.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,450,230,490>
+$output false
+resource Resources::Bitmap Bitmap7
+{
+  attr bitmapfile FileName = .\Res\IMG_07.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,490,230,530>
+$output false
+resource Resources::Bitmap Bitmap8
+{
+  attr bitmapfile FileName = .\Res\IMG_08.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,530,230,570>
+$output false
+resource Resources::Bitmap Bitmap9
+{
+  attr bitmapfile FileName = .\Res\IMG_09.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,170,430,210>
+$output false
+resource Resources::Bitmap Bitmap10
+{
+  attr bitmapfile FileName = .\Res\IMG_10.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,210,430,250>
+$output false
+resource Resources::Bitmap Bitmap11
+{
+  attr bitmapfile FileName = .\Res\IMG_11.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,250,430,290>
+$output false
+resource Resources::Bitmap Bitmap12
+{
+  attr bitmapfile FileName = .\Res\IMG_12.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,290,430,330>
+$output false
+resource Resources::Bitmap Bitmap13
+{
+  attr bitmapfile FileName = .\Res\IMG_13.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,330,430,370>
+$output false
+resource Resources::Bitmap Bitmap14
+{
+  attr bitmapfile FileName = .\Res\IMG_14.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,370,430,410>
+$output false
+resource Resources::Bitmap Bitmap15
+{
+  attr bitmapfile FileName = .\Res\IMG_15.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,410,430,450>
+$output false
+resource Resources::Bitmap Bitmap16
+{
+  attr bitmapfile FileName = .\Res\IMG_16.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,450,430,490>
+$output false
+resource Resources::Bitmap Bitmap17
+{
+  attr bitmapfile FileName = .\Res\IMG_17.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,490,430,530>
+$output false
+resource Resources::Bitmap Bitmap18
+{
+  attr bitmapfile FileName = .\Res\IMG_18.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <230,530,430,570>
+$output false
+resource Resources::Bitmap Bitmap19
+{
+  attr bitmapfile FileName = .\Res\IMG_19.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,170,630,210>
+$output false
+resource Resources::Bitmap Bitmap20
+{
+  attr bitmapfile FileName = .\Res\IMG_20.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,210,630,250>
+$output false
+resource Resources::Bitmap Bitmap21
+{
+  attr bitmapfile FileName = .\Res\IMG_21.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,250,630,290>
+$output false
+resource Resources::Bitmap Bitmap22
+{
+  attr bitmapfile FileName = .\Res\IMG_22.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,290,630,330>
+$output false
+resource Resources::Bitmap Bitmap23
+{
+  attr bitmapfile FileName = .\Res\IMG_23.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,330,630,370>
+$output false
+resource Resources::Bitmap Bitmap24
+{
+  attr bitmapfile FileName = .\Res\IMG_24.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,370,630,410>
+$output false
+resource Resources::Bitmap Bitmap25
+{
+  attr bitmapfile FileName = .\Res\IMG_25.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,410,630,450>
+$output false
+resource Resources::Bitmap Bitmap26
+{
+  attr bitmapfile FileName = .\Res\IMG_26.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,450,630,490>
+$output false
+resource Resources::Bitmap Bitmap27
+{
+  attr bitmapfile FileName = .\Res\IMG_27.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,490,630,530>
+$output false
+resource Resources::Bitmap Bitmap28
+{
+  attr bitmapfile FileName = .\Res\IMG_28.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <430,530,630,570>
+$output false
+resource Resources::Bitmap Bitmap29
+{
+  attr bitmapfile FileName = .\Res\IMG_29.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <630,170,830,210>
+$output false
+resource Resources::Bitmap Bitmap30
+{
+  attr bitmapfile FileName = .\Res\IMG_30.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <630,210,830,250>
+$output false
+resource Resources::Bitmap Bitmap31
+{
+  attr bitmapfile FileName = .\Res\IMG_31.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <630,250,830,290>
+$output false
+resource Resources::Bitmap Bitmap32
+{
+  attr bitmapfile FileName = .\Res\IMG_32.JPG;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// ScreenSaver Images
+note group Note2
+{
+  attr Bounds = <10,130,850,590>;
+}
+
+// Bitmap resources
+note group Note3
+{
+  attr Bounds = <10,10,250,120>;
+}

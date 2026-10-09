@@ -1,0 +1,430 @@
+﻿$version 15.00
+
+// Bitmap resource of the panel background.
+$rect <20,10,230,50>
+$output false
+resource Resources::Bitmap Background
+{
+  attr bitmapfile FileName = .\Res\Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Font resource for caption strings.
+$rect <20,470,230,510>
+$output false
+resource Resources::Font CaptionFont
+{
+  attr fontname FontName = Verdana;
+  attr fontheight Height = 48;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0x7F;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// Font resource for all text or descriptions.
+$rect <230,470,440,510>
+$output false
+resource Resources::Font TextFont
+{
+  attr fontname FontName = Verdana;
+  attr fontheight Height = 24;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0x7F;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// Color constant for drawing caption.
+$rect <20,530,230,570>
+$output false
+const color CaptionColor = #FFFFFFFF;
+
+// Bitmap resource for drawing a red metering bar.
+$rect <20,80,230,120>
+$output false
+resource Resources::Bitmap MeteringBarRed
+{
+  attr bitmapfile FileName = .\Res\YieldBarRed.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for drawing a green metering bar.
+$rect <230,80,440,120>
+$output false
+resource Resources::Bitmap MeteringBarGreen
+{
+  attr bitmapfile FileName = .\Res\YieldBarGreen.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Color constant for drawing text.
+$rect <230,530,440,570>
+$output false
+const color TextColor = #DDDDDDFF;
+
+// Font resource for all text or descriptions.
+$rect <440,470,660,510>
+$output false
+resource Resources::Font DescrFont
+{
+  attr fontname FontName = Arial;
+  attr fontheight Height = 16;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0xFF;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = true;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// Color constant for drawing descriptions.
+$rect <440,530,650,570>
+$output false
+const color DescrColor = #DDDDDDFF;
+
+// Bitmap resource for drawing a yellow metering bar.
+$rect <440,80,650,120>
+$output false
+resource Resources::Bitmap MeteringBarYellow
+{
+  attr bitmapfile FileName = .\Res\YieldBarYellow.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource of the paper used in the data plotter.
+$rect <20,160,230,200>
+$output false
+resource Resources::Bitmap Paper
+{
+  attr bitmapfile FileName = .\Res\PlotterPaper.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource of the first piece of paper used in the data plotter.
+$rect <230,160,440,200>
+$output false
+resource Resources::Bitmap PaperFirst
+{
+  attr bitmapfile FileName = .\Res\PlotterPaperFirst.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource of the writer needle in the data plotter.
+$rect <440,160,650,200>
+$output false
+resource Resources::Bitmap Needle
+{
+  attr bitmapfile FileName = .\Res\Needle.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource of the right side of the data plotter.
+$rect <20,120,230,160>
+$output false
+resource Resources::Bitmap PlotterBox
+{
+  attr bitmapfile FileName = .\Res\PlotterBox.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource of the scale of the data plotter.
+$rect <230,120,440,160>
+$output false
+resource Resources::Bitmap PlotterScale
+{
+  attr bitmapfile FileName = .\Res\PlotterScale.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource of the left side of the data plotter.
+$rect <440,120,650,160>
+$output false
+resource Resources::Bitmap PlotterEnd
+{
+  attr bitmapfile FileName = .\Res\PlotterEnd.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for displaying the numbers within a simulated LCD.
+$rect <20,220,230,260>
+$output false
+resource Resources::Bitmap LcdNumbers
+{
+  attr bitmapfile FileName = .\Res\LcdNumbers.png;
+  attr framesize FrameSize = <42,60>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for displaying the units within a simulated LCD.
+$rect <230,220,440,260>
+$output false
+resource Resources::Bitmap LcdUnits
+{
+  attr bitmapfile FileName = .\Res\LcdUnits.png;
+  attr framesize FrameSize = <80,60>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for displaying the dot within a simulated LCD.
+$rect <440,220,650,260>
+$output false
+resource Resources::Bitmap LcdDot
+{
+  attr bitmapfile FileName = .\Res\LcdDot.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for displaying the background behind the simulated LCD.
+$rect <650,220,860,260>
+$output false
+resource Resources::Bitmap LcdBackground
+{
+  attr bitmapfile FileName = .\Res\LcdBackground.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for drawing the chassis of the electricity meter.
+$rect <20,320,230,360>
+$output false
+resource Resources::Bitmap MeterChassis
+{
+  attr bitmapfile FileName = .\Res\MeterChassis.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for drawing the rotating disc within the electricity meter.
+$rect <230,320,440,360>
+$output false
+resource Resources::Bitmap MeterDisc
+{
+  attr bitmapfile FileName = .\Res\MeterDisc.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for drawing the black numbers within the electricity meter.
+$rect <440,320,650,360>
+$output false
+resource Resources::Bitmap MeterNumbersBlack
+{
+  attr bitmapfile FileName = .\Res\MeterNumbersBlack.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for drawing the red numbers within the electricity meter.
+$rect <650,320,860,360>
+$output false
+resource Resources::Bitmap MeterNumbersRed
+{
+  attr bitmapfile FileName = .\Res\MeterNumbersRed.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for drawing the chassig of the electricity gauges.
+$rect <20,370,230,410>
+$output false
+resource Resources::Bitmap MultimeterChassis
+{
+  attr bitmapfile FileName = .\Res\MultimeterChassis.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for drawing the scale of a wattmeter.
+$rect <230,370,440,410>
+$output false
+resource Resources::Bitmap MultimeterScale
+{
+  attr bitmapfile FileName = .\Res\MultimeterScale.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a bitmap resource.
+$rect <870,370,1080,410>
+$output false
+resource Resources::Bitmap MultimeterNeedle
+{
+  attr bitmapfile FileName = .\Res\MultimeterNeedle.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for displaying the numbers within a simulated LCD.
+$rect <20,260,230,300>
+$output false
+resource Resources::Bitmap LcdNumbersSmall
+{
+  attr bitmapfile FileName = .\Res\LcdNumbersSmall.png;
+  attr framesize FrameSize = <28,40>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for displaying the units within a simulated LCD.
+$rect <230,260,440,300>
+$output false
+resource Resources::Bitmap LcdUnitsSmall
+{
+  attr bitmapfile FileName = .\Res\LcdUnitsSmall.png;
+  attr framesize FrameSize = <53,40>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for displaying the dot within a simulated LCD.
+$rect <440,260,650,300>
+$output false
+resource Resources::Bitmap LcdDotSmall
+{
+  attr bitmapfile FileName = .\Res\LcdDotSmall.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource of the background of the intraday display.
+$rect <20,420,230,460>
+$output false
+resource Resources::Bitmap IntradayBackground
+{
+  attr bitmapfile FileName = .\Res\IntradayBackground.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource of the light effect of the intraday display.
+$rect <230,420,440,460>
+$output false
+resource Resources::Bitmap IntradayDot
+{
+  attr bitmapfile FileName = .\Res\IntradayDot.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// How to manage resources and constants?
+// 
+// https://doc.embedded-wizard.de/managing-resource-data
+note legend Note9
+{
+  attr Bounds = <20,600,470,670>;
+}
+
+// Font resource for all text or descriptions.
+$rect <660,470,880,510>
+$output false
+resource Resources::Font ScaleFont
+{
+  attr fontname FontName = Arial;
+  attr fontheight Height = 12;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = '0'-'9','.',',';
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}

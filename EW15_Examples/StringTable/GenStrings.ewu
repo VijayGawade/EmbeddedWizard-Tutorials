@@ -1,0 +1,219 @@
+$version 15.00
+// This file is generated automatically.
+// Source:    GenStrings.xls
+// Generated: 11.11.2024 08:56:10
+// Excel:     Version 9.0 on Windows (32-bit) NT 6.02.
+
+note legend Note
+{
+  attr Bounds = <610,0,1210,110>;
+}
+
+$output false
+const string Monday = 
+(
+  Default           = "Monday";
+  German            = "Montag";
+  Spanish           = "lunes";
+  Arabic            = "\U0627\U0644\U0625\U062B\U0646\U064A\U0646";
+  Hebrew            = "\U05D9\U05D5\U05DD \U05E9\U05E0\U05D9";
+  Greek             = "\U0394\U03B5\U03C5\U03C4\U03AD\U03C1\U03B1";
+  Russian           = "\U043F\U043E\U043D\U0435\U0434\U0435\U043B\U044C\U043D\U0438\U043A";
+  Turkish           = "Pazartesi";
+  Japanese          = "\U6708\U66DC\U65E5";
+  Korean            = "\UC6D4\UC694\UC77C";
+  Chinese           = "\U661F\U671F\U4E00";
+  Vietnamese        = "th\U1EE9 hai";
+);
+
+$output false
+const string Tuesday = 
+(
+  Default           = "Tuesday";
+  German            = "Dienstag";
+  Spanish           = "martes";
+  Arabic            = "\U0627\U0644\U062B\U0644\U0627\U062B\U0627\U0621";
+  Hebrew            = "\U05D9\U05D5\U05DD \U05E9\U05DC\U05D9\U05E9\U05D9";
+  Greek             = "\U03A4\U03C1\U03AF\U03C4\U03B7";
+  Russian           = "\U0432\U0442\U043E\U0440\U043D\U0438\U043A";
+  Turkish           = "Sal\U0131";
+  Japanese          = "\U706B\U66DC\U65E5";
+  Korean            = "\UD654\UC694\UC77C";
+  Chinese           = "\U661F\U671F\U4E8C";
+  Vietnamese        = "th\U1EE9 ba";
+);
+
+$output false
+const string Wednesday = 
+(
+  Default           = "Wednesday";
+  German            = "Mittwoch";
+  Spanish           = "mi\U00E9rcoles";
+  Arabic            = "\U0627\U0644\U0623\U0631\U0628\U0639\U0627\U0621";
+  Hebrew            = "\U05D9\U05D5\U05DD \U05E8\U05D1\U05D9\U05E2\U05D9";
+  Greek             = "\U03A4\U03B5\U03C4\U03AC\U03C1\U03C4\U03B7";
+  Russian           = "\U0441\U0440\U0435\U0434\U0430";
+  Turkish           = "\U00C7ar\U015Famba";
+  Japanese          = "\U6C34\U66DC\U65E5";
+  Korean            = "\UC218\UC694\UC77C";
+  Chinese           = "\U661F\U671F\U4E09";
+  Vietnamese        = "th\U1EE9 t\U01B0";
+);
+
+$output false
+const string Thursday = 
+(
+  Default           = "Thursday";
+  German            = "Donnerstag";
+  Spanish           = "jueves";
+  Arabic            = "\U0627\U0644\U062E\U0645\U064A\U0633";
+  Hebrew            = "\U05D9\U05D5\U05DD \U05D7\U05DE\U05D9\U05E9\U05D9";
+  Greek             = "\U03A0\U03AD\U03BC\U03C0\U03C4\U03B7";
+  Russian           = "\U0447\U0435\U0442\U0432\U0435\U0440\U0433";
+  Turkish           = "Per\U015Fembe";
+  Japanese          = "\U6728\U66DC\U65E5";
+  Korean            = "\UBAA9\UC694\UC77C";
+  Chinese           = "\U661F\U671F\U56DB";
+  Vietnamese        = "th\U1EE9 n\U0103m";
+);
+
+$output false
+const string Friday = 
+(
+  Default           = "Friday";
+  German            = "Freitag";
+  Spanish           = "viernes";
+  Arabic            = "\U0627\U0644\U062C\U0645\U0639\U0629";
+  Hebrew            = "\U05D9\U05D5\U05DD \U05E9\U05D9\U05E9\U05D9";
+  Greek             = "\U03A0\U03B1\U03C1\U03B1\U03C3\U03BA\U03B5\U03C5\U03AE";
+  Russian           = "\U043F\U044F\U0442\U043D\U0438\U0446\U0430";
+  Turkish           = "Cuma";
+  Japanese          = "\U91D1\U66DC\U65E5";
+  Korean            = "\UAE08\UC694\UC77C";
+  Chinese           = "\U661F\U671F\U4E94";
+  Vietnamese        = "th\U1EE9 s\U00E1u";
+);
+
+$output false
+const string Saturday = 
+(
+  Default           = "Saturday";
+  German            = "Samstag";
+  Spanish           = "s\U00E1bado";
+  Arabic            = "\U0627\U0644\U0633\U0628\U062A";
+  Hebrew            = "\U05D9\U05D5\U05DD \U05E9\U05D1\U05EA";
+  Greek             = "\U03A3\U03AC\U03B2\U03B2\U03B1\U03C4\U03BF";
+  Russian           = "\U0441\U0443\U0431\U0431\U043E\U0442\U0430";
+  Turkish           = "Cumartesi";
+  Japanese          = "\U571F\U66DC\U65E5";
+  Korean            = "\UD1A0\UC694\UC77C";
+  Chinese           = "\U661F\U671F\U516D";
+  Vietnamese        = "th\U1EE9 b\U1EA3y";
+);
+
+$output false
+const string Sunday = 
+(
+  Default           = "Sunday";
+  German            = "Sonntag";
+  Spanish           = "domingo";
+  Arabic            = "\U0627\U0644\U0623\U062D\U062F";
+  Hebrew            = "\U05D9\U05D5\U05DD \U05E8\U05D0\U05E9\U05D5\U05DF";
+  Greek             = "\U039A\U03C5\U03C1\U03B9\U03B1\U03BA\U03AE";
+  Russian           = "\U0432\U043E\U0441\U043A\U0440\U0435\U0441\U0435\U043D\U044C\U0435";
+  Turkish           = "Pazar";
+  Japanese          = "\U65E5\U66DC\U65E5";
+  Korean            = "\UC77C\UC694\UC77C";
+  Chinese           = "\U661F\U671F\U65E5";
+  Vietnamese        = "ch\U1EE7 nh\U1EADt";
+);
+
+$output false
+const string DayOfWeek = 
+(
+  Default           = "Days of the week";
+  German            = "Wochentage";
+  Spanish           = "D\U00EDas de la semana";
+  Arabic            = "\U0623\U064A\U0627\U0645 \U0627\U0644\U0623\U0633\U0628\U0648\U0639";
+  Hebrew            = "\U05D1\U05D0\U05DE\U05E6\U05E2 \U05D4\U05E9\U05D1\U05D5\U05E2";
+  Greek             = "\U0397\U03BC\U03AD\U03C1\U03B5\U03C2 \U03C4\U03B7\U03C2 \U03B5\U03B2\U03B4\U03BF\U03BC\U03AC\U03B4\U03B1\U03C2";
+  Russian           = "\U0414\U043D\U0438 \U043D\U0435\U0434\U0435\U043B\U0438";
+  Turkish           = "Haftan\U0131n G\U00FCnleri";
+  Japanese          = "\U66DC\U65E5";
+  Korean            = "\UC694\UC77C";
+  Chinese           = "\U661F\U671F\U51E0";
+  Vietnamese        = "Ng\U00E0y trong tu\U1EA7n";
+);
+
+$output false
+const string English = 
+(
+  Default           = "English";
+);
+
+$output false
+const string German = 
+(
+  Default           = "German";
+);
+
+$output false
+const string Spanish = 
+(
+  Default           = "Spanish";
+);
+
+$output false
+const string Arabic = 
+(
+  Default           = "Arabic";
+);
+
+$output false
+const string Hebrew = 
+(
+  Default           = "Hebrew";
+);
+
+$output false
+const string Greek = 
+(
+  Default           = "Greek";
+);
+
+$output false
+const string Russian = 
+(
+  Default           = "Russian";
+);
+
+$output false
+const string Turkish = 
+(
+  Default           = "Turkish";
+);
+
+$output false
+const string Japanese = 
+(
+  Default           = "Japanese";
+);
+
+$output false
+const string Korean = 
+(
+  Default           = "Korean";
+);
+
+$output false
+const string Chinese = 
+(
+  Default           = "Chinese";
+);
+
+$output false
+const string Vietnamese = 
+(
+  Default           = "Vietnamese";
+);
+

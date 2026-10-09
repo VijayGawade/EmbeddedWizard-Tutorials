@@ -1,0 +1,649 @@
+﻿$version 15.00
+
+$rect <690,430,890,470>
+$variant Win32_480x272
+vresource ListFontS_480x272 : Washer::ListFontS
+{
+  attr Height = 18;
+}
+
+$rect <690,390,890,430>
+$variant Win32_480x272
+vresource DescrFont_480x272 : Washer::DescrFont
+{
+  attr Height = 14;
+}
+
+$rect <690,470,890,510>
+$variant Win32_480x272
+vresource ListFontM_480x272 : Washer::ListFontM
+{
+  attr Height = 22;
+}
+
+$rect <690,510,890,550>
+$variant Win32_480x272
+vresource ListFontL_480x272 : Washer::ListFontL
+{
+  attr Height = 27;
+}
+
+$rect <690,550,890,590>
+$variant Win32_480x272
+vresource ListFontXL_480x272 : Washer::ListFontXL
+{
+  attr Height = 56;
+}
+
+$rect <890,390,1090,430>
+$variant Win32_480x272
+vresource BgHot_480x272 : Washer::BgHot
+{
+  attr FileName = .\Res\Hot_480x272.png;
+}
+
+$rect <890,430,1090,470>
+$variant Win32_480x272
+vresource BgDelicates_480x272 : Washer::BgDelicates
+{
+  attr FileName = .\Res\Delicates_480x272.png;
+}
+
+$rect <890,470,1090,510>
+$variant Win32_480x272
+vresource BgSportswear_480x272 : Washer::BgSportswear
+{
+  attr FileName = .\Res\Sportswear_480x272.png;
+}
+
+$rect <890,510,1090,550>
+$variant Win32_480x272
+vresource BgWool_480x272 : Washer::BgWool
+{
+  attr FileName = .\Res\Wool_480x272.png;
+}
+
+$rect <890,550,1090,590>
+$variant Win32_480x272
+vresource BgEco_480x272 : Washer::BgEco
+{
+  attr FileName = .\Res\Eco_480x272.png;
+}
+
+$rect <1090,510,1290,550>
+$variant Win32_480x272
+vresource Shadow_480x272 : Washer::Shadow
+{
+  attr FileName = .\Res\Shadow_480x272.png;
+}
+
+$rect <1090,390,1290,430>
+$variant Win32_480x272
+vresource BgSpin_480x272 : Washer::BgSpin
+{
+  attr FileName = .\Res\Spin_480x272.png;
+}
+
+$rect <1090,430,1290,470>
+$variant Win32_480x272
+vresource BgDrain_480x272 : Washer::BgDrain
+{
+  attr FileName = .\Res\Drain_480x272.png;
+}
+
+$rect <1090,470,1290,510>
+$variant Win32_480x272
+vresource BgEasyCare_480x272 : Washer::BgEasyCare
+{
+  attr FileName = .\Res\EasyCare_480x272.png;
+}
+
+$rect <40,240,240,280>
+$variant Win32_480x272
+vclass ProgList_480x272 : Washer::ProgList
+{
+  $rect <0,260,140,300>
+  inherited property Bounds = <0,0,126,240>;
+
+  $rect <20,20,160,60>
+  inherited object SlideTouchHandler
+  {
+    preset Bounds = <0,0,126,240>;
+    preset SnapNext = <0,96>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SimpleTouchHandler
+  {
+    preset Point4 = <0,240>;
+    preset Point3 = <126,240>;
+    preset Point2 = <126,0>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Rectangle
+  {
+    preset Bounds = <0,72,126,168>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BottomList
+  {
+    preset Bounds = <0,168,126,240>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object MainList
+  {
+    preset Bounds = <0,72,126,168>;
+    preset ItemHeight = 96;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TopList
+  {
+    preset Bounds = <0,0,126,72>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Caption
+  {
+    preset Bounds = <10,70,110,100>;
+  }
+}
+
+$rect <240,240,440,280>
+$variant Win32_480x272
+vclass TempList_480x272 : Washer::TempList
+{
+  $rect <0,260,140,300>
+  inherited property Bounds = <0,0,46,240>;
+
+  $rect <20,20,160,60>
+  inherited object SlideTouchHandler
+  {
+    preset Bounds = <0,0,46,240>;
+    preset SnapNext = <0,96>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SimpleTouchHandler
+  {
+    preset Point4 = <0,240>;
+    preset Point3 = <46,240>;
+    preset Point2 = <46,0>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Rectangle
+  {
+    preset Bounds = <0,72,46,168>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BottomList
+  {
+    preset Bounds = <0,168,46,240>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object MainList
+  {
+    preset Bounds = <0,72,46,168>;
+    preset ItemHeight = 96;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TopList
+  {
+    preset Bounds = <0,0,46,72>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Caption
+  {
+    preset Bounds = <5,70,45,100>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Text
+  {
+    preset Bounds = <0,72,46,168>;
+  }
+}
+
+$rect <440,240,640,280>
+$variant Win32_480x272
+vclass SpinList_480x272 : Washer::SpinList
+{
+  $rect <0,260,140,300>
+  inherited property Bounds = <0,0,46,240>;
+
+  $rect <20,20,160,60>
+  inherited object SlideTouchHandler
+  {
+    preset Bounds = <0,0,46,240>;
+    preset SnapNext = <0,96>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SimpleTouchHandler
+  {
+    preset Point4 = <0,240>;
+    preset Point3 = <46,240>;
+    preset Point2 = <46,0>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Rectangle
+  {
+    preset Bounds = <0,72,46,168>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BottomList
+  {
+    preset Bounds = <0,168,46,240>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object MainList
+  {
+    preset Bounds = <0,72,46,168>;
+    preset ItemHeight = 96;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TopList
+  {
+    preset Bounds = <0,0,46,72>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Caption
+  {
+    preset Bounds = <5,70,45,100>;
+  }
+}
+
+$rect <40,380,240,420>
+$variant Win32_480x272
+vclass OptList_480x272 : Washer::OptList
+{
+  $rect <0,260,140,300>
+  inherited property Bounds = <0,0,92,240>;
+
+  $rect <20,20,160,60>
+  inherited object SlideTouchHandler
+  {
+    preset Bounds = <0,0,92,240>;
+    preset SnapNext = <0,96>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SimpleTouchHandler
+  {
+    preset Point4 = <0,240>;
+    preset Point3 = <92,240>;
+    preset Point2 = <92,0>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Rectangle
+  {
+    preset Bounds = <0,72,92,168>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BottomList
+  {
+    preset Bounds = <0,168,92,240>;
+    preset ItemHeight = 36;
+  }
+
+  $rect <20,20,160,60>
+  inherited object MainList
+  {
+    preset Bounds = <0,72,92,168>;
+    preset ItemHeight = 96;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TopList
+  {
+    preset Bounds = <0,0,92,72>;
+    preset ItemHeight = 36;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Caption
+  {
+    preset Bounds = <5,70,85,100>;
+  }
+}
+
+$rect <240,380,640,420>
+$variant Win32_480x272
+vclass TimeList_480x272 : Washer::TimeList
+{
+  $rect <0,240,140,280>
+  inherited property Bounds = <0,0,126,216>;
+
+  $rect <20,20,160,60>
+  inherited object SlideTouchHandlerH
+  {
+    preset Bounds = <0,0,63,216>;
+    preset SnapNext = <0,96>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SimpleTouchHandlerH
+  {
+    preset Point4 = <0,216>;
+    preset Point3 = <63,216>;
+    preset Point2 = <63,0>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Rectangle
+  {
+    preset Bounds = <0,72,126,168>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BottomListH
+  {
+    preset Bounds = <0,168,63,216>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object MainListH
+  {
+    preset Bounds = <0,72,63,168>;
+    preset ItemHeight = 96;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TopListH
+  {
+    preset Bounds = <0,0,63,72>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Caption
+  {
+    preset Bounds = <5,70,55,100>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SlideTouchHandlerM
+  {
+    preset Bounds = <63,0,126,216>;
+    preset SnapNext = <0,96>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SimpleTouchHandlerM
+  {
+    preset Point4 = <63,216>;
+    preset Point3 = <126,216>;
+    preset Point2 = <126,0>;
+    preset Point1 = <63,0>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BottomListM
+  {
+    preset Bounds = <63,168,126,216>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object MainListM
+  {
+    preset Bounds = <63,72,126,168>;
+    preset ItemHeight = 96;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TopListM
+  {
+    preset Bounds = <63,0,126,72>;
+    preset ItemHeight = 24;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Text
+  {
+    preset Bounds = <53,72,73,168>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object DurationText
+  {
+    preset Bounds = <20,140,130,170>;
+  }
+}
+
+$rect <240,40,440,80>
+$variant Win32_480x272
+vclass StartButton_480x272 : Washer::StartButton
+{
+  $rect <0,80,140,120>
+  inherited property Bounds = <0,0,136,44>;
+
+  $rect <20,20,160,60>
+  inherited object Frame
+  {
+    preset Bounds = <0,0,138,48>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandler
+  {
+    preset Point4 = <0,36>;
+    preset Point3 = <126,36>;
+    preset Point2 = <126,0>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Background
+  {
+    preset Bounds = <0,0,126,36>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Text
+  {
+    preset Bounds = <0,0,126,36>;
+  }
+}
+
+$rect <40,40,240,80>
+$variant Win32_480x272
+vclass Washer_480x272 : Washer::Washer
+{
+  $rect <20,20,160,60>
+  inherited object Frame
+  {
+    preset Bounds = <12,90,460,200>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ProgList
+  {
+    preset Bounds = <12,18,138,258>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TempList
+  {
+    preset Bounds = <138,18,184,258>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SpinList
+  {
+    preset Bounds = <184,18,230,258>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object OptList
+  {
+    preset Bounds = <230,18,322,258>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TimeList
+  {
+    preset Bounds = <322,18,448,234>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Border
+  {
+    preset Bounds = <12,90,448,188>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Sep1
+  {
+    preset Bounds = <137,103,139,178>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Sep2
+  {
+    preset Bounds = <183,103,185,178>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Sep3
+  {
+    preset Bounds = <229,103,231,178>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Sep4
+  {
+    preset Bounds = <321,103,323,178>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object StartButton
+  {
+    preset Bounds = <322,190,458,234>;
+  }
+
+  $rect <490,130,630,170>
+  inherited object MoveStartEffect
+  {
+    preset Value2 = <322,234,458,278>;
+    preset Value1 = <322,190,458,234>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Message
+  {
+    preset Bounds = <10,240,320,270>;
+  }
+
+  // Please ensure to choose the profile 'Win32_480x272' in order to see this class \
+  // variant correctly.
+  note legend Note
+  {
+    attr Bounds = <0,510,810,570>;
+  }
+}
+
+// Variants of Resources
+note group Note2
+{
+  attr Bounds = <670,350,1310,610>;
+}
+
+// Variants of main screen and start button
+note group Note4
+{
+  attr Bounds = <20,0,660,100>;
+}
+
+// Variants of list classes
+note group Note
+{
+  attr Bounds = <20,110,660,440>;
+}
+
+note arrow Note3
+{
+  attr Point1 = <660,210>;
+  attr Point2 = <740,210>;
+}
+
+// These are variants of the font and bitmap resources.
+// 
+// The height of these font resource variants is reduced to match the screen size \
+// of 480x272 pixel. 
+// The bitmap resources variants are using a different set of image files, which \
+// are prepared for the screen size of 480x272 pixel.
+// 
+// As soon as the variant condition is fulfilled, these variants are used within \
+// the application.
+note legend Note5
+{
+  attr Bounds = <20,450,590,610>;
+}
+
+// These are variants of the washing machine main screen and start button.
+// 
+// They are adapted in their layout in order to fit into a screen with a size of \
+// 480x272 pixel. Therefore, the variant condition of these class variants are set \
+// to the profile 'Win32_480x272'.
+// 
+// If you want to investigate these classes, please ensure that you have selected \
+// the appropriate profile - otherwise the arrangement will not fit...
+note legend Note6
+{
+  attr Bounds = <740,0,1310,160>;
+}
+
+// These are variants of the different list classes of the washing machine.
+// 
+// They are adapted in their layout in order to fit into a screen with a size of \
+// 480x272 pixel. Therefore, the variant condition of these class variants are set \
+// to the profile 'Win32_480x272'.
+// 
+// If you want to investigate these classes, please ensure that you have selected \
+// the appropriate profile - otherwise the arrangement will not fit...
+note legend Note7
+{
+  attr Bounds = <740,170,1310,340>;
+}
+
+note arrow Note8
+{
+  attr Point1 = <660,40>;
+  attr Point2 = <740,40>;
+}
+
+note arrow Note10
+{
+  attr Point1 = <670,490>;
+  attr Point2 = <590,490>;
+}
+
+// How to manage project variants?
+// 
+// https://doc.embedded-wizard.de/managing-project-variants
+note legend Note9
+{
+  attr Bounds = <20,620,510,690>;
+}

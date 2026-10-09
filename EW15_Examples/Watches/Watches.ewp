@@ -1,0 +1,136 @@
+﻿$version 15.00
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,70,240,110>
+unit Core
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,110,240,150>
+unit Resources
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,150,240,190>
+unit Graphics
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,190,240,230>
+unit Effects
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,230,240,270>
+unit Views
+{
+  attr Directory = $Mosaic;
+}
+
+$rect <40,270,240,310>
+unit WidgetSet
+{
+  attr Directory = $Mosaic\;
+}
+
+// The 'default' Language. Each project has to contain at least one language brick \
+// called 'Default'
+$rect <540,130,740,170>
+language Default;
+
+// This unit is intended to contain the application class and another GUI components.
+$rect <530,240,730,280>
+unit Application
+{
+  attr Directory = .\;
+}
+
+// Unit containing different types of watches and their resources.
+$rect <290,240,490,280>
+unit Watch
+{
+  attr Directory = .\;
+}
+
+// Mosaic Framework
+note group Note1
+{
+  attr Bounds = <20,20,260,330>;
+}
+
+// Configuration for the target code generation
+note group Note2
+{
+  attr Bounds = <270,20,510,190>;
+}
+
+// The default language identifier
+note group Note3
+{
+  attr Bounds = <520,20,760,190>;
+}
+
+// The example 'Watches' shows the implementation of several analog watches.
+// 
+// The unit 'Watch' contains the resources and the implementations of the different \
+// analog watches.
+// The unit 'Application' contains two different application classes to arrange and \
+// present the different watches.
+note legend Note4
+{
+  attr Bounds = <20,340,760,450>;
+}
+
+// Implementation of analog watches and application code
+note group Note
+{
+  attr Bounds = <270,200,760,300>;
+}
+
+// This is a profile member for the project. This profile controls the code generation \
+// for the target system.
+$rect <290,90,490,130>
+profile Win32_720x480 : Windows.Software.RGBA8888
+{
+  attr ScreenSize = <720,480>;
+  attr Optimization = High;
+  attr ApplicationClass = Application::ApplicationLarge;
+  attr ScreenOrientation = Normal;
+  attr FontConversion = Windows;
+  attr CleanOutputDirectories = false;
+  attr OutputFileNameExtension = c;
+  attr Verbose = false;
+  attr StorageOfResources = Code;
+  attr StorageOfConstants = Code;
+
+  $rect <10,10,154,50>
+  macro Author = "Dipl. Ing. Paul Banach and Dipl. Ing. Manfred Schweyer, Copyright (C) TARA Systems GmbH";
+}
+
+// This is a profile member for the project. This profile controls the code generation \
+// for the target system.
+$rect <290,130,490,170>
+profile Win32_240x240 : Windows.Software.RGBA8888
+{
+  attr ScreenSize = <240,240>;
+  attr Optimization = High;
+  attr ApplicationClass = Application::ApplicationSmall;
+  attr ScreenOrientation = Normal;
+  attr FontConversion = Windows;
+  attr CleanOutputDirectories = false;
+  attr OutputFileNameExtension = c;
+  attr Verbose = false;
+  attr StorageOfResources = Code;
+  attr StorageOfConstants = Code;
+
+  $rect <10,10,154,50>
+  macro Author = "Dipl. Ing. Paul Banach and Dipl. Ing. Manfred Schweyer, Copyright (C) TARA Systems GmbH";
+}

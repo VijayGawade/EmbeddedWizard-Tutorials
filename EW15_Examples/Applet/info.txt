@@ -1,0 +1,1 @@
+The class Views::Applet provides an interface to integrate the graphical output of an external application. Within this example, a trivial game is used to show the applet approach.

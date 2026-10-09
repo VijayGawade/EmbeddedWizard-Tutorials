@@ -1,0 +1,1102 @@
+﻿$version 15.00
+
+// This resource contains an image needed to compose the watch.
+$rect <30,390,230,430>
+$output false
+resource Resources::Bitmap Background
+{
+  attr bitmapfile FileName = .\WatchRes\Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <30,430,230,470>
+$output false
+resource Resources::Bitmap Glass
+{
+  attr bitmapfile FileName = .\WatchRes\Glass.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <30,470,230,510>
+$output false
+resource Resources::Bitmap Hours
+{
+  attr bitmapfile FileName = .\WatchRes\HoursWatchHand.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <30,510,230,550>
+$output false
+resource Resources::Bitmap HoursShadow
+{
+  attr bitmapfile FileName = .\WatchRes\HoursWatchHandShadow.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <30,550,230,590>
+$output false
+resource Resources::Bitmap Minutes
+{
+  attr bitmapfile FileName = .\WatchRes\MinutesWatchHand.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <30,590,230,630>
+$output false
+resource Resources::Bitmap MinutesShadow
+{
+  attr bitmapfile FileName = .\WatchRes\MinutesWatchHandShadow.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <30,630,230,670>
+$output false
+resource Resources::Bitmap Seconds
+{
+  attr bitmapfile FileName = .\WatchRes\SecondsWatchHand.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <30,670,230,710>
+$output false
+resource Resources::Bitmap SecondsShadow
+{
+  attr bitmapfile FileName = .\WatchRes\SecondsWatchHandShadow.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This UI component implements a watch.
+$rect <30,50,230,90>
+$output false
+class Watch : Core::Group
+{
+  $rect <0,470,200,510>
+  inherited property Bounds = <0,0,301,301>;
+
+  $rect <0,510,200,550>
+  inherited method UpdateViewState()
+  {
+    aState;
+
+    var float min = ((float)Minute * 6.0 ) + ((float)Second * 0.1 );
+    var float hou = ((float)( Hour + TimeZone ) * 30.0 ) + ((float)Minute * 0.5 ) + 
+                      ((float)Second * ( 0.5 / 60.0 ));
+    var float sec = (float)Second * 6.0;
+
+    HoursImage.  RotateAndScale(<150,150>, -hou, 1.0, 1.0 );
+    MinutesImage.RotateAndScale(<150,150>, -min, 1.0, 1.0 );
+    SecondsImage.RotateAndScale(<150,150>, -sec, 1.0, 1.0 );
+
+    HoursShadowImage.  RotateAndScale(<155,155>, -hou, 1.0, 1.0 );
+    MinutesShadowImage.RotateAndScale(<157,157>, -min, 1.0, 1.0 );
+    SecondsShadowImage.RotateAndScale(<159,159>, -sec, 1.0, 1.0 );
+  }
+
+  // This method implements the jitter animation of the seconds indicator.
+  $rect <210,330,410,370>
+  slot updateSeconds
+  {
+    var float sec = (float)Second * 6.0 + JitterDirection;
+
+    SecondsImage.      RotateAndScale(<150,150>, -sec, 1.0, 1.0 );
+    SecondsShadowImage.RotateAndScale(<159,159>, -sec, 1.0, 1.0 );
+
+    // For the next animation step - calculate the jitter 
+    if ( JitterDirection > 0.0 )
+      JitterDirection = -( JitterDirection - 1.0 );
+
+    // For the next animation step - calculate the jitter 
+    else if ( JitterDirection < 0.0 )
+      JitterDirection = -( JitterDirection + 1.0 );
+
+    // End of jitter - stop the animation
+    else
+      updateSecondsTimer.Enabled = false;
+  }
+
+  // Tis method is invoked periodically to update the current time.
+  $rect <210,410,410,450>
+  slot updateTime
+  {
+    // Get the current time
+    var Core::Time time = Time.CurrentTime;
+
+    Hour   = time.Hour;
+    Minute = time.Minute;
+    Second = time.Second;
+
+
+  }
+
+  $rect <0,330,200,370>
+  object Core::Timer updateSecondsTimer
+  {
+    preset OnTrigger = updateSeconds;
+    preset Period = 20;
+  }
+
+  $rect <0,370,200,410>
+  object Core::Time Time;
+
+  $rect <0,410,200,450>
+  object Core::Timer updateTimer
+  {
+    preset OnTrigger = updateTime;
+    preset Period = 500;
+  }
+
+  $rect <410,330,610,370>
+  var float JitterDirection;
+
+  $rect <520,0,720,40>
+  onset Hour
+  {
+    // Validate the value
+    value = value % 12;
+
+    // Nothing to do
+    if ( pure Hour == value )
+      return;
+
+    // Remember the new value
+    pure Hour = value;
+
+    // Recalculate the position of the watch hands
+    InvalidateViewState();
+  }
+
+  $rect <520,40,720,80>
+  onset Minute
+  {
+    // Validate the value
+    value = value % 60;
+
+    // Nothing to do
+    if ( pure Minute == value )
+      return;
+
+    // Remember the new value
+    pure Minute = value;
+
+    // Recalculate the position of the watch hands
+    InvalidateViewState();
+  }
+
+  $rect <520,80,720,120>
+  onset Second
+  {
+    // Validate the value
+    value = value % 60;
+
+    // Nothing to do
+    if ( pure Second == value )
+      return;
+
+    // Recalculate the position of the watch hands
+    InvalidateViewState();
+
+    // To simulate jitter of the seconds watch hand - start a timer and ...
+    updateSecondsTimer.Enabled = true;
+
+    // ... calculate the direction of the jitter
+    if ( Jitter )
+      if (( value + 60 ) > ( pure Second + 60 ))
+        JitterDirection =  3.0;
+      else
+        JitterDirection = -3.0;
+    else
+      JitterDirection = 0.0;
+
+    // Remember the new value
+    pure Second = value;
+  }
+
+  $rect <520,120,720,160>
+  onset CurrentTime
+  {
+    // No changes? Nothing to do.
+    if ( pure CurrentTime == value )
+      return;
+
+    // Remember the new value
+    pure CurrentTime = value;
+
+    // Start/Stop the update Timer
+    updateTimer.Enabled = value;
+
+    // If the current time view has been activated - update the screen
+    // immediatelly.
+    if ( value )
+      postsignal updateTime;
+  }
+
+  $rect <520,160,720,200>
+  onset TimeZone
+  {
+    // No changes? Nothing to do.
+    if ( pure TimeZone == value )
+      return;
+
+    // Remember the new value
+    pure TimeZone = value;
+
+    // Recalculate the position of the watch hands
+    InvalidateViewState();
+  }
+
+  $rect <520,200,720,240>
+  onset Caption
+  {
+    // No changes? Nothing to do.
+    if ( pure Caption == value )
+      return;
+
+    // Remember the new value
+    pure Caption = value;
+
+    CaptionText.String = value;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,301,301>;
+    preset Bitmap = Watch::Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text CaptionText
+  {
+    preset Bounds = <70,200,230,240>;
+    preset String = "Berlin";
+    preset Font = Watch::CaptionFont;
+    preset Color = #585869FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage HoursShadowImage
+  {
+    preset Point4 = <126,185>;
+    preset Point3 = <185,185>;
+    preset Point2 = <185,60>;
+    preset Point1 = <126,60>;
+    preset SourceAnchor = <29,95>;
+    preset Bitmap = Watch::HoursShadow;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage HoursImage
+  {
+    preset Point4 = <130,171>;
+    preset Point3 = <171,171>;
+    preset Point2 = <171,58>;
+    preset Point1 = <130,58>;
+    preset SourceAnchor = <20,92>;
+    preset Bitmap = Watch::Hours;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage MinutesShadowImage
+  {
+    preset Point4 = <128,186>;
+    preset Point3 = <187,186>;
+    preset Point2 = <187,31>;
+    preset Point1 = <128,31>;
+    preset SourceAnchor = <29,124>;
+    preset Bitmap = Watch::MinutesShadow;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage MinutesImage
+  {
+    preset Point4 = <130,171>;
+    preset Point3 = <171,171>;
+    preset Point2 = <171,28>;
+    preset Point1 = <130,28>;
+    preset SourceAnchor = <21,122>;
+    preset Bitmap = Watch::Minutes;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage SecondsShadowImage
+  {
+    preset Point4 = <139,198>;
+    preset Point3 = <180,198>;
+    preset Point2 = <180,33>;
+    preset Point1 = <139,33>;
+    preset SourceAnchor = <20,126>;
+    preset Bitmap = Watch::SecondsShadow;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage SecondsImage
+  {
+    preset Point4 = <140,182>;
+    preset Point3 = <161,182>;
+    preset Point2 = <161,29>;
+    preset Point1 = <140,29>;
+    preset SourceAnchor = <11,121>;
+    preset Bitmap = Watch::Seconds;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image GlassImage
+  {
+    preset Bounds = <14,13,203,203>;
+    preset Bitmap = Watch::Glass;
+  }
+
+  // This property stores the time to show in the watch.
+  $rect <320,0,520,40>
+  property int32 Hour = 0;
+
+  // This property stores the time to show in the watch.
+  $rect <320,40,520,80>
+  property int32 Minute = 0;
+
+  // This property stores the time to show in the watch.
+  $rect <320,80,520,120>
+  property int32 Second = 0;
+
+  // This property determines, whether the watch should update itself with the current \
+  // time.
+  $rect <320,120,520,160>
+  property bool CurrentTime = false;
+
+  // Time zone offset in hours.
+  $rect <320,160,520,200>
+  property int32 TimeZone = 0;
+
+  // This property stores the caption (name of the time zone) for the watch.
+  $rect <320,200,520,240>
+  property string Caption = "Berlin";
+
+  // This property determines whether the second indicator should jitter or not
+  $rect <320,240,520,280>
+  property bool Jitter = true;
+}
+
+// Font resource used to display the time zone caption in the watch
+$rect <230,390,430,430>
+$output false
+resource Resources::Font CaptionFont
+{
+  attr fontname FontName = Verdana;
+  attr fontheight Height = 34;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0xFF;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// The UI component shows a carousel of watch components. The user can scroll the \
+// watches.
+$rect <240,50,440,90>
+$output false
+class WatchCarousel : Core::Group
+{
+  $rect <10,630,210,670>
+  inherited property Bounds = <0,0,800,600>;
+
+  $rect <10,990,210,1030>
+  inherited method UpdateLayout()
+  {
+    aSize;
+
+    // Update the arrangement if screen size is changed
+    Transition( 0.0 );
+
+    // Ensure, the position of the mirror images is up to date
+    idlesignal UpdateMirrors;
+  }
+
+  $rect <10,670,210,710>
+  inherited property Focus = BackButton;
+
+  $rect <10,890,210,930>
+  array Views::WarpGroup Images[ 5 ] =
+  (
+    Default[0] = ImageL2;
+    Default[1] = ImageL1;
+    Default[2] = ImageC;
+    Default[3] = ImageR1;
+    Default[4] = ImageR2;
+  );
+
+  $rect <10,930,210,970>
+  array Views::WarpGroup Mirrors[ 5 ] =
+  (
+    Default[0] = Mirror1;
+    Default[1] = Mirror2;
+    Default[2] = Mirror3;
+    Default[3] = Mirror4;
+    Default[4] = Mirror5;
+  );
+
+  // This effect drives the scroll animation. Durring the animation the effect invokes \
+  // the methods @onAnimate and @onFinished.
+  $rect <10,830,210,870>
+  object Effects::FloatEffect TransitionEffect
+  {
+    preset OnFinished = onFinished;
+    preset OnAnimate = onAnimate;
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 500;
+  }
+
+  // The keyboard handler reacts to user keyboard inputs and calls the associated \
+  // @onPressKey method.
+  $rect <10,730,210,770>
+  object Core::KeyPressHandler KeyHandlerLeft
+  {
+    preset OnPress = onPressKey;
+    preset Filter = Core::KeyCode.Left;
+    preset OnHold = onPressKey;
+  }
+
+  // The keyboard handler reacts to user keyboard inputs and calls the associated \
+  // @onPressKey method.
+  $rect <10,770,210,810>
+  object Core::KeyPressHandler KeyHandlerRight
+  {
+    preset OnPress = onPressKey;
+    preset Filter = Core::KeyCode.Right;
+    preset OnHold = onPressKey;
+  }
+
+  $rect <210,670,410,710>
+  onset Mirroring
+  {
+    // No changes - nothing to do
+    if ( pure Mirroring == value )
+      return;
+
+    // Remember the new mirroring state
+    pure Mirroring = value;
+
+    // Ensure, the position of the mirror images is up to date
+    idlesignal UpdateMirrors;
+  }
+
+  $rect <410,670,610,710>
+  onset OnBack
+  {
+    pure OnBack = value;
+    BackButton.OnActivate = value;
+  }
+
+  // This slot method is invoked durring the scroll animation.
+  $rect <210,830,410,870>
+  slot onAnimate
+  {
+    // Perform the next transition step and ...
+    Transition( TransitionEffect.Value );
+
+    // ... ensure, the position of the mirror images is up to date
+    postsignal UpdateMirrors;
+  }
+
+  // This slot method is invoked at the end of the scroll animation.
+  $rect <410,830,610,870>
+  slot onFinished
+  {
+    // Ensure that the order of entries within the Images/Mirrors arrays
+    // does correspond to the the current image arrangement
+    Reorder( int32( TransitionEffect.Value2 - TransitionEffect.Value1 ));
+
+    // The user will continue the scrolling -> restart the effect as soon
+    // as possible
+    if ( repeat )
+    {
+      idlesignal TransitionEffect.StartEffect;
+      repeat = false;
+    }
+  }
+
+  // This slot method is invoked from the @KeyHandlerLeft or @KeyHandlerRight handler \
+  // as soon as the user has pressed the key left/right. Its job is to start the \
+  // scroll animation.
+  $rect <210,750,410,790>
+  slot onPressKey
+  {
+    var bool scrollRight = false;
+    var bool scrollLeft  = false;
+
+    // The user has pressed the 'Left' key or made a 'wipe left' gesture?
+    // --> Then scroll the images to the left
+    if (
+         ( sender == KeyHandlerLeft ) ||
+         (
+           ( sender == WipeHandler ) &&
+           ( WipeHandler.Direction == Core::Direction.Left )
+         )
+       )
+      scrollLeft = true;
+
+    // The user has pressed the 'Right' key or made a 'wipe right' gesture?
+    // --> Then scroll the images to the right
+    if (
+         ( sender == KeyHandlerRight ) ||
+         (
+           ( sender == WipeHandler ) &&
+           ( WipeHandler.Direction == Core::Direction.Right )
+         )
+       )
+      scrollRight = true;
+
+    // The transition is still running. Has the user caused again the scrolling?
+    if ( TransitionEffect.Enabled )
+    {
+      repeat = ( scrollLeft  && ( TransitionEffect.Value2 ==  1.0 )) ||
+               ( scrollRight && ( TransitionEffect.Value2 == -1.0 ));
+
+      if ( repeat )
+        TransitionEffect.CycleDuration = 300;
+
+      return;
+    }
+
+    // Scroll the images to the left
+    if ( scrollLeft )
+    {
+      TransitionEffect.Value1 =  0.0;
+      TransitionEffect.Value2 =  1.0;
+    }
+
+    // Scroll the images to the right
+    if ( scrollRight )
+    {
+      TransitionEffect.Value1 =  0.0;
+      TransitionEffect.Value2 = -1.0;
+    }
+
+    // Start the transition
+    TransitionEffect.CycleDuration = 500;
+    TransitionEffect.Enabled       = true;
+  }
+
+  // The method Transition() calculates the position of all images accordingly to \
+  // the animation phase. Animation phase can lie between -1.0 .. 0.0 .. +1.0.
+  $rect <210,890,410,930>
+  method void Transition( arg float aPhase )
+  {
+    var float                scale  = float( Bounds.w ) / 800.0;
+    var point                dstPos = point( Bounds.orect.center.x, int32( 170.0 * scale ));
+    var Graphics::WarpMatrix matrix = new Graphics::WarpMatrix;
+
+    // Prepare the tranformation matrix accordingly to the current screen size
+    matrix.EyeDistance = 250.0 * scale;
+    matrix.Scale( scale, scale,  scale );
+    matrix.Translate( 0.0, 0.0,  900.0 );
+
+    // Transformate the first image
+    if ( aPhase < 0.0 )
+    {
+      matrix.Push();
+      matrix.Rotate( 0.0, 40.0 + aPhase * 20.0, 0.0 );
+      matrix.Translate( 0.0, 0.0, -900.0 );
+      Images[ 0 ].Warp3D( dstPos, matrix );
+      matrix.Pop();
+    }
+
+    // Transformate the second image
+    matrix.Push();
+    matrix.Rotate( 0.0, 20.0 + aPhase * 20.0, 0.0 );
+    matrix.Translate( 0.0, 0.0, -900.0 );
+    Images[ 1 ].Warp3D( dstPos, matrix );
+    matrix.Pop();
+
+    // Transformate the third image
+    matrix.Push();
+    matrix.Rotate( 0.0, aPhase * 20.0, 0.0 );
+    matrix.Translate( 0.0, 0.0, -900.0 );
+    Images[ 2 ].Warp3D( dstPos, matrix );
+    matrix.Pop();
+
+    // Transformate the fourth image
+    matrix.Push();
+    matrix.Rotate( 0.0, -20.0 + aPhase * 20.0, 0.0 );
+    matrix.Translate( 0.0, 0.0, -900.0 );
+    Images[ 3 ].Warp3D( dstPos, matrix );
+    matrix.Pop();
+
+    // Transformate the last image
+    if ( aPhase > 0.0 )
+    {
+      matrix.Rotate( 0.0, -40.0 + aPhase * 20.0, 0.0 );
+      matrix.Translate( 0.0, 0.0, -900.0 );
+      Images[ 4 ].Warp3D( dstPos, matrix );
+    }
+
+    // Images at the end of the list are appearing/disappearing
+    if ( aPhase >= 0.0 )
+    {
+      Images[ 0 ].Opacity = 0;
+      Images[ 4 ].Opacity = int32( aPhase *  255.0 );
+      Images[ 1 ].Opacity = 255 - Images[ 4 ].Opacity;
+    }
+
+    // Images at the end of the list are appearing/disappearing
+    if ( aPhase <= 0.0 )
+    {
+      Images[ 4 ].Opacity = 0;
+      Images[ 0 ].Opacity = int32( aPhase * -255.0 );
+      Images[ 3 ].Opacity = 255 - Images[ 0 ].Opacity;
+    }
+  }
+
+  // This method is invoked at the end of a scroll animation. Its job is to adapt \
+  // the stack order of images.
+  $rect <410,890,610,930>
+  method void Reorder( arg int32 aDirection )
+  {
+    var int32 inx;
+
+    // Reorder the images and mirrors after rotating the carusel to the right
+    if ( aDirection < 0 )
+    {
+      var Views::WarpGroup tmpImage  = Images [4];
+      var Views::WarpGroup tmpMirror = Mirrors[4];
+
+      for ( inx = 4; inx > 0; inx = inx - 1 )
+      {
+        Images [ inx ] = Images [ inx - 1 ];
+        Mirrors[ inx ] = Mirrors[ inx - 1 ];
+      }
+
+      Images [ 0 ] = tmpImage;
+      Mirrors[ 0 ] = tmpMirror;
+    }
+
+    // Reorder the images and mirrors after rotating the carusel to the left
+    if ( aDirection > 0 )
+    {
+      var Views::WarpGroup tmpImage  = Images [0];
+      var Views::WarpGroup tmpMirror = Mirrors[0];
+
+      for ( inx = 0; inx < 4; inx = inx + 1 )
+      {
+        Images [ inx ] = Images [ inx + 1 ];
+        Mirrors[ inx ] = Mirrors[ inx + 1 ];
+      }
+
+      Images [ 4 ] = tmpImage;
+      Mirrors[ 4 ] = tmpMirror;
+    }
+  }
+
+  // This method is invoked in order to update the position and visibility of mirror \
+  // images.
+  $rect <210,930,410,970>
+  slot UpdateMirrors
+  {
+    var int32 inx  = 0;
+    var bool  show = Mirroring;
+
+    // Arrange the mirrors below the corresponding images
+    for ( ; inx < 5; inx = inx + 1 )
+    {
+      var Views::WarpGroup image  = Images[ inx ];
+      var Views::WarpGroup mirror = Mirrors[ inx ];
+
+      mirror.Visible  = show;
+
+      if ( show )
+      {
+        mirror.Point4   = image.Point4;
+        mirror.Point3   = image.Point3;
+        mirror.Point2   = image.Point2 + point( 0, 2 * ( image.Point3.y - image.Point2.y ));
+        mirror.Point1   = image.Point1 + point( 0, 2 * ( image.Point4.y - image.Point1.y ));
+        mirror.Group    = image.Group;
+        mirror.Opacity3 = image.Opacity / 5;
+        mirror.Opacity4 = image.Opacity / 5;
+      }
+    }
+  }
+
+  $rect <20,20,160,60>
+  object Core::WipeTouchHandler WipeHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,800,490>;
+    preset OnRight = onPressKey;
+    preset OnLeft = onPressKey;
+    preset Threshold = 0.02;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup ImageR2
+  {
+    preset Point4 = <710,240>;
+    preset Point3 = <740,210>;
+    preset Point2 = <740,130>;
+    preset Point1 = <710,100>;
+    preset Shininess = 10.0;
+    preset LightingEffect = 0.5;
+    preset SourceAnchor = <150,150>;
+    preset Opacity = 0;
+    preset Group = Watch::WatchMoscow;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup ImageR1
+  {
+    preset Point4 = <580,290>;
+    preset Point3 = <700,250>;
+    preset Point2 = <700,90>;
+    preset Point1 = <580,50>;
+    preset Shininess = 10.0;
+    preset LightingEffect = 0.5;
+    preset SourceAnchor = <150,150>;
+    preset Group = Watch::WatchNewYork;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup ImageL2
+  {
+    preset Point4 = <60,210>;
+    preset Point3 = <90,240>;
+    preset Point2 = <90,100>;
+    preset Point1 = <60,130>;
+    preset Shininess = 10.0;
+    preset LightingEffect = 0.5;
+    preset SourceAnchor = <150,150>;
+    preset Opacity = 0;
+    preset Group = Watch::WatchSydney;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup ImageL1
+  {
+    preset Point4 = <100,250>;
+    preset Point3 = <220,290>;
+    preset Point2 = <220,50>;
+    preset Point1 = <100,90>;
+    preset Shininess = 10.0;
+    preset LightingEffect = 0.5;
+    preset Quality = true;
+    preset SourceAnchor = <150,150>;
+    preset Group = Watch::WatchTokyo;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup ImageC
+  {
+    preset Point4 = <250,320>;
+    preset Point3 = <550,320>;
+    preset Point2 = <550,20>;
+    preset Point1 = <250,20>;
+    preset Shininess = 10.0;
+    preset LightingEffect = 0.5;
+    preset SourceAnchor = <150,150>;
+    preset Group = Watch::WatchBerlin;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Mirror1
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Opacity2 = 0;
+    preset Opacity1 = 0;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Mirror2
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Opacity2 = 0;
+    preset Opacity1 = 0;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Mirror3
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Opacity2 = 0;
+    preset Opacity1 = 0;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Mirror4
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Opacity2 = 0;
+    preset Opacity1 = 0;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Mirror5
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Opacity2 = 0;
+    preset Opacity1 = 0;
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuButton BackButton
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToRight, ResizeHorz, ResizeVert];
+    preset Bounds = <720,520,790,590>;
+    preset Face = Application::BackItem;
+  }
+
+  // The property 'Mirroring' determines whether the mirror images should be shown \
+  // or not.
+  $rect <210,630,410,670>
+  property bool Mirroring = false;
+
+  // The property 'OnBack' can be connected with a slot method. As soon as the user \
+  // has activated the back button, the attached slot method is invoked.
+  $rect <410,630,610,670>
+  property slot OnBack = null;
+
+  // This is a variable.
+  $rect <410,750,610,790>
+  var bool repeat;
+}
+
+// This is an instance of the watch component prepared to show the given time zone
+$rect <30,200,230,240>
+$output false
+autoobject Watch::Watch WatchBerlin
+{
+  preset Buffered = true;
+  preset CurrentTime = true;
+}
+
+// This is an instance of the @Watch component prepared to show the given time zone
+$rect <30,240,230,280>
+$output false
+autoobject Watch::Watch WatchNewYork
+{
+  preset Buffered = true;
+  preset CurrentTime = true;
+  preset TimeZone = -6;
+  preset Caption = "New York";
+}
+
+// This is an instance of the watch component prepared to show the given time zone
+$rect <30,280,230,320>
+$output false
+autoobject Watch::Watch WatchTokyo
+{
+  preset Buffered = true;
+  preset CurrentTime = true;
+  preset TimeZone = 8;
+  preset Caption = "Tokyo";
+}
+
+// This is an instance of the watch component prepared to show the given time zone
+$rect <230,200,430,240>
+$output false
+autoobject Watch::Watch WatchMoscow
+{
+  preset Buffered = true;
+  preset CurrentTime = true;
+  preset TimeZone = 2;
+  preset Caption = "Moscow";
+}
+
+// This is an instance of the watch component prepared to show the given time zone
+$rect <230,240,430,280>
+$output false
+autoobject Watch::Watch WatchSydney
+{
+  preset Buffered = true;
+  preset CurrentTime = true;
+  preset TimeZone = 9;
+  preset Caption = "Sydney";
+}
+
+// The UI component shows a spinning watch.
+$rect <240,90,440,130>
+$output false
+class SpinningWatch : Core::Group
+{
+  $rect <0,620,200,660>
+  inherited property Bounds = <0, 0, 800,600>;
+
+  $rect <0,810,200,850>
+  inherited method UpdateLayout()
+  {
+    aSize;
+
+    // Update the arrangement if screen size is changed
+    postsignal AnimationTimerSlot;
+  }
+
+  $rect <0,660,200,700>
+  inherited property Focus = BackButton;
+
+  $rect <0,710,200,750>
+  var float Angle;
+
+  // This slot method is invoked durring the animation. It calculates the next position \
+  // of the spinning watch.
+  $rect <210,710,410,750>
+  slot AnimationTimerSlot
+  {
+    // Get the next rotation angle
+    Angle = Angle + 0.8;
+
+    var float                scale   = float( Bounds.w ) / 800.0;
+    var point                dstPos1 = point( Bounds.orect.center.x, int32( 170.0 * scale ));
+    var point                dstPos2 = point( Bounds.orect.center.x, int32( 550.0 * scale ));
+    var Graphics::WarpMatrix matrix  = new Graphics::WarpMatrix;
+
+    matrix.EyeDistance = 308.0 * scale;
+    matrix.Scale( scale, scale, scale );
+
+    // Rotate the clock
+    matrix.Push();
+    matrix.Rotate( Angle * 0.9, Angle, Angle );
+    Image.Warp3D( dstPos1, matrix );
+    matrix.Pop();
+
+    // ... and its mirror image
+    matrix.Rotate( 180.0 - Angle * 0.9, Angle, -Angle );
+    Mirror.Warp3D( dstPos2, matrix );
+  }
+
+  $rect <210,750,410,790>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationTimerSlot;
+    preset Period = 16;
+    preset Enabled = true;
+  }
+
+  $rect <210,660,410,700>
+  onset OnBack
+  {
+    pure OnBack = value;
+    BackButton.OnActivate = value;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Image
+  {
+    preset Layout = Core::Layout[];
+    preset Point4 = <250,320>;
+    preset Point3 = <550,320>;
+    preset Point2 = <550,20>;
+    preset Point1 = <250,20>;
+    preset LightingEffect = 0.6;
+    preset SourceAnchor = <150,150>;
+    preset Group = Watch::WatchBerlin;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Mirror
+  {
+    preset Layout = Core::Layout[];
+    preset Point4 = <250,400>;
+    preset Point3 = <550,400>;
+    preset Point2 = <550,700>;
+    preset Point1 = <250,700>;
+    preset Quality = false;
+    preset SourceAnchor = <150,150>;
+    preset Opacity = 50;
+    preset Group = Watch::WatchBerlin;
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuButton BackButton
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToRight, ResizeHorz, ResizeVert];
+    preset Bounds = <720,520,790,590>;
+    preset Face = Application::BackItem;
+  }
+
+  // The property 'OnBack' can be connected with a slot method. As soon as the user \
+  // has activated the back button, the attached slot method is invoked.
+  $rect <210,620,410,660>
+  property slot OnBack = null;
+}
+
+// Resources
+note group Note
+{
+  attr Bounds = <10,350,460,730>;
+}
+
+// Watch objects with timezone/location
+note group Note1
+{
+  attr Bounds = <10,160,460,340>;
+}
+
+// Watch Components
+note group Note2
+{
+  attr Bounds = <10,10,460,150>;
+}

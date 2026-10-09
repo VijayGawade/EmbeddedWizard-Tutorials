@@ -1,0 +1,83 @@
+﻿$version 15.00
+
+// This is the root component of the entire GUI application.
+$rect <40,40,240,80>
+$output false
+class Application : Core::Root
+{
+  $rect <1300,10,1500,50>
+  inherited property Bounds = <0,0,1280,720>;
+
+  $rect <20,20,160,60>
+  object Monitor::Monitor Monitor
+  {
+    preset Bounds = <0,0,1280,720>;
+  }
+
+  $rect <20,900,200,940>
+  inherited method DriveMultiTouchHitting()
+  {
+    idlesignal ResetAutoDemo;
+
+    return super( aDown, aFinger, aPos );
+  }
+
+  // Timer object to drive the auto demo mode.
+  $rect <20,810,220,850>
+  object Core::Timer AutoDemoTimer
+  {
+    preset OnTrigger = AutoDemoSlot;
+    preset Period = 1000;
+    preset Begin = 30000;
+    preset Enabled = true;
+  }
+
+  // Slot method to trigger the next phase of the auto demo.
+  $rect <220,810,420,850>
+  slot AutoDemoSlot
+  {
+    Monitor.AutoDemoTimer.Enabled = true;
+
+
+  }
+
+  // Slot method to reset the auto demo.
+  $rect <20,850,220,890>
+  slot ResetAutoDemo
+  {
+    sender; /* the method is called from the sender object */
+
+    Monitor.AutoDemoTimer.Enabled = false;
+    Monitor.AutoState = 0;
+
+    /* restart the auto demo timer */
+    AutoDemoTimer.Enabled = false;
+    AutoDemoTimer.Enabled = true;
+
+
+  }
+
+  // Auto demo timer and methods
+  note group Note2
+  {
+    attr Bounds = <0,760,440,960>;
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Bounds
+  $member DriveMultiTouchHitting
+  $member Monitor
+  $member AutoDemoTimer
+  $member AutoDemoSlot
+  $member ResetAutoDemo
+  $member Note2
+}
+
+// Application class of the example
+note group Note4
+{
+  attr Bounds = <20,0,660,100>;
+}

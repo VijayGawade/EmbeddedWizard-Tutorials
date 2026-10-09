@@ -1,0 +1,414 @@
+﻿$version 15.00
+
+$rect <290,70,490,110>
+$variant Win32_480x272
+vconst Spacing_480x272 : Cutter::Spacing = <4,4>;
+
+$rect <290,110,490,150>
+$variant Win32_480x272
+vconst Border_480x272 : Cutter::Border = <8,8>;
+
+$rect <290,150,490,190>
+$variant Win32_480x272
+vconst CaptionHeight_480x272 : Cutter::CaptionHeight = 22;
+
+$rect <540,110,740,150>
+$variant Win32_480x272
+vresource CaptionFont_480x272 : Cutter::CaptionFont
+{
+  attr Height = 19;
+}
+
+$rect <540,190,740,230>
+$variant Win32_480x272
+vresource SmallDigitFont_480x272 : Cutter::SmallDigitFont
+{
+  attr Height = 31;
+}
+
+$rect <540,70,740,110>
+$variant Win32_480x272
+vresource DescrFont_480x272 : Cutter::DescrFont
+{
+  attr Height = 14;
+}
+
+$rect <940,70,1140,110>
+$variant Win32_480x272
+vresource PaperStripe_480x272 : Cutter::PaperStripe
+{
+  attr FileName = .\Res\PaperFeed_480x272.png;
+  attr FrameSize = <201,42>;
+}
+
+$rect <940,110,1140,150>
+$variant Win32_480x272
+vresource PaperFormat_480x272 : Cutter::PaperFormat
+{
+  attr FileName = .\Res\PaperFormat_480x272.png;
+}
+
+$rect <940,150,1140,190>
+$variant Win32_480x272
+vresource PaperBatch_480x272 : Cutter::PaperBatch
+{
+  attr FileName = .\Res\PaperBatch_480x272.png;
+}
+
+$rect <940,190,1140,230>
+$variant Win32_480x272
+vresource PaperSpeed_480x272 : Cutter::PaperSpeed
+{
+  attr FileName = .\Res\PaperSpeed_480x272.png;
+}
+
+$rect <940,230,1140,270>
+$variant Win32_480x272
+vresource Background_480x272 : Cutter::Background
+{
+  attr FileName = .\Res\Background_480x272.png;
+}
+
+$rect <290,190,490,230>
+$variant Win32_480x272
+vconst StatusHeight_480x272 : Cutter::StatusHeight = 32;
+
+$rect <540,270,740,310>
+$variant Win32_480x272
+vresource LargeDigitFont_480x272 : Cutter::LargeDigitFont
+{
+  attr Height = 62;
+}
+
+$rect <540,230,740,270>
+$variant Win32_480x272
+vresource MediumDigitFont_480x272 : Cutter::MediumDigitFont
+{
+  attr Height = 46;
+}
+
+$rect <940,270,1140,310>
+$variant Win32_480x272
+vresource ButtonBig_480x272 : Cutter::ButtonBig
+{
+  attr FileName = .\Res\MainButton_480x272.png;
+}
+
+$rect <540,150,740,190>
+$variant Win32_480x272
+vresource MainButtonFont_480x272 : Cutter::MainButtonFont
+{
+  attr Height = 33;
+}
+
+$rect <940,310,1140,350>
+$variant Win32_480x272
+vresource StatusIcons_480x272 : Cutter::StatusIcons
+{
+  attr FrameSize = <22,22>;
+  attr FileName = .\Res\StatusIcons_480x272.png;
+}
+
+$rect <740,110,940,150>
+$variant Win32_480x272
+vresource Arrows_480x272 : Cutter::Arrows
+{
+  attr FrameSize = <15,25>;
+  attr FileName = .\Res\Arrows_480x272.png;
+}
+
+$rect <40,70,240,110>
+$variant Win32_480x272
+vclass FeedWindow_480x272 : Cutter::FeedWindow
+{
+  $rect <0,220,140,260>
+  inherited property Bounds = <0,0,230,114>;
+
+  $rect <20,20,160,60>
+  inherited object Text
+  {
+    preset Bounds = <110,80,230,114>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object PaperFeed
+  {
+    preset Bounds = <0,20,194,92>;
+  }
+}
+
+$rect <40,150,240,190>
+$variant Win32_480x272
+vclass FormatWindow_480x272 : Cutter::FormatWindow
+{
+  $rect <0,140,140,180>
+  inherited property Bounds = <0,0,230,114>;
+
+  $rect <20,20,160,60>
+  inherited object Icon
+  {
+    preset Bounds = <0,50,92,99>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TextW
+  {
+    preset Bounds = <96,46,225,71>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TextH
+  {
+    preset Bounds = <96,76,225,102>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TextWidth
+  {
+    preset Bounds = <139,30,230,76>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TextHeight
+  {
+    preset Bounds = <139,60,230,108>;
+  }
+}
+
+$rect <40,190,240,230>
+$variant Win32_480x272
+vclass BatchWindow_480x272 : Cutter::BatchWindow
+{
+  $rect <0,160,140,200>
+  inherited property Bounds = <0,0,230,114>;
+
+  $rect <20,20,160,60>
+  inherited object Icon
+  {
+    preset Bounds = <25,20,85,110>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Text
+  {
+    preset Bounds = <103,80,224,98>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TextBatchLarge
+  {
+    preset Bounds = <101,15,230,89>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TextBatchMedium
+  {
+    preset Bounds = <101,25,196,80>;
+  }
+}
+
+$rect <40,230,240,270>
+$variant Win32_480x272
+vclass RemainingWindow_480x272 : Cutter::RemainingWindow
+{
+  $rect <10,230,180,270>
+  inherited property Bounds = <0,0,230,114>;
+
+  $rect <20,20,160,60>
+  inherited object Text
+  {
+    preset Bounds = <20,80,61,94>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TextRemaining
+  {
+    preset Bounds = <20,20,101,82>;
+  }
+}
+
+$rect <40,110,240,150>
+$variant Win32_480x272
+vclass SpeedWindow_480x272 : Cutter::SpeedWindow
+{
+  $rect <0,230,140,270>
+  inherited property Bounds = <0,0,308,114>;
+
+  $rect <20,20,160,60>
+  inherited object Text
+  {
+    preset Bounds = <140,85,221,99>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Icon
+  {
+    preset Bounds = <67,40,119,92>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TextSpeed
+  {
+    preset Bounds = <140,25,248,87>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SpeedButtonL
+  {
+    preset Bounds = <2,24,42,111>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SpeedButtonR
+  {
+    preset Bounds = <266,24,306,111>;
+  }
+}
+
+$rect <740,150,940,190>
+$variant Win32_480x272
+vresource Paper_480x272 : Cutter::Paper
+{
+  attr FileName = .\Res\Paper_480x272.png;
+}
+
+$rect <740,190,940,230>
+$variant Win32_480x272
+vresource Thumb_480x272 : Cutter::Thumb
+{
+  attr FileName = .\Res\Thumb_480x272.png;
+}
+
+$rect <40,280,240,320>
+$variant Win32_480x272
+vclass PaperCut_480x272 : Cutter::PaperCut
+{
+  $rect <0,300,200,340>
+  inherited property Bounds = <0,0,195,270>;
+
+  $rect <20,20,160,60>
+  inherited object Image
+  {
+    preset Bounds = <0,0,195,270>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BorderBottom
+  {
+    preset Bounds = <0,257,195,260>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BorderTop
+  {
+    preset Bounds = <0,16,195,19>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BorderLeft
+  {
+    preset Bounds = <12,0,15,270>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object BorderRight
+  {
+    preset Bounds = <180,0,183,270>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object VertSlider
+  {
+    preset Bounds = <87,7,107,227>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object HorzSlider
+  {
+    preset Bounds = <102,121,192,141>;
+  }
+
+  $rect <220,50,420,90>
+  inherited slot onUpdate
+  {
+    sender; /* the method is called from the sender object */
+
+    /* adjust left and right border according current paper width */
+    if ( PaperWidth != null )
+    {
+      /* right A3 line (297mm) is at x pos 180 - left A3 line is at x pos 12 */
+      /* ==> center is at 96 */
+      var int32 x = (PaperWidth^) / 20 * 168 / 297;
+      BorderLeft.Bounds.origin.x = 96 - x;
+      BorderRight.Bounds.origin.x = 96 + x;
+    }
+
+    /* adjust top border according current paper height */
+    if ( PaperHeight != null )
+    {
+      /* A3 line (420mm) is at y pos 16 - 0 line (0mm) is at y pos 257 */
+      var int32 y = 257 - (PaperHeight^) / 10 * 241 / 420;
+      BorderTop.Bounds.origin.y = y;
+    }  
+
+  }
+}
+
+$rect <540,310,740,350>
+$variant Win32_480x272
+vresource ButtonFont_480x272 : Cutter::ButtonFont
+{
+  attr Height = 19;
+}
+
+$rect <740,70,940,110>
+$variant Win32_480x272
+vresource BarRaster_480x272 : Cutter::BarRaster
+{
+  attr FileName = .\Res\BarGraph_480x272.png;
+}
+
+// Variants of Resources
+note group Note
+{
+  attr Bounds = <520,20,1160,370>;
+}
+
+// Variants of classes
+note group Note1
+{
+  attr Bounds = <20,20,260,370>;
+}
+
+// Variants of constants
+note group Note2
+{
+  attr Bounds = <270,20,510,370>;
+}
+
+note arrow Note3
+{
+  attr Point1 = <140,370>;
+  attr Point2 = <140,430>;
+}
+
+// These are variants of the different window classes of the paper cutting machine.
+// 
+// They are adapted in their layout in order to fit into a screen with a size of \
+// 480x272 pixel. Therefore, the variant condition of these class variants are set \
+// to the profile 'Win32_480x272'.
+// 
+// If you want to investigate these classes, please ensure that you have selected \
+// the appropriate profile - otherwise the arrangement will not fit...
+note legend Note7
+{
+  attr Bounds = <20,430,590,600>;
+}
+
+// How to manage project variants?
+// 
+// https://doc.embedded-wizard.de/managing-project-variants
+note legend Note9
+{
+  attr Bounds = <20,610,510,680>;
+}

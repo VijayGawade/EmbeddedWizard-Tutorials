@@ -1,0 +1,1659 @@
+﻿$version 15.00
+
+$rect <220,100,420,140>
+$variant Win32_480x272
+vresource FontXXL_480x272 : BezierClock::FontXXL
+{
+  attr FontName = Roboto Light;
+  attr Height = 40;
+}
+
+$rect <220,60,420,100>
+$variant Win32_480x272
+vresource FontL_480x272 : BezierClock::FontL
+{
+  attr FontName = Roboto Light;
+  attr Height = 24;
+}
+
+$rect <20,250,220,290>
+$variant Win32_480x272
+vclass TimePicker_480x272 : BezierClock::TimePicker
+{
+  $rect <0,170,200,210>
+  inherited property Bounds = <0,0,172,150>;
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerSecond
+  {
+    preset Bounds = <119,0,162,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerMinute
+  {
+    preset Bounds = <65,0,107,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerHour
+  {
+    preset Bounds = <10,0,53,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListSecond
+  {
+    preset Bounds = <119,0,162,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListMinute
+  {
+    preset Bounds = <65,0,107,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListHour
+  {
+    preset Bounds = <10,0,53,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Separator2
+  {
+    preset Bounds = <102,57,122,89>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Separator1
+  {
+    preset Bounds = <47,57,67,89>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line1
+  {
+    preset Point2 = <53,99>;
+    preset Point1 = <10,99>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line2
+  {
+    preset Point2 = <52,51>;
+    preset Point1 = <9,51>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line3
+  {
+    preset Point2 = <107,51>;
+    preset Point1 = <65,51>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line4
+  {
+    preset Point2 = <107,99>;
+    preset Point1 = <65,99>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line5
+  {
+    preset Point2 = <162,99>;
+    preset Point1 = <119,99>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line6
+  {
+    preset Point2 = <162,51>;
+    preset Point1 = <119,51>;
+  }
+}
+
+$rect <20,60,220,100>
+$variant Win32_480x272
+vclass ClockScreen_480x272 : BezierClock::ClockScreen
+{
+  $rect <200,280,340,320>
+  inherited property Bounds = <0,0,480,272>;
+
+  $rect <0,280,200,320>
+  inherited object DotPath
+  {
+    preset Radius = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerDown
+  {
+    preset Point4 = <60,215>;
+    preset Point3 = <419,215>;
+    preset Point2 = <419,271>;
+    preset Point1 = <60,271>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerRight
+  {
+    preset Point4 = <419,0>;
+    preset Point3 = <479,0>;
+    preset Point2 = <479,271>;
+    preset Point1 = <419,271>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerUp
+  {
+    preset Point4 = <60,0>;
+    preset Point3 = <419,0>;
+    preset Point2 = <419,56>;
+    preset Point1 = <60,56>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Date
+  {
+    preset Bounds = <0,172,480,226>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot1
+  {
+    preset Bounds = <188,148,218,178>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot2
+  {
+    preset Bounds = <188,112,218,142>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit0
+  {
+    preset Bounds = <47,53,119,176>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit1
+  {
+    preset Bounds = <119,53,191,176>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit2
+  {
+    preset Bounds = <215,53,287,176>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit3
+  {
+    preset Bounds = <287,53,359,176>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit4
+  {
+    preset Bounds = <361,118,393,172>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit5
+  {
+    preset Bounds = <399,118,431,172>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageUp
+  {
+    preset Bounds = <0,0,480,20>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageDown
+  {
+    preset Bounds = <0,250,480,272>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageRight
+  {
+    preset Bounds = <460,0,480,272>;
+  }
+}
+
+$rect <20,100,220,140>
+$variant Win32_480x272
+vclass SettingsScreen_480x272 : BezierClock::SettingsScreen
+{
+  $rect <10,290,150,330>
+  inherited property Bounds = <0,0,480,272>;
+
+  $rect <20,20,160,60>
+  inherited object PushButtonConfirm
+  {
+    preset Bounds = <348,200,468,250>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object PushButtonCancel
+  {
+    preset Bounds = <12,200,132,250>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TimePicker
+  {
+    preset Bounds = <289,39,461,189>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object DatePicker
+  {
+    preset Bounds = <19,39,279,189>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object UpTouchHandler
+  {
+    preset Point4 = <60,0>;
+    preset Point3 = <420,0>;
+    preset Point2 = <420,36>;
+    preset Point1 = <60,36>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageUp
+  {
+    preset Bounds = <0,0,480,18>;
+  }
+}
+
+$rect <20,290,220,330>
+$variant Win32_480x272
+vclass DatePicker_480x272 : BezierClock::DatePicker
+{
+  $rect <10,180,210,220>
+  inherited property Bounds = <0,0,260,150>;
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerYear
+  {
+    preset Bounds = <160,0,250,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerMonth
+  {
+    preset Bounds = <79,0,149,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerDay
+  {
+    preset Bounds = <10,0,67,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListYear
+  {
+    preset Bounds = <160,0,250,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListMonth
+  {
+    preset Bounds = <79,0,149,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListDay
+  {
+    preset Bounds = <10,0,67,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line
+  {
+    preset Point2 = <67,51>;
+    preset Point1 = <10,51>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line1
+  {
+    preset Point2 = <67,99>;
+    preset Point1 = <10,99>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line2
+  {
+    preset Point2 = <149,99>;
+    preset Point1 = <79,99>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line3
+  {
+    preset Point2 = <149,51>;
+    preset Point1 = <79,51>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line4
+  {
+    preset Point2 = <249,51>;
+    preset Point1 = <160,51>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line5
+  {
+    preset Point2 = <249,99>;
+    preset Point1 = <160,99>;
+  }
+}
+
+$rect <20,140,220,180>
+$variant Win32_480x272
+vclass TimerScreen_480x272 : BezierClock::TimerScreen
+{
+  $rect <200,280,340,320>
+  inherited property Bounds = <0,0,480,272>;
+
+  $rect <0,280,200,320>
+  inherited object DotPath
+  {
+    preset Radius = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot1
+  {
+    preset Bounds = <225,144,255,174>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot2
+  {
+    preset Bounds = <225,116,255,146>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit0
+  {
+    preset Bounds = <133,99,177,169>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit1
+  {
+    preset Bounds = <182,99,226,169>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit2
+  {
+    preset Bounds = <254,99,298,169>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit3
+  {
+    preset Bounds = <302,99,346,169>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit4
+  {
+    preset Bounds = <215,172,238,206>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit5
+  {
+    preset Bounds = <240,172,265,206>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RotaryKnob
+  {
+    preset Bounds = <112,8,368,264>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerLeft
+  {
+    preset Point4 = <0,0>;
+    preset Point3 = <60,0>;
+    preset Point2 = <60,270>;
+    preset Point1 = <0,270>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageLeft
+  {
+    preset Bounds = <0,0,20,270>;
+  }
+}
+
+// Class and Resource Variants for 480x272
+note group Note
+{
+  attr Bounds = <0,10,440,350>;
+}
+
+// Class and Resource Variants for 320x240
+note group Note1
+{
+  attr Bounds = <450,10,890,350>;
+}
+
+// Class and Resource Variants for 1280x720
+note group Note2
+{
+  attr Bounds = <900,10,1340,350>;
+}
+
+// These are variants of the font and bitmap resources to match the screen size of \
+// 480x272 pixel.
+// 
+// The variants of the classes are necessary to adapt the layout of the BezierClock \
+// example within a screen of 480x272 pixel.
+// 
+// As soon as the variant condition is fulfilled, these variants are used within \
+// the application.
+note legend Note5
+{
+  attr Bounds = <0,420,440,580>;
+}
+
+note arrow Note10
+{
+  attr Point1 = <220,350>;
+  attr Point2 = <220,420>;
+}
+
+// How to manage project variants?
+// 
+// https://doc.embedded-wizard.de/managing-project-variants
+note legend Note9
+{
+  attr Bounds = <0,590,440,660>;
+}
+
+// These are variants of the font and bitmap resources to match the screen size of \
+// 320x240 pixel.
+// 
+// The variants of the classes are necessary to adapt the layout of the BezierClock \
+// example within a screen of 320x240 pixel.
+// 
+// As soon as the variant condition is fulfilled, these variants are used within \
+// the application.
+note legend Note6
+{
+  attr Bounds = <450,420,890,580>;
+}
+
+note arrow Note11
+{
+  attr Point1 = <670,350>;
+  attr Point2 = <670,420>;
+}
+
+// These are variants of the font and bitmap resources to match the screen size of \
+// 1280x720 pixel.
+// 
+// The variants of the classes are necessary to adapt the layout of the BezierClock \
+// example within a screen of 1280x720 pixel.
+// 
+// As soon as the variant condition is fulfilled, these variants are used within \
+// the application.
+note legend Note7
+{
+  attr Bounds = <900,420,1340,580>;
+}
+
+note arrow Note12
+{
+  attr Point1 = <1120,350>;
+  attr Point2 = <1120,420>;
+}
+
+$rect <220,170,420,210>
+$variant Win32_480x272
+vresource BackgroundPreview_480x272 : BezierClock::BackgroundPreview
+{
+  attr FileName = .\Res\BackgroundPreview_480x272.png;
+  attr FrameSize = <120,60>;
+}
+
+$rect <220,290,420,330>
+$variant Win32_480x272
+vresource Blue_480x272 : BezierClock::Blue
+{
+  attr FileName = .\Res\Blue_480x272.png;
+}
+
+$rect <220,210,420,250>
+$variant Win32_480x272
+vresource Dark_480x272 : BezierClock::Dark
+{
+  attr FileName = .\Res\Dark_480x272.png;
+}
+
+$rect <220,250,420,290>
+$variant Win32_480x272
+vresource Orange_480x272 : BezierClock::Orange
+{
+  attr FileName = .\Res\Orange_480x272.png;
+}
+
+$rect <20,180,220,220>
+$variant Win32_480x272
+vclass StyleScreen_480x272 : BezierClock::StyleScreen
+{
+  $rect <10,290,150,330>
+  inherited property Bounds = <0,0,480,272>;
+
+  $rect <20,20,160,60>
+  inherited object DownTouchHandler
+  {
+    preset Point4 = <60,224>;
+    preset Point3 = <420,224>;
+    preset Point2 = <420,270>;
+    preset Point1 = <60,270>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageDown
+  {
+    preset Bounds = <0,250,480,272>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RadioButtonDark
+  {
+    preset Bounds = <20,90,150,160>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RadioButtonOrange
+  {
+    preset Bounds = <175,90,305,160>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RadioButtonBlue
+  {
+    preset Bounds = <330,90,460,160>;
+  }
+}
+
+$rect <670,100,870,140>
+$variant Win32_320x240
+vresource FontXXL_320x240 : BezierClock::FontXXL
+{
+  attr FontName = Roboto Light;
+  attr Height = 35;
+}
+
+$rect <670,60,870,100>
+$variant Win32_320x240
+vresource FontL_320x240 : BezierClock::FontL
+{
+  attr FontName = Roboto Light;
+  attr Height = 15;
+}
+
+$rect <470,250,670,290>
+$variant Win32_320x240
+vclass TimePicker_320x240 : BezierClock::TimePicker
+{
+  $rect <0,160,200,200>
+  inherited property Bounds = <0,0,120,120>;
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerSecond
+  {
+    preset Bounds = <86,0,120,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerMinute
+  {
+    preset Bounds = <43,0,77,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerHour
+  {
+    preset Bounds = <0,0,34,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListSecond
+  {
+    preset Bounds = <86,0,120,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListMinute
+  {
+    preset Bounds = <43,0,77,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListHour
+  {
+    preset Bounds = <0,0,34,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Separator2
+  {
+    preset Bounds = <77,40,87,72>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Separator1
+  {
+    preset Bounds = <34,40,44,72>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line1
+  {
+    preset Point2 = <34,79>;
+    preset Point1 = <0,79>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line2
+  {
+    preset Point2 = <34,41>;
+    preset Point1 = <0,41>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line3
+  {
+    preset Point2 = <77,41>;
+    preset Point1 = <43,41>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line4
+  {
+    preset Point2 = <77,79>;
+    preset Point1 = <43,79>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line5
+  {
+    preset Point2 = <120,79>;
+    preset Point1 = <86,79>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line6
+  {
+    preset Point2 = <120,41>;
+    preset Point1 = <86,41>;
+  }
+}
+
+$rect <470,60,670,100>
+$variant Win32_320x240
+vclass ClockScreen_320x240 : BezierClock::ClockScreen
+{
+  $rect <200,280,340,320>
+  inherited property Bounds = <0,0,320,240>;
+
+  $rect <0,280,200,320>
+  inherited object DotPath
+  {
+    preset Radius = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerDown
+  {
+    preset Point4 = <40,190>;
+    preset Point3 = <280,190>;
+    preset Point2 = <280,240>;
+    preset Point1 = <40,240>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerRight
+  {
+    preset Point4 = <280,0>;
+    preset Point3 = <320,0>;
+    preset Point2 = <320,240>;
+    preset Point1 = <280,240>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerUp
+  {
+    preset Point4 = <40,0>;
+    preset Point3 = <280,0>;
+    preset Point2 = <280,50>;
+    preset Point1 = <40,50>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Date
+  {
+    preset Bounds = <0,170,320,226>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot1
+  {
+    preset Bounds = <113,134,138,160>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot2
+  {
+    preset Bounds = <113,102,138,128>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit0
+  {
+    preset Bounds = <5,60,55,160>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit1
+  {
+    preset Bounds = <63,60,113,160>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit2
+  {
+    preset Bounds = <141,60,191,160>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit3
+  {
+    preset Bounds = <199,60,249,160>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit4
+  {
+    preset Bounds = <252,46,277,96>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit5
+  {
+    preset Bounds = <282,46,307,96>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageUp
+  {
+    preset Bounds = <0,0,320,20>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageDown
+  {
+    preset Bounds = <0,220,320,240>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageRight
+  {
+    preset Bounds = <300,0,320,240>;
+  }
+}
+
+$rect <470,100,670,140>
+$variant Win32_320x240
+vclass SettingsScreen_320x240 : BezierClock::SettingsScreen
+{
+  $rect <10,270,150,310>
+  inherited property Bounds = <0,0,320,240>;
+
+  $rect <20,20,160,60>
+  inherited object PushButtonConfirm
+  {
+    preset Bounds = <200,190,320,240>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object PushButtonCancel
+  {
+    preset Bounds = <0,190,120,240>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TimePicker
+  {
+    preset Bounds = <195,50,315,170>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object DatePicker
+  {
+    preset Bounds = <5,50,185,170>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object UpTouchHandler
+  {
+    preset Point4 = <40,0>;
+    preset Point3 = <280,0>;
+    preset Point2 = <280,32>;
+    preset Point1 = <40,32>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageUp
+  {
+    preset Bounds = <0,0,320,20>;
+  }
+}
+
+$rect <470,290,670,330>
+$variant Win32_320x240
+vclass DatePicker_320x240 : BezierClock::DatePicker
+{
+  $rect <0,150,200,190>
+  inherited property Bounds = <0,0,180,120>;
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerYear
+  {
+    preset Bounds = <112,0,180,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerMonth
+  {
+    preset Bounds = <46,0,107,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerDay
+  {
+    preset Bounds = <0,0,41,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListYear
+  {
+    preset Bounds = <112,0,180,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListMonth
+  {
+    preset Bounds = <46,0,107,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListDay
+  {
+    preset Bounds = <0,0,41,120>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line
+  {
+    preset Point2 = <41,41>;
+    preset Point1 = <0,41>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line1
+  {
+    preset Point2 = <41,79>;
+    preset Point1 = <0,79>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line2
+  {
+    preset Point2 = <107,79>;
+    preset Point1 = <46,79>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line3
+  {
+    preset Point2 = <107,41>;
+    preset Point1 = <46,41>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line4
+  {
+    preset Point2 = <179,41>;
+    preset Point1 = <112,41>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line5
+  {
+    preset Point2 = <179,79>;
+    preset Point1 = <112,79>;
+  }
+}
+
+$rect <470,140,670,180>
+$variant Win32_320x240
+vclass TimerScreen_320x240 : BezierClock::TimerScreen
+{
+  $rect <210,280,350,320>
+  inherited property Bounds = <0,0,320,240>;
+
+  $rect <0,280,200,320>
+  inherited object DotPath
+  {
+    preset Radius = 5.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot1
+  {
+    preset Bounds = <149,128,177,156>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot2
+  {
+    preset Bounds = <149,101,177,129>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit0
+  {
+    preset Bounds = <64,85,105,151>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit1
+  {
+    preset Bounds = <110,85,151,151>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit2
+  {
+    preset Bounds = <176,85,217,151>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit3
+  {
+    preset Bounds = <221,85,262,151>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit4
+  {
+    preset Bounds = <140,154,161,186>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit5
+  {
+    preset Bounds = <163,154,186,186>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RotaryKnob
+  {
+    preset Bounds = <40,0,280,240>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerLeft
+  {
+    preset Point4 = <0,0>;
+    preset Point3 = <40,0>;
+    preset Point2 = <40,240>;
+    preset Point1 = <0,240>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageLeft
+  {
+    preset Bounds = <0,0,20,240>;
+  }
+}
+
+$rect <670,170,870,210>
+$variant Win32_320x240
+vresource BackgroundPreview_320x240 : BezierClock::BackgroundPreview
+{
+  attr FileName = .\Res\BackgroundPreview_320x240.png;
+  attr FrameSize = <100,50>;
+}
+
+$rect <670,290,870,330>
+$variant Win32_320x240
+vresource Blue_320x240 : BezierClock::Blue
+{
+  attr FileName = .\Res\Blue_320x240.png;
+}
+
+$rect <670,210,870,250>
+$variant Win32_320x240
+vresource Dark_320x240 : BezierClock::Dark
+{
+  attr FileName = .\Res\Dark_320x240.png;
+}
+
+$rect <670,250,870,290>
+$variant Win32_320x240
+vresource Orange_320x240 : BezierClock::Orange
+{
+  attr FileName = .\Res\Orange_320x240.png;
+}
+
+$rect <470,180,670,220>
+$variant Win32_320x240
+vclass StyleScreen_320x240 : BezierClock::StyleScreen
+{
+  $rect <10,270,150,310>
+  inherited property Bounds = <0,0,320,240>;
+
+  $rect <20,20,160,60>
+  inherited object DownTouchHandler
+  {
+    preset Point4 = <40,210>;
+    preset Point3 = <280,210>;
+    preset Point2 = <280,239>;
+    preset Point1 = <40,239>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageDown
+  {
+    preset Bounds = <0,220,320,240>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RadioButtonDark
+  {
+    preset Bounds = <105,10,215,70>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RadioButtonOrange
+  {
+    preset Bounds = <105,80,215,140>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RadioButtonBlue
+  {
+    preset Bounds = <105,150,215,210>;
+  }
+}
+
+$rect <1120,100,1320,140>
+$variant Win32_1280x720
+vresource FontXXL_1280x720 : BezierClock::FontXXL
+{
+  attr FontName = Roboto Light;
+  attr Height = 105;
+}
+
+$rect <1120,60,1320,100>
+$variant Win32_1280x720
+vresource FontL_1280x720 : BezierClock::FontL
+{
+  attr FontName = Roboto Light;
+  attr Height = 54;
+}
+
+$rect <920,250,1120,290>
+$variant Win32_1280x720
+vclass TimePicker_1280x720 : BezierClock::TimePicker
+{
+  $rect <0,380,200,420>
+  inherited property Bounds = <0,0,440,360>;
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerSecond
+  {
+    preset Bounds = <312,0,429,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerMinute
+  {
+    preset Bounds = <162,0,279,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerHour
+  {
+    preset Bounds = <12,0,129,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListSecond
+  {
+    preset Bounds = <312,0,429,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListMinute
+  {
+    preset Bounds = <162,0,279,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListHour
+  {
+    preset Bounds = <12,0,129,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Separator2
+  {
+    preset Bounds = <265,137,321,214>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Separator1
+  {
+    preset Bounds = <114,137,170,214>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line1
+  {
+    preset Point2 = <129,237>;
+    preset Point1 = <12,237>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line2
+  {
+    preset Point2 = <127,123>;
+    preset Point1 = <9,123>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line3
+  {
+    preset Point2 = <279,123>;
+    preset Point1 = <162,123>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line4
+  {
+    preset Point2 = <279,237>;
+    preset Point1 = <162,237>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line5
+  {
+    preset Point2 = <429,237>;
+    preset Point1 = <312,237>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line6
+  {
+    preset Point2 = <429,123>;
+    preset Point1 = <312,123>;
+  }
+}
+
+$rect <920,60,1120,100>
+$variant Win32_1280x720
+vclass ClockScreen_1280x720 : BezierClock::ClockScreen
+{
+  $rect <10,780,210,820>
+  inherited property Bounds = <0,0,1280,720>;
+
+  $rect <10,740,210,780>
+  inherited object DotPath
+  {
+    preset Radius = 12.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerDown
+  {
+    preset Point4 = <0,569>;
+    preset Point3 = <1096,569>;
+    preset Point2 = <1096,719>;
+    preset Point1 = <0,719>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerRight
+  {
+    preset Point4 = <1096,0>;
+    preset Point3 = <1278,0>;
+    preset Point2 = <1278,719>;
+    preset Point1 = <1096,719>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerUp
+  {
+    preset Point4 = <0,0>;
+    preset Point3 = <1096,0>;
+    preset Point2 = <1096,150>;
+    preset Point1 = <0,150>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Date
+  {
+    preset Bounds = <0,490,1280,650>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot1
+  {
+    preset Bounds = <520,384,569,453>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot2
+  {
+    preset Bounds = <520,260,569,323>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit0
+  {
+    preset Bounds = <125,90,317,477>;
+    preset StrokeWidth = 12.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit1
+  {
+    preset Bounds = <317,90,509,477>;
+    preset StrokeWidth = 12.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit2
+  {
+    preset Bounds = <573,90,766,477>;
+    preset StrokeWidth = 12.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit3
+  {
+    preset Bounds = <766,90,958,477>;
+    preset StrokeWidth = 12.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit4
+  {
+    preset Bounds = <970,290,1055,461>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit5
+  {
+    preset Bounds = <1071,290,1156,461>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageUp
+  {
+    preset Bounds = <0,0,1280,40>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageDown
+  {
+    preset Bounds = <0,680,1280,722>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageRight
+  {
+    preset Bounds = <1240,0,1280,720>;
+  }
+}
+
+$rect <920,100,1120,140>
+$variant Win32_1280x720
+vclass SettingsScreen_1280x720 : BezierClock::SettingsScreen
+{
+  $rect <20,750,160,790>
+  inherited property Bounds = <0,0,1280,720>;
+
+  $rect <20,20,160,60>
+  inherited object PushButtonConfirm
+  {
+    preset Bounds = <930,530,1230,650>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object PushButtonCancel
+  {
+    preset Bounds = <60,530,360,650>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TimePicker
+  {
+    preset Bounds = <750,140,1190,500>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object DatePicker
+  {
+    preset Bounds = <50,140,690,500>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object UpTouchHandler
+  {
+    preset Point4 = <160,0>;
+    preset Point3 = <1120,0>;
+    preset Point2 = <1120,96>;
+    preset Point1 = <160,96>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageUp
+  {
+    preset Bounds = <0,0,1280,40>;
+  }
+}
+
+$rect <920,290,1120,330>
+$variant Win32_1280x720
+vclass DatePicker_1280x720 : BezierClock::DatePicker
+{
+  $rect <10,380,210,420>
+  inherited property Bounds = <0,0,640,360>;
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerYear
+  {
+    preset Bounds = <390,0,629,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerMonth
+  {
+    preset Bounds = <180,0,369,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerDay
+  {
+    preset Bounds = <10,0,159,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListYear
+  {
+    preset Bounds = <390,0,629,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListMonth
+  {
+    preset Bounds = <180,0,369,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ListDay
+  {
+    preset Bounds = <10,0,159,360>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line
+  {
+    preset Point2 = <159,122>;
+    preset Point1 = <10,122>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line1
+  {
+    preset Point2 = <159,238>;
+    preset Point1 = <10,238>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line2
+  {
+    preset Point2 = <369,238>;
+    preset Point1 = <180,238>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line3
+  {
+    preset Point2 = <369,122>;
+    preset Point1 = <180,122>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line4
+  {
+    preset Point2 = <626,122>;
+    preset Point1 = <390,122>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Line5
+  {
+    preset Point2 = <626,238>;
+    preset Point1 = <390,238>;
+  }
+}
+
+$rect <920,140,1120,180>
+$variant Win32_1280x720
+vclass TimerScreen_1280x720 : BezierClock::TimerScreen
+{
+  $rect <210,740,350,780>
+  inherited property Bounds = <0,0,1280,720>;
+
+  $rect <10,740,210,780>
+  inherited object DotPath
+  {
+    preset Radius = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot1
+  {
+    preset Bounds = <620,386,650,416>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot2
+  {
+    preset Bounds = <620,310,650,340>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit0
+  {
+    preset Bounds = <347,259,467,449>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit1
+  {
+    preset Bounds = <481,259,602,449>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit2
+  {
+    preset Bounds = <678,259,799,449>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit3
+  {
+    preset Bounds = <810,259,930,449>;
+    preset StrokeWidth = 6.1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit4
+  {
+    preset Bounds = <572,459,635,552>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit5
+  {
+    preset Bounds = <640,459,708,552>;
+    preset StrokeWidth = 2.3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RotaryKnob
+  {
+    preset Bounds = <290,10,990,710>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object TouchHandlerLeft
+  {
+    preset Point4 = <0,0>;
+    preset Point3 = <160,0>;
+    preset Point2 = <160,719>;
+    preset Point1 = <0,719>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageLeft
+  {
+    preset Bounds = <0,0,40,720>;
+  }
+}
+
+$rect <1120,170,1320,210>
+$variant Win32_1280x720
+vresource BackgroundPreview_1280x720 : BezierClock::BackgroundPreview
+{
+  attr FileName = .\Res\BackgroundPreview_1280x720.png;
+  attr FrameSize = <300,150>;
+}
+
+$rect <1120,290,1320,330>
+$variant Win32_1280x720
+vresource Blue_1280x720 : BezierClock::Blue
+{
+  attr FileName = .\Res\Blue_1280x720.png;
+}
+
+$rect <1120,210,1320,250>
+$variant Win32_1280x720
+vresource Dark_1280x720 : BezierClock::Dark
+{
+  attr FileName = .\Res\Dark_1280x720.png;
+}
+
+$rect <1120,250,1320,290>
+$variant Win32_1280x720
+vresource Orange_1280x720 : BezierClock::Orange
+{
+  attr FileName = .\Res\Orange_1280x720.png;
+}
+
+$rect <920,180,1120,220>
+$variant Win32_1280x720
+vclass StyleScreen_1280x720 : BezierClock::StyleScreen
+{
+  $rect <20,760,160,800>
+  inherited property Bounds = <0,0,1280,720>;
+
+  $rect <20,20,160,60>
+  inherited object DownTouchHandler
+  {
+    preset Point4 = <160,588>;
+    preset Point3 = <1120,588>;
+    preset Point2 = <1120,719>;
+    preset Point1 = <160,719>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ImageDown
+  {
+    preset Bounds = <0,680,1280,722>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RadioButtonDark
+  {
+    preset Bounds = <90,275,410,445>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RadioButtonOrange
+  {
+    preset Bounds = <480,275,800,445>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object RadioButtonBlue
+  {
+    preset Bounds = <870,275,1190,445>;
+  }
+}

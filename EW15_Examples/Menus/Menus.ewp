@@ -1,0 +1,122 @@
+﻿$version 15.00
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,50,230,90>
+unit Core
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,90,230,130>
+unit Resources
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,130,230,170>
+unit Views
+{
+  attr Directory = $Mosaic;
+}
+
+$rect <30,170,230,210>
+unit Templates
+{
+  attr Directory = $Mosaic\;
+}
+
+$rect <30,210,230,250>
+unit WidgetSet
+{
+  attr Directory = $Mosaic\;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,250,230,290>
+unit Graphics
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,290,230,330>
+unit Effects
+{
+  attr Directory = $Mosaic;
+}
+
+// The 'default' Language. Each project has to contain at least one language brick \
+// called 'Default'
+$rect <530,50,730,90>
+language Default;
+
+// The 'default' Language. Each project has to contain at least one language brick \
+// called 'Default'
+$rect <530,90,730,130>
+language German;
+
+$rect <280,200,480,240>
+unit Example
+{
+  attr Directory = .\;
+}
+
+// Mosaic Framework
+note group Note1
+{
+  attr Bounds = <10,10,250,340>;
+}
+
+// Profile Configuration
+note group Note2
+{
+  attr Bounds = <260,10,500,120>;
+}
+
+// Languages
+note group Note3
+{
+  attr Bounds = <510,10,750,150>;
+}
+
+// Project Units
+note group Note5
+{
+  attr Bounds = <260,160,500,260>;
+}
+
+// Welcome to Embedded Wizard Menu System Example!
+// 
+// This example application demonstrates how to implement an application containing \
+// a menu system and how to integrate it with a device.
+// 
+// You can double-click on the 'Example' brick to open the unit within the Composer \
+// and to analyze the implementation.
+// 
+// To start the application within the Prototyper, press 'Ctrl'+'F5'.
+note legend Note6
+{
+  attr Bounds = <10,350,750,510>;
+}
+
+// This is the 'default' profile for the new project. This profile will be used for \
+// test, prototyping, etc.
+$rect <280,60,480,100>
+profile Win32 : Windows.Software.RGBA8888
+{
+  attr Verbose = false;
+  attr ScreenSize = <800,600>;
+  attr Optimization = High;
+  attr ApplicationClass = Example::Application;
+  attr CleanOutputDirectories = false;
+  attr OutputFileNameExtension = c;
+  attr FontConversion = Windows;
+  attr ScreenOrientation = Normal;
+  attr StorageOfResources = Code;
+  attr StorageOfConstants = Code;
+
+  $rect <10,10,154,50>
+  macro Author = "Dipl. Ing. Paul Banach and Dipl. Ing. Manfred Schweyer, Copyright (C) TARA Systems GmbH";
+}

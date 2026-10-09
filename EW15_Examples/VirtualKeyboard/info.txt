@@ -1,0 +1,1 @@
+This demo shows the usage of the virtual keyboard component and combines it with a classic keyboard input.

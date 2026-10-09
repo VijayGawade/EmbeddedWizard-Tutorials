@@ -1,0 +1,1 @@
+This demo application implements a data logger for a photovoltaic solar power plant and presents different screens to display operating conditions, power metering or energy statistics.

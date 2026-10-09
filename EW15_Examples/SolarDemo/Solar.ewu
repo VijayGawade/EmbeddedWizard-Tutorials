@@ -1,0 +1,4018 @@
+﻿$version 15.00
+
+// The panel class is used as base class for all display panels of the GUI application.
+$rect <30,50,230,90>
+$output false
+class Panel : Core::Group
+{
+  $rect <820,0,1020,40>
+  inherited property Bounds = <0,0,800,480>;
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,800,480>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::Background;
+    preset AlphaBlended = false;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text CaptionText
+  {
+    preset Bounds = <30,10,770,60>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "Solar Demo";
+    preset Font = SolarRes::CaptionFont;
+    preset Color = SolarRes::CaptionColor;
+  }
+
+  // The method 'Unlock' is used to start some build-up effects in derived panels.
+  $rect <820,50,1020,90>
+  method void Unlock()
+  {
+    //Buffered = false;
+  }
+
+  // The class 'Panel' is used as base class for all panels of the solar demo.
+  // It contains the background image and a caption.
+  note legend Note
+  {
+    attr Bounds = <10,500,800,570>;
+  }
+}
+
+//  The class 'YearPanel' display the overall energy yield for all months of one \
+// year. The animated bars are drawen by using the class 'MeteringBar'.
+$rect <30,250,230,290>
+$output false
+class YearPanel : Solar::Panel
+{
+  $rect <20,20,160,60>
+  inherited object CaptionText
+  {
+    preset String = "Annual Statistics";
+  }
+
+  $rect <820,10,1020,50>
+  inherited method Unlock()
+  {
+    super();
+
+    /* start the build up animation... */
+    AnimationTimer.Enabled = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text YearText
+  {
+    preset Bounds = <30,10,170,60>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "2018";
+    preset Font = SolarRes::CaptionFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  // This is a timer object.
+  $rect <10,510,210,550>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationSlot;
+    preset Period = 100;
+  }
+
+  // This is a slot method.
+  $rect <210,510,410,550>
+  slot AnimationSlot
+  {
+    /* please note: instead of reading data from a real solar power system
+       only a few dummy data are calculated for displaying them within this 
+       solar demo application */
+
+    Counter = Counter + 1;
+
+    switch ( Counter )
+    {
+      case 1: 
+      {
+        YieldBar1.MaxValue = 100;
+        YieldBar1.SetValue = 30;
+        YieldBar1.ActualValue = 35;
+      }
+      case 2: 
+      {
+        YieldBar2.MaxValue = 100;
+        YieldBar2.SetValue = 30;
+        YieldBar2.ActualValue = 38;
+      }
+      case 3: 
+      {
+        YieldBar3.MaxValue = 100;
+        YieldBar3.SetValue = 40;
+        YieldBar3.ActualValue = 50;
+      }
+      case 4: 
+      {
+        YieldBar4.MaxValue = 100;
+        YieldBar4.SetValue = 65;
+        YieldBar4.ActualValue = 66;
+      }
+      case 5: 
+      {
+        YieldBar5.MaxValue = 100;
+        YieldBar5.SetValue = 80;
+        YieldBar5.ActualValue = 81;
+      }
+      case 6: 
+      {
+        YieldBar6.MaxValue = 100;
+        YieldBar6.SetValue = 90;
+        YieldBar6.ActualValue = 89;
+      }
+      case 7: 
+      {
+        YieldBar7.MaxValue = 100;
+        YieldBar7.SetValue = 90;
+        YieldBar7.ActualValue = 96;
+      }
+      case 8: 
+      {
+        YieldBar8.MaxValue = 100;
+        YieldBar8.SetValue = 80;
+        YieldBar8.ActualValue = 82;
+      }
+      case 9: 
+      {
+        YieldBar9.MaxValue = 100;
+        YieldBar9.SetValue = 65;
+        YieldBar9.ActualValue = 75;
+      }
+      case 10: 
+      {
+        YieldBar10.MaxValue = 100;
+        YieldBar10.SetValue = 45;
+        YieldBar10.ActualValue = 35;
+      }
+      case 11: 
+      {
+        YieldBar11.MaxValue = 100;
+        YieldBar11.SetValue = 30;
+        YieldBar11.ActualValue = 28;
+      }
+      case 12: 
+      {
+        YieldBar12.MaxValue = 100;
+        YieldBar12.SetValue = 12;
+        YieldBar12.ActualValue = 10;
+      }
+      default:
+        AnimationTimer.Enabled = false;
+    }
+
+
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar1
+  {
+    preset Bounds = <20,100,60,470>;
+    preset Caption = Resources::JanuaryAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar2
+  {
+    preset Bounds = <85,100,125,470>;
+    preset Caption = Resources::FebruaryAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar3
+  {
+    preset Bounds = <150,100,190,470>;
+    preset Caption = Resources::MarchAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar4
+  {
+    preset Bounds = <215,100,255,470>;
+    preset Caption = Resources::AprilAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar5
+  {
+    preset Bounds = <280,100,320,470>;
+    preset Caption = Resources::MayAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar6
+  {
+    preset Bounds = <345,100,385,470>;
+    preset Caption = Resources::JuneAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar7
+  {
+    preset Bounds = <410,100,450,470>;
+    preset Caption = Resources::JulyAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar8
+  {
+    preset Bounds = <475,100,515,470>;
+    preset Caption = Resources::AugustAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar9
+  {
+    preset Bounds = <540,100,580,470>;
+    preset Caption = Resources::SeptemberAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar10
+  {
+    preset Bounds = <605,100,645,470>;
+    preset Caption = Resources::OctoberAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar11
+  {
+    preset Bounds = <670,100,710,470>;
+    preset Caption = Resources::NovemberAbbr;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeteringBar YieldBar12
+  {
+    preset Bounds = <735,100,775,470>;
+    preset Caption = Resources::DecemberAbbr;
+  }
+
+  // This is a variable.
+  $rect <410,510,610,550>
+  var int32 Counter = 0;
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText
+  {
+    preset Bounds = <340,80,770,120>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "Energy Yield per Month in kWh";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  // The class 'YearPanel' display the overall energy yield for all months of one \
+  // year. The animated bars are drawn by using the class 'Solar::MeteringBar'.
+  // As soon as this panel is unlocked, the timer driven animation provides some \
+  // random data for the metering bars.
+  note legend Note
+  {
+    attr Bounds = <10,560,800,640>;
+  }
+}
+
+// The class 'MeteringBar' implements a graphical bar for displaying a metering value. \
+// When the metering bar is shown, a simple damped vibration creates a nice build-up \
+// effect.
+$rect <280,250,480,290>
+$output false
+class MeteringBar : Core::Group
+{
+  $rect <90,0,290,40>
+  inherited property Bounds = <0,0,40,370>;
+
+  $rect <300,0,500,40>
+  inherited method UpdateViewState()
+  {
+    aState;
+
+    /* decide if we have to display a red or a green bar */
+    if ( ActualValue >= SetValue )
+      Frame.Bitmap = SolarRes::MeteringBarGreen;
+    else
+      Frame.Bitmap = SolarRes::MeteringBarRed;
+
+    postsignal AnimationSlot;
+
+  }
+
+  // This is a simple filled rectangle object.
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,230,40,370>;
+    preset Color = #40404080;
+    preset Visible = false;
+  }
+
+  // This is a frame view.
+  $rect <20,20,160,60>
+  object Views::Frame Frame
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeVert];
+    preset Bounds = <8,40,32,370>;
+    preset Bitmap = SolarRes::MeteringBarGreen;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,0,40,20>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertTop];
+    preset String = "Text";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = false;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,20,40,40>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertTop];
+    preset String = "1234";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = false;
+  }
+
+  // The property 'MaxValue' defines the maximum range of the metering bar.
+  $rect <90,50,290,90>
+  property int32 MaxValue = 0;
+
+  // The onset method of the property 'MaxValue' changes the maximum range of the \
+  // metering bar.
+  $rect <300,50,500,90>
+  onset MaxValue
+  {
+    /* avoid negative values */
+    if ( value < 0 )
+      value = 0;
+
+    pure MaxValue = value;
+
+    /* check other values to keep them in range */
+    if ( SetValue > MaxValue )
+      SetValue = MaxValue;
+    if ( ActualValue > MaxValue )
+      pure ActualValue = MaxValue;
+
+    /* finally, force an update of the component */
+    InvalidateViewState();
+
+  }
+
+  // The property 'SetValue' defines the expected nominal value.
+  $rect <90,90,290,130>
+  property int32 SetValue = 0;
+
+  // The onset method for the property 'SetValue'.
+  $rect <300,90,500,130>
+  onset SetValue
+  {
+    /* check limits of the value */
+    if ( value < 0 )
+      value = 0;
+    if ( value > MaxValue )
+      value = MaxValue;
+
+    pure SetValue = value;
+
+    /* finally, force an update of the component */
+    InvalidateViewState();
+
+  }
+
+  // The property 'ActualValue' defines the actual metering value.
+  $rect <90,130,290,170>
+  property int32 ActualValue = 0;
+
+  // The onset method for the property 'ActualValue'.
+  $rect <300,130,500,170>
+  onset ActualValue
+  {
+    /* check limits of the value */
+    if ( value < 0 )
+      value = 0;
+    if ( value > MaxValue )
+      value = MaxValue;
+
+    /* check for news... */
+    if ( value == pure ActualValue )
+      return;
+
+    /* now take the new value */
+    pure ActualValue = value;
+
+    /* in case that the value is set the first time, we start a nice animation... */
+    if ( AnimationCounter == 0 )
+      AnimationTimer.Enabled = true;
+
+    /* finally, force an update of the component */
+    InvalidateViewState();
+
+  }
+
+  // The slot method 'Update' performs the build-up effect of the metereing bar.
+  $rect <90,260,290,300>
+  slot AnimationSlot
+  {
+    var int32 y = 0;
+
+    /* in case that the end value is already reached, set the final arrangement */
+    if ( AnimationCounter == AnimationArray.size )
+    {
+      AnimationTimer.Enabled = false;
+      
+      /* calculate the size of the bar in pixel */
+      if ( MaxValue > 0 )
+        y = ( Bounds.size.y - 40 ) * ActualValue / MaxValue;
+
+      /* avoid to small bar */
+      if ( y < 32 ) 
+        y = 32;
+
+      /* set position of bar */
+      Frame.Bounds.y1 = Bounds.size.y - y;
+
+      /* ensure to display the right value */
+      ValueText.String = string( ActualValue );
+      
+      /* calculate the best position for the text fields */
+      if ( SetValue > ActualValue )
+        y = ( Bounds.size.y - 40 ) * SetValue / MaxValue;
+
+      ValueText.Bounds.origin.y = Bounds.size.y - y - 20;
+      DescrText.Bounds.origin.y = Bounds.size.y - y - 40;
+      ValueText.Visible = true;
+      DescrText.Visible = true;
+
+      /* draw a rectangle to indicate the expected set value */
+      if (( MaxValue > 0 ) && ( SetValue > 0 ))
+      {
+        y = ( Bounds.size.y - 40 ) * SetValue / MaxValue;
+        Rectangle.Bounds.y1 = Bounds.size.y - y;
+        Rectangle.Visible = true;
+      }
+    }
+    else if ( AnimationCounter == 0 )
+    {
+      Frame.Bounds.y1 = Frame.Bounds.y2;
+    }
+
+    /* otherwise the next step of animation is requested */
+    else
+    {
+      /* calculate the size of the bar in pixel */
+      if ( MaxValue > 0 )
+        y = ( Bounds.size.y - 40 ) * ActualValue / MaxValue * AnimationArray[ AnimationCounter ] / 1000;
+
+      /* avoid to small bar */
+      if ( y < 32 ) 
+        y = 32;
+
+      /* set position of bar and text fields */
+      Frame.Bounds.y1 = Bounds.size.y - y;
+    }
+
+    if ( AnimationTimer.Enabled )
+      AnimationCounter = AnimationCounter + 1;
+
+
+
+
+  }
+
+  // This is a timer object to drive the build-up effect.
+  $rect <90,220,290,260>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationSlot;
+    preset Period = 25;
+  }
+
+  // The variable 'AnimationCounter' stores the currently active step of the build-up \
+  // effect.
+  $rect <300,220,500,260>
+  var int32 AnimationCounter = 0;
+
+  // Array of precalculated values for the damped vibration (harmonic oscillation).
+  $rect <300,260,500,300>
+  array int32 AnimationArray[ 60 ] =
+  (
+    Default[0] = 100;
+    Default[1] = 300;
+    Default[2] = 440;
+    Default[3] = 570;
+    Default[4] = 690;
+    Default[5] = 800;
+    Default[6] = 900;
+    Default[7] = 990;
+    Default[8] = 1070;
+    Default[9] = 1130;
+    Default[10] = 1180;
+    Default[11] = 1200;
+    Default[12] = 1210;
+    Default[13] = 1190;
+    Default[14] = 1160;
+    Default[15] = 1120;
+    Default[16] = 1080;
+    Default[17] = 1020;
+    Default[18] = 970;
+    Default[19] = 920;
+    Default[20] = 890;
+    Default[21] = 870;
+    Default[22] = 860;
+    Default[23] = 870;
+    Default[24] = 890;
+    Default[25] = 920;
+    Default[26] = 960;
+    Default[27] = 1000;
+    Default[28] = 1030;
+    Default[29] = 1050;
+    Default[30] = 1070;
+    Default[31] = 1080;
+    Default[32] = 1090;
+    Default[33] = 1080;
+    Default[34] = 1070;
+    Default[35] = 1050;
+    Default[36] = 1030;
+    Default[37] = 1010;
+    Default[38] = 990;
+    Default[39] = 970;
+    Default[40] = 960;
+    Default[41] = 950;
+    Default[42] = 940;
+    Default[43] = 950;
+    Default[44] = 960;
+    Default[45] = 970;
+    Default[46] = 990;
+    Default[47] = 1000;
+    Default[48] = 1010;
+    Default[49] = 1015;
+    Default[50] = 1018;
+    Default[51] = 1020;
+    Default[52] = 1018;
+    Default[53] = 1015;
+    Default[54] = 1010;
+    Default[55] = 1005;
+    Default[56] = 1003;
+    Default[57] = 1001;
+    Default[58] = 1000;
+    Default[59] = 1000;
+  );
+
+  // The property 'Caption' contains the title of the metering bar.
+  $rect <90,170,290,210>
+  property string Caption = "";
+
+  // The onset method for the property 'Caption' contains changes the title of the \
+  // metering bar.
+  $rect <300,170,500,210>
+  onset Caption
+  {
+    pure Caption = value;
+    DescrText.String = value;
+  }
+
+  // The class 'MeteringBar' implements a graphical bar for displaying a metering \
+  // value. When the metering bar is shown, a simple damped vibration creates a nice \
+  // build-up effect.
+  note legend Note
+  {
+    attr Bounds = <90,320,500,430>;
+  }
+}
+
+// The class 'MonthPanel' displays the energy yield per day during the last 30 days.
+$rect <30,200,230,240>
+$output false
+class MonthPanel : Solar::Panel
+{
+  $rect <20,20,160,60>
+  inherited object CaptionText
+  {
+    preset String = "Last 30 Days";
+  }
+
+  $rect <820,10,1020,50>
+  inherited method Unlock()
+  {
+    super();
+
+    /* start the build up animation... */
+    AnimationTimer.Enabled = true;
+  }
+
+  // This is a timer object.
+  $rect <10,510,210,550>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationSlot;
+    preset Period = 50;
+  }
+
+  // This is a slot method.
+  $rect <210,510,410,550>
+  slot AnimationSlot
+  {
+    /* please note: instead of reading data from a real solar power system
+       only a few dummy data are calculated for displaying them within this 
+       solar demo application */
+
+    var int32 left   = 10;
+    var int32 bottom = 470;
+    var int32 height = 350;
+    var int32 right  = 765;
+    var int32 deltaX = 25;
+
+    var int32 maxValue = 100;
+    var int32 actValue = math_rand( 10, 90 );
+
+    var int32 x;
+    var int32 y = 0;
+    var rect rStart;
+    var rect rEnd;
+
+
+    /* calculate the final height of the bar in pixel */
+    if ( maxValue > 0 )
+      y = height * actValue / maxValue;
+
+    /* avoid to small bar */
+    if ( y < 20 ) 
+      y = 20;
+
+    /* calculate start position of bar in horizontal direction */
+    x = right - DayCounter * deltaX + 5;
+
+    /* now lets define the final rectangle */
+    rEnd = rect( x, bottom - y, x + 15, bottom );
+
+    /* and let's find a start rectangle */
+    x = left;//math_rand( left, right );
+    rStart = rect( x, 0, x + 15, 0 );
+
+    /* create the bar object */
+    var Views::Frame frame = new Views::Frame;
+    frame.Bitmap = SolarRes::MeteringBarYellow;
+    frame.Bounds = rStart;
+
+    /* add the frame object to make it visible */
+    Add( frame, 0 );
+
+    /* create an animation timer */
+    var Effects::RectEffect effect = new Effects::RectEffect;
+    effect.Outlet = ^frame.Bounds;
+    effect.Timing = Effects::Timing.FastIn_EaseOut;
+    effect.Enabled = true;
+    effect.NoOfCycles = 1;
+    effect.CycleDuration = 500;
+    effect.Value1 = rStart;
+    effect.Value2 = rEnd;
+
+    /* store the effect in order to avoid that the GC removes it... */
+    if ( DayCounter < EffectArray.size )
+      EffectArray[ DayCounter ] = effect;
+
+    /* until all 30 days are shown... */
+    DayCounter = DayCounter + 1;
+    if ( DayCounter == 30 )
+      AnimationTimer.Enabled = false;
+
+
+  }
+
+  // This is a variable.
+  $rect <410,510,610,550>
+  var int32 DayCounter = 0;
+
+  // This is an array.
+  $rect <610,510,810,550>
+  array Effects::RectEffect EffectArray[ 30 ];
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line1
+  {
+    preset Point2 = <779,399>;
+    preset Point1 = <50,399>;
+    preset Color = #B0B0B3FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line2
+  {
+    preset Point2 = <779,329>;
+    preset Point1 = <50,329>;
+    preset Color = #B0B0B3FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line3
+  {
+    preset Point2 = <779,260>;
+    preset Point1 = <50,260>;
+    preset Color = #B0B0B3FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line4
+  {
+    preset Point2 = <779,190>;
+    preset Point1 = <50,190>;
+    preset Color = #B0B0B3FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line5
+  {
+    preset Point2 = <779,120>;
+    preset Point1 = <50,120>;
+    preset Color = #B0B0B3FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText1
+  {
+    preset Bounds = <10,380,40,400>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertBottom];
+    preset String = "20";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText2
+  {
+    preset Bounds = <10,310,40,330>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertBottom];
+    preset String = "40";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText3
+  {
+    preset Bounds = <10,240,40,260>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertBottom];
+    preset String = "60";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText4
+  {
+    preset Bounds = <10,170,40,190>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertBottom];
+    preset String = "80";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText5
+  {
+    preset Bounds = <10,100,40,120>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertBottom];
+    preset String = "100";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText
+  {
+    preset Bounds = <340,80,770,120>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "Energy Yield per Day in kWh";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  // The class 'MonthPanel' displays the energy yield per day during the last 30 \
+  // days.
+  // As soon as this panel is unlocked, the timer driven animation provides some \
+  // random data for the data display.
+  note legend Note
+  {
+    attr Bounds = <10,560,800,640>;
+  }
+}
+
+// The class 'DataPlotter' implements the simulation of a data plotter that writes \
+// metered values with a pen on a moving paper.
+$rect <280,450,480,490>
+$output false
+class DataPlotter : Core::Group
+{
+  $rect <340,0,540,40>
+  inherited property Bounds = <0,0,320,340>;
+
+  $rect <340,40,540,80>
+  inherited method UpdateViewState()
+  {
+    aState;
+
+    /* create canvas if necessary */
+    if ( Canvas == null )
+      InitPlotter();
+
+    /* arrange items in case of composer */
+    $if $composer
+    PaperImage.Visible = true;
+    PaperImage.Bounds.origin.x = Bounds.w - PaperImage.Bounds.w;
+    PaperFirstImage.Visible = true;
+    PaperFirstImage.Bounds.origin.x = Bounds.w - PaperImage.Bounds.w - PaperFirstImage.Bounds.w;
+    Needle.Visible = true;
+    Needle.Bounds.origin.x = Bounds.w - Needle.Bounds.w;
+    $endif
+
+
+  }
+
+  // The variable 'Canvas' stores the internal bitmap used to prepare all drawing \
+  // operations.
+  $rect <10,360,210,400>
+  var Graphics::Canvas Canvas = null;
+
+  // The method 'DrawPenLine' is called to draw a line at the given horizontal position \
+  // 'aX' from the vertical start position 'aY1' to the end position 'aY2'.
+  $rect <430,440,630,480>
+  method void DrawPenLine( arg color aColor, arg int32 aX, arg int32 aY1, arg int32 aY2 )
+  {
+    var int32 y1;
+    var int32 y2;
+    var rect  r;
+    var color c;
+
+    /* just to be sure... */
+    if ( Canvas == null )
+      return;
+
+    /* sort the give y values */
+    if ( aY1 < aY2 )
+    {
+      y1 = aY1;
+      y2 = aY2;
+    }  
+    else
+    {
+      y1 = aY2;
+      y2 = aY1;
+    }  
+
+    /* draw a little bit arround the pen to unsharpen the pen */
+    c = color( aColor.red, aColor.green, aColor.blue, 0x40 );
+    r = rect( aX - 1, y1, aX + 2, y2 + 1 );
+    Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+
+    r = rect( aX, y1 - 1, aX + 1, y2 + 2 );
+    Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+
+    /* draw the center point of the pen */
+    c = color( aColor.red, aColor.green, aColor.blue, 0x80 );
+    r = rect( aX, y1, aX + 1, y2 + 1 );
+    Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+
+  }
+
+  // The variable 'Clipping' contains the clipping area used for all drawing operations \
+  // within the Canvas.
+  $rect <10,400,210,440>
+  var rect Clipping = <0,0,0,0>;
+
+  // The variable 'LastValue' stores the current position of the simulated pen in \
+  // vertical direction.
+  $rect <220,440,420,480>
+  var int32 LastValue = 0;
+
+  // The property 'PenColor' stores the color value of the simulated pen used for \
+  // drawing the data channel.
+  $rect <340,110,540,150>
+  property color PenColor = #000080FF;
+
+  // The onset method for the property 'PenColor' changes the color of the simulated \
+  // pen used for drawing the data channel.
+  $rect <540,110,740,150>
+  onset PenColor
+  {
+    /* check if the given value differs from the current value */
+    if ( pure PenColor == value )
+      return;
+
+    /* assign the color */
+    pure PenColor = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The method 'AddSamples' is called to feed new data into the simulated plotter.
+  $rect <430,360,630,400>
+  method void AddSample( arg int32 aData )
+  {
+    /* accumulate the sample in SampleStorage */
+    if ( NoOfStoredSamples < SamplesPerUpdate )
+    {
+      if ( aData > MaxValue )
+        aData = MaxValue;
+      if ( aData < MinValue )
+        aData = MinValue;
+      SampleStorage[ NoOfStoredSamples ] = aData;
+      NoOfStoredSamples = NoOfStoredSamples + 1;
+    }
+
+    /* in case that enough samples are collected, let's draw the samples... */
+    if ( NoOfStoredSamples >= SamplesPerUpdate )
+      DrawSamples();
+
+
+
+  }
+
+  // The variable 'PaperPosition' contains the total offset of the paper in pixel. \
+  // The variable is used to copy the paper pattern to the right location.
+  $rect <10,440,210,480>
+  var int32 PaperPosition = 0;
+
+  // The property 'MaxValue' stores the upper level of the data range.
+  $rect <340,190,540,230>
+  property int32 MaxValue = 0;
+
+  // The onset method for the property 'MaxValue' changes the maximum data value.
+  $rect <540,190,740,230>
+  onset MaxValue
+  {
+    /* check if the given value differs from the current value */
+    if ( pure MaxValue == value )
+      return;
+
+    /* ensure that maximum value is positive */
+    if ( value < 1 )
+      value = 1;
+
+    /* store the new value */
+    pure MaxValue = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The property 'SamplesPerUpdate' defines the number of samples that has to be \
+  // added until a redraw happens.
+  $rect <340,230,540,270>
+  property int32 SamplesPerUpdate = 1;
+
+  // The onset method for the property 'SamplesPerUpdate' changes the number of samples \
+  // that have to be added until they are drawn.
+  $rect <540,230,740,270>
+  onset SamplesPerUpdate
+  {
+    /* check if the given value differs from the current value */
+    if ( pure SamplesPerUpdate == value )
+      return;
+
+    /* limit range between 1 and 64 */
+    if ( value < 1 )
+      value = 1;
+    if ( value > 64 )
+      value = 64;
+
+    /* store the new value */
+    pure SamplesPerUpdate = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The variable 'NoOfStoredSamples' contains the number of samples that are currently \
+  // stored in the SampleStorage.
+  $rect <220,360,420,400>
+  var int32 NoOfStoredSamples = 0;
+
+  // The array 'SampleStorage' keeps the added data values of the data channel until \
+  // they are drawn.
+  $rect <220,400,420,440>
+  array int32 SampleStorage[ 64 ];
+
+  // The property 'MinValue' stores the lower level of the data range.
+  $rect <340,150,540,190>
+  property int32 MinValue = 0;
+
+  // The onset method for the property 'MinValue' changes the minimum data value.
+  $rect <540,150,740,190>
+  onset MinValue
+  {
+    /* check if the given value differs from the current value */
+    if ( pure MinValue == value )
+      return;
+
+    /* ensure that minimum value is positive */
+    if ( value < 0 )
+      value = 0;
+
+    /* store the new value */
+    pure MinValue = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The method 'DrawSamples' is called when a sequence of samples have to be drawn.
+  $rect <430,400,630,440>
+  method void DrawSamples()
+  {
+    var int32 x;
+    var int32 y;
+    var int32 w = Bounds.w;
+    var int32 h = Bounds.h;
+    var int32 borderY = 30;
+    var int32 paperW = SamplesPerUpdate;
+    var int32 paperX = PaperPosition % w;
+
+    /* create canvas if necessary */
+    if ( Canvas == null )
+      InitPlotter();
+
+    /* add a piece of paper at the current position within the canvas */
+    Canvas.CopyBitmap( Clipping, PaperImage.Bitmap, 0, rect( paperX, 0, paperX + paperW, h ), 
+      point( PaperPosition % 64, 0 ), #FFFFFFFF, #FFFFFFFF, #FFFFFFFF, #FFFFFFFF, false );
+
+    /* if necessary, handle the wrap-arround and put the remaining piece of paper at the beginning of the canvas */
+    if ( paperX + paperW > w )
+      Canvas.CopyBitmap( Clipping, PaperImage.Bitmap, 0, rect( paperX - w, 0, paperX - w + paperW, h ), 
+        point( PaperPosition % 64, 0 ), #FFFFFFFF, #FFFFFFFF, #FFFFFFFF, #FFFFFFFF, false );
+
+    /* draw all samples of the last sequence */
+    for ( x = 0; x <  SamplesPerUpdate; x = x + 1 )
+    {
+      /* draw data of channel */
+      y = Bounds.h - borderY;
+
+      if ( MaxValue > 0 )
+        y =  y - (( SampleStorage[ x ] - MinValue ) * ( Bounds.h - 2 * borderY ) / MaxValue );
+
+      DrawPenLine( PenColor, ( PaperPosition + x - 10 ) % w, LastValue, y );
+      LastValue = y;
+    }
+
+    /* set position of needle to last value */
+    Needle.Bounds.origin.y = LastValue - Needle.Bounds.h / 2;
+    Needle.Bounds.origin.x = Bounds.w - Needle.Bounds.w;
+
+    /* clear the storage of the data channel */
+    NoOfStoredSamples = 0;
+
+    /* finally, we have to move the content within the wallpaper to the left */
+    PaperPosition = PaperPosition + paperW;
+    Image.ScrollOffset = point( -( PaperPosition % w ), 0 );
+
+
+
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image PaperImage
+  {
+    preset Visible = false;
+    preset Bitmap = SolarRes::Paper;
+    preset Bounds = <168,0,296,340>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image PaperFirstImage
+  {
+    preset Visible = false;
+    preset Bitmap = SolarRes::PaperFirst;
+    preset Bounds = <40,0,168,340>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Needle
+  {
+    preset Visible = false;
+    preset Bitmap = SolarRes::Needle;
+    preset Bounds = <280,160,295,175>;
+    preset AutoSize = true;
+  }
+
+  // This is a method.
+  $rect <540,40,740,80>
+  method void InitPlotter()
+  {
+    /* intialize the clipping variable, which is used later 
+       as clipping for all drawing operations */
+    Clipping = rect( 0, 0, Bounds.w, Bounds.h );
+
+    /* create canvas */
+    if ( Canvas == null )
+      Canvas = new Graphics::Canvas;
+
+    /* set size to bounds area */
+    Canvas.FrameSize = Bounds.size;
+
+    /* and clear the complete bitmap with transparent color */
+    var rect r = rect( 0, 0, Bounds.w, Bounds.h );
+    Canvas.FillRectangle( r, r, #00000000, #00000000, #00000000, #00000000, false );
+
+    /* copy the first paper image :-) */
+    Canvas.CopyBitmap( Clipping, PaperFirstImage.Bitmap, 0, 
+      rect( Bounds.w - PaperFirstImage.Bitmap.FrameSize.x, 0, Bounds.w, Bounds.h ), 
+      point( 0, 0 ), #FFFFFFFF, #FFFFFFFF, #FFFFFFFF, #FFFFFFFF, false );
+
+    /* assign the canvas to the image object */
+    Image.Bitmap = Canvas;
+    Image.Bounds.size = Bounds.size;
+
+    /* initialize the last value to center */
+    LastValue = Bounds.h / 2;
+
+    /* set position of the needle to last value */
+    Needle.Visible = true;
+    Needle.Bounds.origin.y = LastValue - Needle.Bounds.h / 2;
+    Needle.Bounds.origin.x = Bounds.w - Needle.Bounds.w;
+
+
+  }
+
+  // This is a wallpaper view.
+  $rect <20,20,160,60>
+  object Views::Wallpaper Image
+  {
+    preset Bounds = <0,0,320,340>;
+  }
+
+  // The class 'DataPlotter' implements the simulation of a data plotter that writes \
+  // metered values with a pen on a moving paper.
+  // The data are feed into the plotter by calling the method AddSample() - as soon \
+  // as enough samples are available (determined via the property 'SamplesPerUpdate'), \
+  // the method DrawSamples() take care that the paper is shifted and that the new \
+  // data values are drawn by using the method DrawPenLine().
+  // The data range of the plotter can be configured via the properties 'MinValue' \
+  // and 'MaxValue'. The color of the plotter pen can be defined with the property \
+  // 'PenColor'.
+  note legend Note
+  {
+    attr Bounds = <10,490,740,660>;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder Canvas 1
+  $reorder DrawPenLine 1
+  $reorder Clipping 1
+  $reorder LastValue 1
+}
+
+// The class 'PowerPanel' shows the current power values on a simulated data writer.
+$rect <30,450,230,490>
+$output false
+class PowerPanel : Solar::Panel
+{
+  $rect <20,20,160,60>
+  inherited object CaptionText
+  {
+    preset String = "Momentary Power";
+  }
+
+  $rect <820,10,1020,50>
+  inherited method Unlock()
+  {
+    super();
+
+    /* start the build up animation... */
+    AnimationTimer.Enabled = true;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::DataPlotter Plotter
+  {
+    preset Bounds = <40,100,749,440>;
+    preset MaxValue = 100;
+    preset SamplesPerUpdate = 64;
+  }
+
+  // This is a timer object.
+  $rect <10,510,210,550>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationSlot;
+    preset Period = 50;
+  }
+
+  // This is a slot method.
+  $rect <210,510,410,550>
+  slot AnimationSlot
+  {
+    var int32 i;
+
+    /* please note: instead of reading data from a real solar power system
+       only a few dummy data are calculated for displaying them within this 
+       solar demo application */
+    for ( i = 0; i < Plotter.SamplesPerUpdate; i = i + 1 )
+    {
+      var int32 delta = math_rand(-3,4 );
+
+      if ( SimPower + delta > 100 )
+        delta = -delta;
+      if ( SimPower + delta < 0 )
+        delta = -delta;
+
+      SimPower = SimPower + delta;
+
+      Plotter.AddSample( SimPower );
+    }
+
+    if ( Plotter.SamplesPerUpdate > 1 )
+      Plotter.SamplesPerUpdate = Plotter.SamplesPerUpdate - 4;
+    else
+    {
+      Plotter.SamplesPerUpdate = 1;
+      AnimationTimer.Period = 100;
+    }
+
+  }
+
+  // This is a variable.
+  $rect <410,510,610,550>
+  var int32 SimPower = 50;
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image PlotterBox
+  {
+    preset Bitmap = SolarRes::PlotterBox;
+    preset Bounds = <708,80,786,468>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image PlotterEnd
+  {
+    preset Bitmap = SolarRes::PlotterEnd;
+    preset Bounds = <20,80,63,468>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image PlotterScale
+  {
+    preset Bitmap = SolarRes::PlotterScale;
+    preset Bounds = <458,80,536,468>;
+    preset AutoSize = true;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line1
+  {
+    preset Point2 = <482,410>;
+    preset Point1 = <464,410>;
+    preset Color = #000080FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line2
+  {
+    preset Point2 = <482,340>;
+    preset Point1 = <464,340>;
+    preset Color = #000080FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line3
+  {
+    preset Point2 = <482,270>;
+    preset Point1 = <464,270>;
+    preset Color = #000080FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line4
+  {
+    preset Point2 = <482,200>;
+    preset Point1 = <464,200>;
+    preset Color = #000080FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line Line5
+  {
+    preset Point2 = <482,130>;
+    preset Point1 = <464,130>;
+    preset Color = #000080FF;
+    preset AlphaBlended = false;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText1
+  {
+    preset Bounds = <486,398,516,418>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "0";
+    preset Font = SolarRes::DescrFont;
+    preset Color = #000080FF;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText2
+  {
+    preset Bounds = <486,328,516,348>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "1200";
+    preset Font = SolarRes::DescrFont;
+    preset Color = #000080FF;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText3
+  {
+    preset Bounds = <486,258,516,278>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "2400";
+    preset Font = SolarRes::DescrFont;
+    preset Color = #000080FF;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText4
+  {
+    preset Bounds = <486,188,516,208>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "3600";
+    preset Font = SolarRes::DescrFont;
+    preset Color = #000080FF;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ValueText5
+  {
+    preset Bounds = <486,118,516,138>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "4800";
+    preset Font = SolarRes::DescrFont;
+    preset Color = #000080FF;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText
+  {
+    preset Bounds = <57,440,457,460>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertBottom];
+    preset String = "Solar Power (DC) in W - Sample Rate 500 msec";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  // The class 'PowerPanel' shows the current power values on a simulated data writer \
+  // (data plotter).
+  // As soon as this panel is unlocked, the timer driven animation provides continuously \
+  // random data for the data plotter.
+  note legend Note
+  {
+    attr Bounds = <10,560,800,640>;
+  }
+}
+
+// The class 'LcdDisplay' implements a digital display for showing system values.
+$rect <280,300,480,340>
+$output false
+class LcdDisplay : Core::Group
+{
+  $rect <10,80,210,120>
+  inherited property Bounds = <0,0,280,60>;
+
+  $rect <10,130,210,170>
+  inherited method UpdateViewState()
+  {
+    aState;
+
+    var int32 x = 0;
+    var int32 delta = Dot.Bounds.w * 1 / 3;
+    var int32 val = CurrentValue / Divisor;
+
+    /* update all digits... */
+    Digit1.FrameNumber = val % 10;
+    Digit2.FrameNumber = ( val / 10 ) % 10;
+    Digit3.FrameNumber = ( val / 100 ) % 10;
+    Digit4.FrameNumber = ( val / 1000 ) % 10;
+    Digit5.FrameNumber = ( val / 10000 ) % 10;
+    Digit6.FrameNumber = ( val / (int32)100000 ) % 10;
+
+    /* negative values causes ----- */
+    if ( val < 0 )
+    {
+      Digit1.FrameNumber = 10;
+      Digit2.FrameNumber = 10;
+      Digit3.FrameNumber = 10;
+      Digit4.FrameNumber = 10;
+      Digit5.FrameNumber = 10;
+      Digit6.FrameNumber = 10;
+    }
+
+    /* arrange digit 6 */
+    if ( NoOfDigits > 5 )
+    {
+      Digit6.Visible = true;
+      Digit6.Bounds.origin.x = x;
+      x = x + Digit6.Bounds.w - delta;
+    }
+    else
+      Digit6.Visible = false;
+
+    if ( DotPosition == 5 )
+    {
+      Dot.Bounds.origin.x = x;
+      x = x + Dot.Bounds.w - delta;
+    }
+
+    /* arrange digit 5 */
+    if ( NoOfDigits > 4 )
+    {
+      Digit5.Visible = true;
+      Digit5.Bounds.origin.x = x;
+      x = x + Digit5.Bounds.w - delta;
+    }
+    else
+      Digit5.Visible = false;
+
+    if ( DotPosition == 4 )
+    {
+      Dot.Bounds.origin.x = x;
+      x = x + Dot.Bounds.w - delta;
+    }
+
+    /* arrange digit 4 */
+    if ( NoOfDigits > 3 )
+    {
+      Digit4.Visible = true;
+      Digit4.Bounds.origin.x = x;
+      x = x + Digit4.Bounds.w - delta;
+    }
+    else
+      Digit4.Visible = false;
+
+    if ( DotPosition == 3 )
+    {
+      Dot.Bounds.origin.x = x;
+      x = x + Dot.Bounds.w - delta;
+    }
+
+    /* arrange digit 3 */
+    if ( NoOfDigits > 2 )
+    {
+      Digit3.Visible = true;
+      Digit3.Bounds.origin.x = x;
+      x = x + Digit3.Bounds.w - delta;
+    }
+    else
+      Digit3.Visible = false;
+
+    if ( DotPosition == 2 )
+    {
+      Dot.Bounds.origin.x = x;
+      x = x + Dot.Bounds.w - delta;
+    }
+
+    /* arrange digit 2 */
+    if ( NoOfDigits > 1 )
+    {
+      Digit2.Visible = true;
+      Digit2.Bounds.origin.x = x;
+      x = x + Digit2.Bounds.w - delta;
+    }
+    else
+      Digit6.Visible = false;
+
+    if ( DotPosition == 1 )
+    {
+      Dot.Bounds.origin.x = x;
+      x = x + Dot.Bounds.w - delta;
+    }
+
+    /* digit 1 is always visible */
+    Digit1.Visible = true;
+    Digit1.Bounds.origin.x = x;
+    x = x + Digit1.Bounds.w - delta;
+
+    if ( DotPosition < 1 )
+      Dot.Visible = false;
+    else
+      Dot.Visible = true;
+
+    /* arrange unit */
+    Extent.Visible = true;
+    Extent.Bounds.origin.x = x;
+    switch( Unit )
+    {
+      case Solar::LcdUnit.Watt: 
+        Extent.FrameNumber = 0;
+      case Solar::LcdUnit.Volt: 
+        Extent.FrameNumber = 1;
+      case Solar::LcdUnit.Ampere: 
+        Extent.FrameNumber = 2;
+      case Solar::LcdUnit.Hour: 
+        Extent.FrameNumber = 3;
+      case Solar::LcdUnit.KiloWattHour: 
+        Extent.FrameNumber = 4;
+      case Solar::LcdUnit.Celsius: 
+        Extent.FrameNumber = 5;
+      case Solar::LcdUnit.Hertz: 
+        Extent.FrameNumber = 6;
+      default:
+        Extent.Visible = false;
+    }
+
+
+      
+
+
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Digit1
+  {
+    preset Bitmap = SolarRes::LcdNumbers;
+    preset Bounds = <190,0,232,60>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Digit2
+  {
+    preset FrameNumber = 0;
+    preset Bitmap = SolarRes::LcdNumbers;
+    preset Bounds = <150,0,192,60>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Digit3
+  {
+    preset Bitmap = SolarRes::LcdNumbers;
+    preset Bounds = <72,0,114,60>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Digit4
+  {
+    preset Bitmap = SolarRes::LcdNumbers;
+    preset Bounds = <30,0,72,60>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Digit5
+  {
+    preset Bitmap = SolarRes::LcdNumbers;
+    preset Bounds = <0,0,42,60>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Digit6
+  {
+    preset Bitmap = SolarRes::LcdNumbers;
+    preset Bounds = <0,0,42,60>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Dot
+  {
+    preset Bitmap = SolarRes::LcdDot;
+    preset Bounds = <230,0,316,60>;
+    preset AutoSize = true;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Extent
+  {
+    preset Bitmap = SolarRes::LcdUnits;
+    preset Bounds = <230,0,316,60>;
+    preset AutoSize = true;
+  }
+
+  // The property 'NoOfDigits' stores the number of digits that are shown by the \
+  // simulated LCD display.
+  $rect <510,0,710,40>
+  property int32 NoOfDigits = 6;
+
+  // The onset method of the property 'NoOfDigits' changes the number of currently \
+  // displayed digits and rearranges the LCD display accordingly.
+  $rect <510,40,710,80>
+  onset NoOfDigits
+  {
+    /* check if the given value differs from the current value */
+    if ( pure NoOfDigits == value )
+      return;
+
+    /* check limits of the given value */
+    if ( value < 1 )
+      value = 1;
+    if ( value > 6 )
+      value = 6;
+     
+    /* store the new value */
+    pure NoOfDigits = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The property 'DotPosition' stores the index of the digit where the dot is shown. \
+  // In case that 'DotPosition' is zero, the dot disappears.
+  $rect <510,90,710,130>
+  property int32 DotPosition = 0;
+
+  // The onset method of the property 'DotPosition' changes the position of the dot \
+  // and rearranges the LCD display accordingly.
+  $rect <510,130,710,170>
+  onset DotPosition
+  {
+    /* check if the given value differs from the current value */
+    if ( pure DotPosition == value )
+      return;
+
+    /* check limits of the given value */
+    if ( value < 0 )
+      value = 0;
+    if ( value > 5 )
+      value = 5;
+
+    /* store the new value */ 
+    pure DotPosition = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The property 'Unit' stores the currently selected unit that is shown in the \
+  // simulated LCD display.
+  $rect <720,0,920,40>
+  property Solar::LcdUnit Unit = Solar::LcdUnit.None;
+
+  // The onset method of the property 'Unit' changes the currently displayed unit.
+  $rect <720,40,920,80>
+  onset Unit
+  {
+    /* check if the given value differs from the current value */
+    if ( pure Unit == value )
+      return;
+
+    /* store the new value */
+    pure Unit = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+
+  }
+
+  // The property 'Value' contains the currently displayed value. If the value is \
+  // negative, all digits show a '-' sign. Please note, that the value is displayed \
+  // with the corresponding digits, independent from the position of the dot.
+  $rect <300,0,500,40>
+  property int32 CurrentValue = 0;
+
+  // The onset method of the property 'Value' changes the currently displayed value \
+  // of all digits.
+  $rect <300,40,500,80>
+  onset CurrentValue
+  {
+    /* check if the given value differs from the current value */
+    if ( pure CurrentValue == value )
+      return;
+
+    /* store the new 1value */ 
+    pure CurrentValue = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+
+  }
+
+  // This slot method will receive a signal, if the value of the property assigned \
+  // to @Outlet has been changed by another widget or by the application logic. In \
+  // response to this notification, the widget will update itself.
+  $rect <300,180,500,220>
+  slot outletSlot
+  {
+    /* update the current state of the widget */
+    if ( Outlet != null )
+      CurrentValue = Outlet^;
+  }
+
+  $rect <300,130,500,170>
+  onset Outlet
+  {
+    /* check if the new outlet differs from the currently used outlet */
+    if ( pure Outlet == value )
+      return;
+
+    /* detach from the previous outlet */
+    if ( pure Outlet != null )
+      detachobserver outletSlot, pure Outlet;
+
+    /* store the new outlet */
+    pure Outlet = value;
+
+    /* ... and attach to the new one */
+    if ( value != null )
+      attachobserver outletSlot, value;
+
+    /* finally, update the current state of the widget by posting a signal to the outlet slot */
+    if ( value != null )
+      postsignal outletSlot;
+  }
+
+  // The property 'Outlet' provides an interface for the Model-View-Controller (MVC). \
+  // In the MVC, the widgets (views) and the application logic (model) are always \
+  // kept apart. An automatism behind this model ensures, that widgets are notified \
+  // automatically as soon as the affected model has changed its state. On the other \
+  // hand, user interactions on a widget cause the affected model to execute the \
+  // application logic. Usually, a model is a simple Chora object containg several \
+  // properties and the implementation of onget/onset method.
+  // By assigning a property reference, Outlet establishes a connection between the \
+  // widget and the model object, the affected property belongs to. After this, the \
+  // widget is able to read and modify the referred property in response to the user \
+  // interactions. It is also able to adapt the widget appearance, if the value of \
+  // the referred property has been modified by another widget or by the application \
+  // logic itself.
+  $rect <300,90,500,130>
+  property ^int32 Outlet = null;
+
+  // The class 'LcdDisplay' implements a widget to display metering values as numeric \
+  // values with a LCD style. 
+  // Each digit of the display is implemented as image - using a bitmap resource \
+  // that contains a stripe of all 10 numbers.
+  // The property 'CurrentValue' represents the momentary value of the widget. The \
+  // properties 'DotPosition', 'Divisor' and 'NoOfDigits' can be used to configure \
+  // the display.
+  // The property 'TextColor' is used to define the color of the widget.
+  // The display can be connected with an int32 'Outlet' property to show the current \
+  // value of this property. 
+  note legend Note
+  {
+    attr Bounds = <10,270,750,420>;
+  }
+
+  // The property 'TextColor' defines the color of the widgets text members. The \
+  // property is used to assign a color independent from the current theme color.
+  $rect <720,90,920,130>
+  property color TextColor = #FFFFFFFF;
+
+  $rect <720,130,920,170>
+  onset TextColor
+  {
+    /* store the new value */
+    pure TextColor = value;
+
+    /* ...and colorize the affected members of the widget */
+    Digit1.Color = value;
+    Digit2.Color = value;
+    Digit3.Color = value;
+    Digit4.Color = value;
+    Digit5.Color = value;
+    Digit6.Color = value;
+    Dot.Color = value;
+    Extent.Color = value;
+
+  }
+
+  // The property 'Divisor' stores the ratio for the display value.
+  $rect <510,180,710,220>
+  property int32 Divisor = 1;
+
+  $rect <510,220,710,260>
+  onset Divisor
+  {
+    /* check if the given value differs from the current value */
+    if ( pure Divisor == value )
+      return;
+
+    /* check limits of the given value */
+    if ( value < 1 )
+      value = 1;
+    if ( value > 1000 )
+      value = 1000;
+
+    /* store the new value */ 
+    pure Divisor = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+}
+
+// The class 'DigitalPanel' shows all internal data of the simulated solar inverter \
+// by using digital 7 segment displays.
+$rect <30,300,230,340>
+$output false
+class DigitalPanel : Solar::Panel
+{
+  $rect <20,20,160,60>
+  inherited object CaptionText
+  {
+    preset String = "Operating Conditions";
+  }
+
+  // This is a frame view.
+  $rect <20,20,160,60>
+  object Views::Frame Frame1
+  {
+    preset Bitmap = SolarRes::LcdBackground;
+    preset Bounds = <30,120,310,290>;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText1
+  {
+    preset Bounds = <30,80,320,110>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Momentary Solar Data (DC)";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplay SolarPower
+  {
+    preset Bounds = <60,140,260,200>;
+    preset NoOfDigits = 4;
+    preset Unit = Solar::LcdUnit.Watt;
+    preset Outlet = ^Solar::Device.SolarPower;
+    preset TextColor = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplaySmall SolarVoltage
+  {
+    preset Bounds = <60,220,170,270>;
+    preset NoOfDigits = 3;
+    preset Unit = Solar::LcdUnit.Volt;
+    preset Outlet = ^Solar::Device.SolarVoltage;
+    preset TextColor = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplaySmall SolarCurrent
+  {
+    preset Bounds = <170,220,280,270>;
+    preset NoOfDigits = 3;
+    preset DotPosition = 2;
+    preset Unit = Solar::LcdUnit.Ampere;
+    preset Outlet = ^Solar::Device.SolarCurrent;
+    preset TextColor = #000000FF;
+    preset Divisor = 10;
+  }
+
+  // This is a frame view.
+  $rect <20,20,160,60>
+  object Views::Frame Frame2
+  {
+    preset Bitmap = SolarRes::LcdBackground;
+    preset Bounds = <340,120,780,290>;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText2
+  {
+    preset Bounds = <340,80,770,110>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Momentary Inverter Data (AC)";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplay InverterPower
+  {
+    preset Bounds = <370,140,570,200>;
+    preset NoOfDigits = 4;
+    preset Unit = Solar::LcdUnit.Watt;
+    preset Outlet = ^Solar::Device.InverterPower;
+    preset TextColor = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplaySmall InverterVoltage
+  {
+    preset Bounds = <370,220,470,260>;
+    preset NoOfDigits = 3;
+    preset Unit = Solar::LcdUnit.Volt;
+    preset CurrentValue = 230;
+    preset Outlet = ^Solar::Device.InverterVoltage;
+    preset TextColor = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplaySmall InverterCurrent
+  {
+    preset Bounds = <480,220,590,260>;
+    preset NoOfDigits = 3;
+    preset DotPosition = 2;
+    preset Unit = Solar::LcdUnit.Ampere;
+    preset Outlet = ^Solar::Device.InverterCurrent;
+    preset TextColor = #000000FF;
+    preset Divisor = 10;
+  }
+
+  // This is a frame view.
+  $rect <20,20,160,60>
+  object Views::Frame Frame3
+  {
+    preset Bitmap = SolarRes::LcdBackground;
+    preset Bounds = <30,350,390,460>;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText3
+  {
+    preset Bounds = <30,310,360,340>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Total Energy Yield";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplay TotalEnergyYield
+  {
+    preset Bounds = <50,370,370,430>;
+    preset NoOfDigits = 6;
+    preset DotPosition = 1;
+    preset Unit = Solar::LcdUnit.KiloWattHour;
+    preset Outlet = ^Solar::Device.EnergyYield;
+    preset TextColor = #000000FF;
+  }
+
+  // This is a frame view.
+  $rect <20,20,160,60>
+  object Views::Frame Frame4
+  {
+    preset Bitmap = SolarRes::LcdBackground;
+    preset Bounds = <420,350,780,460>;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText4
+  {
+    preset Bounds = <420,310,746,340>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Total Runtime";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplay TotalRuntime
+  {
+    preset Bounds = <480,370,750,430>;
+    preset NoOfDigits = 6;
+    preset DotPosition = 1;
+    preset Unit = Solar::LcdUnit.Hour;
+    preset Outlet = ^Solar::Device.Runtime;
+    preset TextColor = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplay Temperature
+  {
+    preset Bounds = <600,140,740,200>;
+    preset NoOfDigits = 2;
+    preset Unit = Solar::LcdUnit.Celsius;
+    preset CurrentValue = 48;
+    preset TextColor = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::LcdDisplaySmall InverterFrequency
+  {
+    preset Bounds = <600,220,750,260>;
+    preset NoOfDigits = 4;
+    preset DotPosition = 2;
+    preset Unit = Solar::LcdUnit.Hertz;
+    preset CurrentValue = 5000;
+    preset TextColor = #000000FF;
+  }
+
+  // The class 'DigitalPanel' shows all internal data of the simulated solar inverter \
+  // by using digital 7 segment displays.
+  // The different LCD displays are connected directly to the device class to get \
+  // their data.
+  note legend Note
+  {
+    attr Bounds = <10,500,800,580>;
+  }
+}
+
+// Enum items for selecting the unit to be displayed.
+$rect <700,300,900,340>
+$output false
+enum LcdUnit
+{
+  // Enum item for unit Watt.
+  $rect <160,10,300,50>
+  item Watt;
+
+  // Enum item for unit Volt.
+  $rect <310,10,450,50>
+  item Volt;
+
+  // Enum item for unit Ampere.
+  $rect <460,10,600,50>
+  item Ampere;
+
+  // Enum item for unit Hour.
+  $rect <10,60,150,100>
+  item Hour;
+
+  // Enum item for unit KiloWattHour.
+  $rect <160,60,300,100>
+  item KiloWattHour;
+
+  // Enum item for unit Celsius.
+  $rect <310,60,450,100>
+  item Celsius;
+
+  // Enum item for no unit.
+  $rect <10,10,150,50>
+  item None;
+
+  // Enum item for unit Hertz.
+  $rect <460,60,600,100>
+  item Hertz;
+}
+
+// The class 'AnalogDisplay' shows the current status of the solar power system with \
+// a couple of analog insturments and a electrcity meter.
+$rect <30,350,230,390>
+$output false
+class AnalogPanel : Solar::Panel
+{
+  $rect <20,20,160,60>
+  inherited object CaptionText
+  {
+    preset String = "Power Metering";
+  }
+
+  $rect <20,20,160,60>
+  object Solar::ElectricMeter ElectricMeter
+  {
+    preset Bounds = <510,80,780,470>;
+    preset OutletEnergyYield = ^Solar::Device.EnergyYield;
+    preset OutletRuntime = ^Solar::Device.Runtime;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::AnalogDisplay SolarPower
+  {
+    preset Bounds = <30,120,180,250>;
+    preset MaxValue = 4000;
+    preset TextUnit = "kW";
+    preset TextScale0 = "0";
+    preset TextScale1 = "1";
+    preset TextScale2 = "2";
+    preset TextScale3 = "3";
+    preset TextScale4 = "4";
+    preset Outlet = ^Solar::Device.SolarPower;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::AnalogDisplay SolarVoltage
+  {
+    preset Bounds = <190,120,340,250>;
+    preset MaxValue = 400;
+    preset TextUnit = "V";
+    preset TextScale0 = "0";
+    preset TextScale1 = "100";
+    preset TextScale2 = "200";
+    preset TextScale3 = "300";
+    preset TextScale4 = "400";
+    preset Outlet = ^Solar::Device.SolarVoltage;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::AnalogDisplay SolarCurrent
+  {
+    preset Bounds = <350,120,500,250>;
+    preset MaxValue = 8000;
+    preset TextUnit = "A";
+    preset TextScale0 = "0";
+    preset TextScale1 = "2";
+    preset TextScale2 = "4";
+    preset TextScale3 = "6";
+    preset TextScale4 = "8";
+    preset Outlet = ^Solar::Device.SolarCurrent;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::AnalogDisplay InverterPower
+  {
+    preset Bounds = <30,310,180,440>;
+    preset MaxValue = 4000;
+    preset TextUnit = "kW";
+    preset TextScale0 = "0";
+    preset TextScale1 = "1";
+    preset TextScale2 = "2";
+    preset TextScale3 = "3";
+    preset TextScale4 = "4";
+    preset Outlet = ^Solar::Device.InverterPower;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::AnalogDisplay InverterVoltage
+  {
+    preset Bounds = <190,310,340,440>;
+    preset MaxValue = 400;
+    preset TextUnit = "V";
+    preset TextScale0 = "0";
+    preset TextScale1 = "100";
+    preset TextScale2 = "200";
+    preset TextScale3 = "300";
+    preset TextScale4 = "400";
+    preset Outlet = ^Solar::Device.InverterVoltage;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::AnalogDisplay InverterCurrent
+  {
+    preset Bounds = <350,310,500,440>;
+    preset MaxValue = 8000;
+    preset TextUnit = "A";
+    preset TextScale0 = "0";
+    preset TextScale1 = "2";
+    preset TextScale2 = "4";
+    preset TextScale3 = "6";
+    preset TextScale4 = "8";
+    preset Outlet = ^Solar::Device.InverterCurrent;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText1
+  {
+    preset Bounds = <30,80,320,110>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Momentary Solar Data (DC)";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text DescrText2
+  {
+    preset Bounds = <30,270,460,300>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Momentary Inverter Data (AC)";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+
+  // The class 'AnalogDisplay' shows the current status of the solar power system \
+  // with a couple of analog insturments and a electrcity meter.
+  // The different gauges and the electricity meter are connected directly to the \
+  // device class to get their data.
+  note legend Note
+  {
+    attr Bounds = <10,500,800,580>;
+  }
+}
+
+// The class 'MeterCounterBlack' implements a single black digit of the electricity \
+// meter 'ElectricMeter'.
+$rect <490,350,690,390>
+$output false
+class MeterCounterBlack : Core::Group
+{
+  $rect <40,0,240,40>
+  inherited property Bounds = <0, 0, 20, 30>;
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bitmap = SolarRes::MeterNumbersBlack;
+    preset Bounds = <0,0,20,330>;
+  }
+
+  // The property 'Value' contains the currently displayed number.
+  $rect <250,0,450,40>
+  property int32 Value = 0;
+
+  // The onset method of the property 'Value' changes the currently displayed number.
+  $rect <250,40,450,80>
+  onset Value
+  {
+    if ( value < 0 )
+      value = 0;
+    value = value % 10;
+
+    if ( value == pure Value )
+      return;
+
+    pure Value = value;
+    Timer.Enabled = true;
+  }
+
+  // This is a timer object to trigger the slow motion of the counter.
+  $rect <40,50,240,90>
+  object Core::Timer Timer
+  {
+    preset OnTrigger = Slot;
+    preset Period = 25;
+  }
+
+  // Slot method to make the counter motion.
+  $rect <40,90,240,130>
+  slot Slot
+  {
+    /* calculate final position of the bitmap */
+    var int32 y = -Value * 30;
+
+    /* if end position is reached, timer can be disabled */
+    if ( Image.Bounds.origin.y == y )
+    {
+      Timer.Enabled = false;
+      return;
+    }
+
+    /* move the image a little bit */
+    Image.Bounds.origin.y = Image.Bounds.origin.y - 1;
+
+    /* avoid overflow */
+    if ( Image.Bounds.origin.y <= -300 )
+      Image.Bounds.origin.y = 0;
+
+
+  }
+
+  // This class implements a single digit of an electricity meter with a smooth movement \
+  // of the displayed value.
+  note legend Note
+  {
+    attr Bounds = <0,140,450,190>;
+  }
+}
+
+// The class 'MeterCounterBlack' implements a single red digit of the electricity \
+// meter 'ElectricMeter'.
+$rect <700,350,900,390>
+$output false
+class MeterCounterRed : Core::Group
+{
+  $rect <40,0,240,40>
+  inherited property Bounds = <0, 0, 20, 30>;
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bitmap = SolarRes::MeterNumbersRed;
+    preset Bounds = <0,0,20,330>;
+  }
+
+  // The property 'Value' contains the currently displayed number.
+  $rect <250,0,450,40>
+  property int32 Value = 0;
+
+  // The onset method of the property 'Value' changes the currently displayed number.
+  $rect <250,40,450,80>
+  onset Value
+  {
+    if ( value < 0 )
+      value = 0;
+    value = value % 100;
+
+    if ( value == pure Value )
+      return;
+
+    pure Value = value;
+    Timer.Enabled = true;
+  }
+
+  // This is a timer object to trigger the slow motion of the counter.
+  $rect <40,50,240,90>
+  object Core::Timer Timer
+  {
+    preset OnTrigger = Slot;
+    preset Period = 25;
+  }
+
+  // Slot method to make the counter motion.
+  $rect <40,90,240,130>
+  slot Slot
+  {
+    /* calculate final position of the bitmap */
+    var int32 y = -Value * 3;
+
+    /* if end position is reached, timer can be disabled */
+    if ( Image.Bounds.origin.y == y )
+    {
+      Timer.Enabled = false;
+      return;
+    }
+
+    /* move the image a little bit */
+    Image.Bounds.origin.y = Image.Bounds.origin.y - 1;
+
+    /* avoid overflow */
+    if ( Image.Bounds.origin.y <= -300 )
+      Image.Bounds.origin.y = 0;
+
+
+  }
+
+  // This class implements a single digit of an electricity meter with a smooth movement \
+  // of the displayed value.
+  note legend Note
+  {
+    attr Bounds = <0,140,450,190>;
+  }
+}
+
+// The class 'ElectricMeter' implements the simulation of an electricity meter.
+$rect <280,350,480,390>
+$output false
+class ElectricMeter : Core::Group
+{
+  $rect <290,10,490,50>
+  inherited property Bounds = <0,0,270,390>;
+
+  // The property 'EnergyYield' contains the currently displayed value of the electricity \
+  // meter. The value contains two digits after the decimal point (1 kWh = value \
+  // 100).
+  $rect <290,120,490,160>
+  property int32 EnergyYield = 0;
+
+  // The onset method of the property 'EnergyYield' changes the conter value of the \
+  // electricity meter.
+  $rect <290,160,490,200>
+  onset EnergyYield
+  {
+    /* avoid negative values */
+    if ( value < 0 )
+      value = 0;
+
+    /* set all digits of the counter */
+    Energy0.Value = value % 100;
+    Energy1.Value = ( value / 100 ) % 10;
+    Energy2.Value = ( value / 1000 ) % 10;
+    Energy3.Value = ( value / 10000 ) % 10;
+    Energy4.Value = ( value / (int32)100000 ) % 10;
+    Energy5.Value = ( value / (int32)1000000 ) % 10;
+    Energy6.Value = ( value / (int32)10000000 ) % 10;
+
+    /* store the property value */
+    pure EnergyYield = value;
+
+
+  }
+
+  // The property 'Runtime' contains the currently displayed value of the operating \
+  // hours counter. The value contains two digits after the decimal point (1 h = \
+  // value 100).
+  $rect <500,120,700,160>
+  property int32 Runtime = 0;
+
+  // The onset method of the property 'Runtime' changes the value of the operating \
+  // hours counter.
+  $rect <500,160,700,200>
+  onset Runtime
+  {
+    /* avoid negative values */
+    if ( value < 0 )
+      value = 0;
+
+    /* set all digits of the counter */
+    Time0.Value = value % 100;
+    Time1.Value = ( value / 100 ) % 10;
+    Time2.Value = ( value / 1000 ) % 10;
+    Time3.Value = ( value / 10000 ) % 10;
+    Time4.Value = ( value / (int32)100000 ) % 10;
+    Time5.Value = ( value / (int32)1000000 ) % 10;
+    Time6.Value = ( value / (int32)10000000 ) % 10;
+
+    /* store the property value */
+    pure Runtime = value;
+
+
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterRed Energy0
+  {
+    preset Bounds = <180,120,200,150>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Energy1
+  {
+    preset Bounds = <160,120,180,150>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Energy2
+  {
+    preset Bounds = <140,120,160,150>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Energy3
+  {
+    preset Bounds = <120,120,140,150>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Energy4
+  {
+    preset Bounds = <100,120,120,150>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Energy5
+  {
+    preset Bounds = <80,120,100,150>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Energy6
+  {
+    preset Bounds = <60,120,80,150>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterRed Time0
+  {
+    preset Bounds = <180,190,200,220>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Time1
+  {
+    preset Bounds = <160,190,180,220>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Time2
+  {
+    preset Bounds = <140,190,160,220>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Time3
+  {
+    preset Bounds = <120,190,140,220>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Time4
+  {
+    preset Bounds = <100,190,120,220>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Time5
+  {
+    preset Bounds = <80,190,100,220>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterCounterBlack Time6
+  {
+    preset Bounds = <60,190,80,220>;
+  }
+
+  $rect <20,20,160,60>
+  object Solar::MeterDisc MeterDisc
+  {
+    preset Bounds = <60,65,200,79>;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <0,0,268,388>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::MeterChassis;
+  }
+
+  // This slot method will receive a signal, if the value of the property assigned \
+  // to @Outlet has been changed by another widget or by the application logic. In \
+  // response to this notification, the widget will update itself.
+  $rect <290,310,490,350>
+  slot outletSlotEnergyYield
+  {
+    /* update the current state of the widget */
+    if ( OutletEnergyYield != null )
+      EnergyYield = OutletEnergyYield^;
+  }
+
+  $rect <290,260,490,300>
+  onset OutletEnergyYield
+  {
+    /* check if the new outlet differs from the currently used outlet */
+    if ( pure OutletEnergyYield == value )
+      return;
+
+    /* detach from the previous outlet */
+    if ( pure OutletEnergyYield != null )
+      detachobserver outletSlotEnergyYield, pure OutletEnergyYield;
+
+    /* store the new outlet */
+    pure OutletEnergyYield = value;
+
+    /* ... and attach to the new one */
+    if ( value != null )
+      attachobserver outletSlotEnergyYield, value;
+
+    /* finally, update the current state of the widget by posting a signal to the outlet slot */
+    if ( value != null )
+      postsignal outletSlotEnergyYield;
+  }
+
+  // The property 'Outlet' provides an interface for the Model-View-Controller (MVC). \
+  // In the MVC, the widgets (views) and the application logic (model) are always \
+  // kept apart. An automatism behind this model ensures, that widgets are notified \
+  // automatically as soon as the affected model has changed its state. On the other \
+  // hand, user interactions on a widget cause the affected model to execute the \
+  // application logic. Usually, a model is a simple Chora object containg several \
+  // properties and the implementation of onget/onset method.
+  // By assigning a property reference, Outlet establishes a connection between the \
+  // widget and the model object, the affected property belongs to. After this, the \
+  // widget is able to read and modify the referred property in response to the user \
+  // interactions. It is also able to adapt the widget appearance, if the value of \
+  // the referred property has been modified by another widget or by the application \
+  // logic itself.
+  $rect <290,220,490,260>
+  property ^int32 OutletEnergyYield = null;
+
+  // The class 'ElectricMeter' implements an old-style electricity meter.
+  // Within this solar demo application, it is enhanced to show the "produced" solar \
+  // energy and the operating hours. 
+  // The property 'EnergyYield' represents the total energy yield in kWh. The property \
+  // 'Runtime' represents the overall runtime of the inverter in hours.
+  // The electric meter can be connected with the int32 'OutletEnergyYield' and 'OutletRuntime' \
+  // properties to show the current values of these properties.
+  note legend Note
+  {
+    attr Bounds = <0,410,710,570>;
+  }
+
+  // This slot method will receive a signal, if the value of the property assigned \
+  // to @Outlet has been changed by another widget or by the application logic. In \
+  // response to this notification, the widget will update itself.
+  $rect <500,310,700,350>
+  slot outletSlotRuntime
+  {
+    /* update the current state of the widget */
+    if ( OutletRuntime != null )
+      Runtime = OutletRuntime^;
+  }
+
+  $rect <500,260,700,300>
+  onset OutletRuntime
+  {
+    /* check if the new outlet differs from the currently used outlet */
+    if ( pure OutletRuntime == value )
+      return;
+
+    /* detach from the previous outlet */
+    if ( pure OutletRuntime != null )
+      detachobserver outletSlotRuntime, pure OutletRuntime;
+
+    /* store the new outlet */
+    pure OutletRuntime = value;
+
+    /* ... and attach to the new one */
+    if ( value != null )
+      attachobserver outletSlotRuntime, value;
+
+    /* finally, update the current state of the widget by posting a signal to the outlet slot */
+    if ( value != null )
+      postsignal outletSlotRuntime;
+  }
+
+  // The property 'Outlet' provides an interface for the Model-View-Controller (MVC). \
+  // In the MVC, the widgets (views) and the application logic (model) are always \
+  // kept apart. An automatism behind this model ensures, that widgets are notified \
+  // automatically as soon as the affected model has changed its state. On the other \
+  // hand, user interactions on a widget cause the affected model to execute the \
+  // application logic. Usually, a model is a simple Chora object containg several \
+  // properties and the implementation of onget/onset method.
+  // By assigning a property reference, Outlet establishes a connection between the \
+  // widget and the model object, the affected property belongs to. After this, the \
+  // widget is able to read and modify the referred property in response to the user \
+  // interactions. It is also able to adapt the widget appearance, if the value of \
+  // the referred property has been modified by another widget or by the application \
+  // logic itself.
+  $rect <500,220,700,260>
+  property ^int32 OutletRuntime = null;
+}
+
+// The class 'MeterDisc' implements the rotating disc within the electricity meter \
+// 'ElectricMeter'.
+$rect <910,350,1110,390>
+$output false
+class MeterDisc : Core::Group
+{
+  $rect <0,30,200,70>
+  inherited property Bounds = <0,0,140,14>;
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <0,0,800,15>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::MeterDisc;
+  }
+
+  // This is a move and resize rectangle effect.
+  $rect <0,70,200,110>
+  object Effects::RectEffect RectEffect
+  {
+    preset CycleDuration = 33000;
+    preset Enabled = true;
+    preset Value2 = <0,0,800,14>;
+    preset Value1 = <-660,0,140,14>;
+    preset Outlet = ^Image.Bounds;
+  }
+
+  // This class implements an endless running meter disc...
+  note legend Note
+  {
+    attr Bounds = <210,0,410,110>;
+  }
+}
+
+// The class 'LcdDisplaySmall' implements a digital display for showing system values.
+$rect <490,300,690,340>
+$output false
+class LcdDisplaySmall : Solar::LcdDisplay
+{
+  $rect <0,60,140,100>
+  inherited property Bounds = <0,0,180,40>;
+
+  $rect <20,20,160,60>
+  inherited object Digit1
+  {
+    preset Bounds = <120,0,148,40>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::LcdNumbersSmall;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit2
+  {
+    preset Bounds = <96,0,124,40>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::LcdNumbersSmall;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit3
+  {
+    preset Bounds = <72,0,100,40>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::LcdNumbersSmall;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit4
+  {
+    preset Bounds = <48,0,76,40>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::LcdNumbersSmall;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit5
+  {
+    preset Bounds = <24,0,52,40>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::LcdNumbersSmall;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Digit6
+  {
+    preset Bounds = <0,0,28,40>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::LcdNumbersSmall;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Dot
+  {
+    preset Bounds = <143,0,156,40>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::LcdDotSmall;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Extent
+  {
+    preset Bounds = <144,0,197,40>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::LcdUnitsSmall;
+  }
+}
+
+// The class 'DataDisplay' implements the simulation of a data display that writes \
+// metered values with a light-pen on the screen.
+$rect <280,150,480,190>
+$output false
+class DataDisplay : Core::Group
+{
+  $rect <10,400,210,440>
+  inherited property Bounds = <0,0,320,340>;
+
+  $rect <210,400,410,440>
+  inherited method Init()
+  {
+    Bounds.size = Background.Bitmap.FrameSize;
+  }
+
+  // The method 'AddSamples' is called to feed new data into the intraday display.
+  $rect <780,290,980,330>
+  method void AddSample( arg int32 aData )
+  {
+    var int32 x;
+    var int32 y;
+    var int32 deltaX;
+    var int32 borderY = 0;
+
+    if ( aData > MaxValue )
+      aData = MaxValue;
+    if ( aData < MinValue )
+      aData = MinValue;
+
+    SampleNumber = SampleNumber + 1;
+    if ( SampleNumber > NoOfSamples )
+      return;
+
+    deltaX = Bounds.w / NoOfSamples;
+
+    /* draw data with a new dot image */
+    y = Bounds.h - borderY;
+    x = SampleNumber * deltaX;
+
+    if ( MaxValue > 0 )
+      y =  y - (( aData - MinValue ) * ( Bounds.h - 2 * borderY ) / MaxValue );
+
+    var Views::Image img = new Views::Image;
+    img.Bitmap = Dot.Bitmap;
+    img.Bounds = Dot.Bounds;
+    img.Bounds.origin.x = x - img.Bounds.w / 2;
+    img.Bounds.origin.y = y - img.Bounds.h / 2;
+
+    Add( img, 0 );
+
+
+  }
+
+  // The property 'MaxValue' stores the upper level of the data range.
+  $rect <780,180,980,220>
+  property int32 MaxValue = 100;
+
+  // The onset method for the property 'MaxValue' changes the maximum data value.
+  $rect <780,220,980,260>
+  onset MaxValue
+  {
+    /* ensure that maximum value is positive */
+    if ( value < 1 )
+      value = 1;
+
+    pure MaxValue = value;
+  }
+
+  // The property 'MinValue' stores the lower level of the data range.
+  $rect <780,90,980,130>
+  property int32 MinValue = 0;
+
+  // The onset method for the property 'MinValue' changes the minimum data value.
+  $rect <780,130,980,170>
+  onset MinValue
+  {
+    /* ensure that minimum value is positive */
+    if ( value < 0 )
+      value = 0;
+
+    pure MinValue = value;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bitmap = SolarRes::IntradayBackground;
+    preset Bounds = <0,0,760,380>;
+    preset AutoSize = true;
+  }
+
+  // The variable 'LastX' stores the current position of the simulated pen in horizontal \
+  // direction.
+  $rect <780,340,980,380>
+  var int32 SampleNumber = 0;
+
+  // The property 'NoOfSamples' stores the number of samples that can be added to \
+  // the display.
+  $rect <780,0,980,40>
+  property int32 NoOfSamples = 10;
+
+  // The onset method for the property 'NoOfSamples' changes the maximum number of \
+  // samples.
+  $rect <780,40,980,80>
+  onset NoOfSamples
+  {
+    /* ensure that maximum value is positive */
+    if ( value < 1 )
+      value = 1;
+
+    pure NoOfSamples = value;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Dot
+  {
+    preset Visible = false;
+    preset Bitmap = SolarRes::IntradayDot;
+    preset Bounds = <0,0,15,15>;
+    preset AutoSize = true;
+  }
+
+  // The class 'DataDisplay' implements a data display that writes metered values \
+  // with small sun images on the screen.
+  // This display item is used to show the intraday energy yield of the solar inverter.
+  // The data have to be provided from outside by calling the method AddSample().
+  note legend Note
+  {
+    attr Bounds = <420,400,970,510>;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text Time5
+  {
+    preset Bounds = <624,360,664,380>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "18:00";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text Time4
+  {
+    preset Bounds = <504,360,544,380>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "15:00";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text Time3
+  {
+    preset Bounds = <384,360,424,380>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "12:00";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text Time2
+  {
+    preset Bounds = <264,360,304,380>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "9:00";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text Time1
+  {
+    preset Bounds = <144,360,184,380>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertBottom];
+    preset String = "6:00";
+    preset Font = SolarRes::DescrFont;
+    preset Color = SolarRes::DescrColor;
+    preset Visible = true;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <5,10,140,60>;
+    preset WrapText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertTop];
+    preset String = "Solar Power of Today";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+}
+
+// The class 'IntradayPanel' displays the energy yield per day by using the class \
+// 'DataDisplay'.
+$rect <30,150,230,190>
+$output false
+class IntradayPanel : Solar::Panel
+{
+  $rect <20,20,160,60>
+  inherited object CaptionText
+  {
+    preset String = "Intraday Performance";
+  }
+
+  $rect <820,10,1020,50>
+  inherited method Unlock()
+  {
+    super();
+
+    AnimationTimer.Enabled = true;
+
+  }
+
+  $rect <20,20,160,60>
+  object Solar::DataDisplay DataDisplay
+  {
+    preset Bounds = <20,90,780,470>;
+    preset MaxValue = 100;
+    preset NoOfSamples = 64;
+  }
+
+  // This is a timer object.
+  $rect <10,510,210,550>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationSlot;
+    preset Period = 25;
+  }
+
+  // This is a slot method.
+  $rect <210,510,410,550>
+  slot AnimationSlot
+  {
+    /* please note: instead of reading data from a real solar power system
+       only a few dummy data are calculated for displaying them within this 
+       solar demo application */
+
+    var int32 x = Counter;
+    var int32 y;
+
+    var float f = math_sin( (float)x * 180.0 / (float) DataDisplay.NoOfSamples );
+
+    y = (int32)( f * f * (float)DataDisplay.MaxValue * 0.9 ) + math_rand( -2, 3 );
+
+    DataDisplay.AddSample( y );
+
+    /* until all values are shown... */
+    Counter = Counter + 1;
+    if ( Counter >= DataDisplay.NoOfSamples )
+      AnimationTimer.Enabled = false;
+
+
+  }
+
+  // This is a variable.
+  $rect <410,510,610,550>
+  var int32 Counter = 0;
+
+  // The class 'IntradayPanel' displays the energy yield per day by using the class \
+  // 'Solar::DataDisplay'.
+  // As soon as this panel is unlocked, the timer driven animation provides some \
+  // random data for the data display.
+  note legend Note
+  {
+    attr Bounds = <10,560,800,640>;
+  }
+}
+
+// The class 'InfoPanel' is responsible for displaying the Welcome Message of the \
+// GUI application.
+$rect <30,100,230,140>
+$output false
+class InfoPanel : Solar::Panel
+{
+  $rect <20,20,160,60>
+  inherited object CaptionText
+  {
+    preset String = "Embedded Wizard Solar Demo";
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <30,90,770,460>;
+    preset WrapText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Welcome to Embedded Wizard!\n\nThis application demonstrates a couple of fancy analog and digital instruments and data displays as they could be used in a modern solar power application (data logger).\n\nThe application can be controlled easily by touch gestures:\nJust slide with your finger from right to left (or vice versa) in order to change the currently displayed page.\n\nFor more information about Embedded Wizard please visit http://www.embedded-wizard.de";
+    preset Font = SolarRes::TextFont;
+    preset Color = SolarRes::TextColor;
+  }
+}
+
+// This is a GUI component.
+$rect <280,400,480,440>
+$output false
+class AnalogDisplay : Core::Group
+{
+  $rect <0,180,200,220>
+  inherited property Bounds = <0,0,148,128>;
+
+  $rect <0,220,200,260>
+  inherited method UpdateViewState()
+  {
+    // Avoid Chora warnings due to unused parameters.
+    aState;
+
+    /* calculate angle of needle in the range from -38 to +38 degrees */
+    var float angle = 38.0;
+    var int32 val = CurrentValue;
+
+    /* check the limits of the display value */
+    if ( CurrentValue < MinValue )
+      val = MinValue;
+    if ( CurrentValue > MaxValue )
+      val = MaxValue;
+
+    /* ensure that the current set value and the given minimum and maximum values are valid */
+    if ( MaxValue > MinValue )
+    {
+      /* calculate the new rotation angle of the needle */
+      angle = angle - 76.0 * (float)( val - MinValue ) / (float)( MaxValue - MinValue );
+    }
+
+    /* if calculated angle is different from the current angle, let's start an animation to move the needle smooth */
+    if ( angle != needleAngle )
+    {
+      RotateNeedleEffect.Enabled = false;
+      RotateNeedleEffect.Value1  = needleAngle;
+      RotateNeedleEffect.Value2  = angle;
+      RotateNeedleEffect.Enabled = true;
+    }
+
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Back
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <0,0,148,128>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::MultimeterScale;
+  }
+
+  // This is a 2D/3D warp image view.
+  $rect <20,20,160,60>
+  object Views::WarpImage Needle
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Point4 = <66,113>;
+    preset Point3 = <73,108>;
+    preset Point2 = <18,38>;
+    preset Point1 = <11,43>;
+    preset SourceAnchor = <3,89>;
+    preset Bitmap = SolarRes::MultimeterNeedle;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Front
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <0,0,148,128>;
+    preset AutoSize = true;
+    preset Bitmap = SolarRes::MultimeterChassis;
+  }
+
+  // This is a 'float' change effect.
+  $rect <0,270,200,310>
+  object Effects::FloatEffect RotateNeedleEffect
+  {
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1000;
+    preset Outlet = ^needleAngle;
+  }
+
+  // This is an internal property to drive the smooth needle animation.
+  $rect <0,310,200,350>
+  property float needleAngle = 38.0;
+
+  $rect <0,350,200,390>
+  onset needleAngle
+  {
+    /* limit the given value to the range between MinValue and MaxValue */
+    if ( value > 38.0 )
+      value = 38.0;
+    if ( value < -38.0 )
+      value = -38.0;
+
+    /* check if the given value differs from the current value */
+    if ( pure needleAngle == value )
+      return;
+
+    /* store the new value */
+    pure needleAngle = value;
+
+    /* rorate the needle to the given angle */
+    Needle.RotateAndScale( <70,110>, needleAngle, 1.0, 1.0 );
+
+
+
+  }
+
+  // The property 'CurrentValue' stores the momentary value of the widget. The value \
+  // is limited automatically to the range from @MinValue to @MaxValue.
+  $rect <200,0,400,40>
+  property int32 CurrentValue = 0;
+
+  $rect <200,40,400,80>
+  onset CurrentValue
+  {
+    /* check if the given value differs from the current value */
+    if ( pure CurrentValue == value )
+      return;
+
+    /* store the new value */
+    pure CurrentValue = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The property 'MinValue' defines the lower boundary of the widgets value range.
+  $rect <400,0,600,40>
+  property int32 MinValue = 0;
+
+  $rect <400,40,600,80>
+  onset MinValue
+  {
+    /* check if the given value differs from the current value */
+    if ( pure MinValue == value )
+      return;
+
+    /* store the new value */
+    pure MinValue = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The property 'MaxValue' defines the upper boundary of the widgets value range.
+  $rect <600,0,800,40>
+  property int32 MaxValue = 100;
+
+  $rect <600,40,800,80>
+  onset MaxValue
+  {
+    /* check if the given value differs from the current value */
+    if ( pure MaxValue == value )
+      return;
+
+    /* store the new value */
+    pure MaxValue = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ScaleTextUnit
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <42,55,102,77>;
+    preset String = "xy";
+    preset Font = Resources::FontMedium;
+    preset Color = #000000FF;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ScaleText0
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <13,48,41,61>;
+    preset String = "0";
+    preset Font = SolarRes::ScaleFont;
+    preset Color = #000000FF;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ScaleText1
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <34,36,62,49>;
+    preset String = "1";
+    preset Font = SolarRes::ScaleFont;
+    preset Color = #000000FF;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ScaleText2
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <57,31,85,44>;
+    preset String = "2";
+    preset Font = SolarRes::ScaleFont;
+    preset Color = #000000FF;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ScaleText3
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <81,36,109,49>;
+    preset String = "3";
+    preset Font = SolarRes::ScaleFont;
+    preset Color = #000000FF;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ScaleText4
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <101,48,129,61>;
+    preset String = "4";
+    preset Font = SolarRes::ScaleFont;
+    preset Color = #000000FF;
+  }
+
+  // The property 'TextUnit' represents the unit of the analog meter. The string \
+  // is displayed at the center of the scale to show the dimension unit of the gauge, \
+  // for example: 'mV', 'mA', 'prm', '°C', 'mph", ...
+  $rect <402,90,602,130>
+  property string TextUnit = "";
+
+  $rect <402,130,602,170>
+  onset TextUnit
+  {
+    pure TextUnit = value;
+    ScaleTextUnit.String = value;
+  }
+
+  // The property 'TextScale0' stores the string of the measured value, shown at \
+  // the scale position 0.
+  $rect <400,180,600,220>
+  property string TextScale0 = "";
+
+  $rect <402,220,602,260>
+  onset TextScale0
+  {
+    pure TextScale0 = value;
+    ScaleText0.String = value;
+  }
+
+  // The property 'TextScale1' stores the string of the measured value, shown at \
+  // the scale position 1.
+  $rect <402,270,602,310>
+  property string TextScale1 = "";
+
+  $rect <402,310,602,350>
+  onset TextScale1
+  {
+    pure TextScale1 = value;
+    ScaleText1.String = value;
+  }
+
+  // The property 'TextScale2' stores the string of the measured value, shown at \
+  // the scale position 2.
+  $rect <402,360,602,400>
+  property string TextScale2 = "";
+
+  $rect <402,400,602,440>
+  onset TextScale2
+  {
+    pure TextScale2 = value;
+    ScaleText2.String = value;
+  }
+
+  // The property 'TextScale3' stores the string of the measured value, shown at \
+  // the scale position 3.
+  $rect <612,180,812,220>
+  property string TextScale3 = "";
+
+  $rect <612,220,812,260>
+  onset TextScale3
+  {
+    pure TextScale3 = value;
+    ScaleText3.String = value;
+  }
+
+  // The property 'TextScale4' stores the string of the measured value, shown at \
+  // the scale position 4.
+  $rect <612,270,812,310>
+  property string TextScale4 = "";
+
+  $rect <612,310,812,350>
+  onset TextScale4
+  {
+    pure TextScale4 = value;
+    ScaleText4.String = value;
+  }
+
+  // This slot method will receive a signal, if the value of the property assigned \
+  // to @Outlet has been changed by another widget or by the application logic. In \
+  // response to this notification, the widget will update itself.
+  $rect <200,180,400,220>
+  slot outletSlot
+  {
+    /* update the current state of the widget */
+    if ( Outlet != null )
+      CurrentValue = Outlet^;
+  }
+
+  $rect <200,130,400,170>
+  onset Outlet
+  {
+    /* check if the new outlet differs from the currently used outlet */
+    if ( pure Outlet == value )
+      return;
+
+    /* detach from the previous outlet */
+    if ( pure Outlet != null )
+      detachobserver outletSlot, pure Outlet;
+
+    /* store the new outlet */
+    pure Outlet = value;
+
+    /* ... and attach to the new one */
+    if ( value != null )
+      attachobserver outletSlot, value;
+
+    /* finally, update the current state of the widget by posting a signal to the outlet slot */
+    if ( value != null )
+      postsignal outletSlot;
+  }
+
+  // The property 'Outlet' provides an interface for the Model-View-Controller (MVC). \
+  // In the MVC, the widgets (views) and the application logic (model) are always \
+  // kept apart. An automatism behind this model ensures, that widgets are notified \
+  // automatically as soon as the affected model has changed its state. On the other \
+  // hand, user interactions on a widget cause the affected model to execute the \
+  // application logic. Usually, a model is a simple Chora object containg several \
+  // properties and the implementation of onget/onset method.
+  // By assigning a property reference, Outlet establishes a connection between the \
+  // widget and the model object, the affected property belongs to. After this, the \
+  // widget is able to read and modify the referred property in response to the user \
+  // interactions. It is also able to adapt the widget appearance, if the value of \
+  // the referred property has been modified by another widget or by the application \
+  // logic itself.
+  $rect <200,90,400,130>
+  property ^int32 Outlet = null;
+
+  // The class 'AnalogDisplay' implements a widget to illustrate a value by using \
+  // a rotating needle. 
+  // The property 'CurrentValue' represents the momentary value of the gauge and \
+  // corresponds to the position of the needle. The supported value range of the \
+  // gauge can be defined by setting the properties 'MinValue' and 'MaxValue'.
+  // Optinally, the widget displays a unit text in the center of the scale by using \
+  // the property 'TextUnit' and it can display the scaling by using the properties \
+  // 'TextScale0'...'TextScale5'.
+  // A gauge can be connected with an Int32 'Outlet' property to show the current \
+  // value of this property.
+  note legend Note
+  {
+    attr Bounds = <10,450,720,630>;
+  }
+}
+
+// The class 'PanelCarousel' arranges the different solar demo panels horizontally \
+// and manages them as an endless carousel.
+$rect <280,50,480,90>
+$output false
+class PanelCarousel : Core::Group
+{
+  $rect <820,10,1020,50>
+  inherited property Bounds = <0,0,800,480>;
+
+  $rect <820,60,1020,100>
+  inherited method Init()
+  {
+    /* create the first panel at startup */
+    ArrangeCarousel( new Solar::InfoPanel );
+
+  }
+
+  // The variable 'CenterPanel' refers to the currently visible panel.
+  $rect <1020,180,1220,220>
+  var Solar::Panel CenterPanel = null;
+
+  // The variable 'LeftPanel' refers to the left neighbour of the currently visible \
+  // panel.
+  $rect <820,180,1020,220>
+  var Solar::Panel LeftPanel = null;
+
+  // The variable 'RightPanel' refers to the right neighbour of the currently visible \
+  // panel.
+  $rect <1220,180,1420,220>
+  var Solar::Panel RightPanel = null;
+
+  // This is a slide gesture handler.
+  $rect <20,20,160,60>
+  object Core::SlideTouchHandler SlideTouchHandler
+  {
+    preset Bounds = <0,0,800,480>;
+    preset OnEnd = onEndAnimation;
+    preset SnapNext = <800,0>;
+    preset SlideVert = false;
+    preset ResetSpace = 100;
+  }
+
+  // This is an outline view to group other views together.
+  $rect <20,20,160,60>
+  object Core::Outline Outline
+  {
+    preset Bounds = <0,0,800,480>;
+    preset SlideHandler = SlideTouchHandler;
+  }
+
+  // This is a method.
+  $rect <820,130,1020,170>
+  method void ArrangeCarousel( arg Solar::Panel aCenterPanel )
+  {
+    /* remove all current panels */
+    if ( LeftPanel != null )
+    {
+      Remove( LeftPanel );
+      LeftPanel = null;
+    }
+    if ( CenterPanel != null )
+    {
+      Remove( CenterPanel );
+      CenterPanel = null;
+    }
+    if ( RightPanel != null )
+    {
+      Remove( RightPanel );
+      RightPanel = null;
+    }
+
+    /* create new left/right neighbours depending on type of center panel */
+    if (( Solar::InfoPanel)aCenterPanel != null )
+    {
+      LeftPanel  = new Solar::YearPanel;
+      RightPanel = new Solar::DigitalPanel;
+    }
+    else if (( Solar::DigitalPanel)aCenterPanel != null )
+    {
+      LeftPanel  = new Solar::InfoPanel;
+      RightPanel = new Solar::AnalogPanel;
+    }
+    else if (( Solar::AnalogPanel)aCenterPanel != null )
+    {
+      LeftPanel  = new Solar::DigitalPanel;
+      RightPanel = new Solar::PowerPanel;
+    }
+    else if (( Solar::PowerPanel)aCenterPanel != null )
+    {
+      LeftPanel  = new Solar::AnalogPanel;
+      RightPanel = new Solar::IntradayPanel;
+    }
+    else if (( Solar::IntradayPanel)aCenterPanel != null )
+    {
+      LeftPanel  = new Solar::PowerPanel;
+      RightPanel = new Solar::MonthPanel;
+    }
+    else if (( Solar::MonthPanel)aCenterPanel != null )
+    {
+      LeftPanel  = new Solar::IntradayPanel;
+      RightPanel = new Solar::YearPanel;
+    }
+    else if (( Solar::YearPanel)aCenterPanel != null )
+    {
+      LeftPanel  = new Solar::MonthPanel;
+      RightPanel = new Solar::InfoPanel;
+    }
+
+    /* store the center panel */
+    CenterPanel = aCenterPanel;
+
+    /* now arrange the three panels and reset the outline */
+    LeftPanel.Bounds = <-800,0,0,480>;
+    CenterPanel.Bounds = <0,0,800,480>;
+    RightPanel.Bounds = <800,0,1600,480>;
+    Outline.ScrollOffset = <0,0>;
+
+    /* set all three panels to embedded in order to arrange them by the outline box */
+    LeftPanel.Embedded = true;
+    CenterPanel.Embedded = true;
+    RightPanel.Embedded = true;
+
+    /* add the three panels to this UI component */
+    Add( LeftPanel, 0 );
+    Add( CenterPanel, 0 );
+    Add( RightPanel, 0 );
+
+    /* start the build-up animation of the panel (if any) */
+    CenterPanel.Unlock();
+
+  }
+
+  // Slot method to react on the end of a slide animation.
+  $rect <820,240,1020,280>
+  slot onEndAnimation
+  {
+    /* choose new center panel according current outline position */
+    if ( Outline.ScrollOffset.x < -400 )
+      ArrangeCarousel( RightPanel );
+    if ( Outline.ScrollOffset.x > 400 )
+      ArrangeCarousel( LeftPanel );
+
+
+
+  }
+
+  // This is a move point effect used by the outline box to get a smooth scrolling \
+  // between the screens.
+  $rect <820,300,1020,340>
+  object Effects::PointEffect PointEffect
+  {
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset CycleDuration = 500;
+  }
+
+  // The class 'PanelCarousel' manages the different panels of the solar demo. It \
+  // arranges the panels in a horizontally order, so that the user can navigate through \
+  // the pages by a left/right key input or by a horizontal slide gesture.
+  // 
+  // The method ArrangeCarousel() creates the left and the right neighbor of the \
+  // current center panel. This makes it possible, that the user can slide to the \
+  // left or to the right side and the panels will follow the finger. The three panels \
+  // are managed by an outline box and a slide touch handler. After the slide animation \
+  // has finished, the left/right neighbors are created again. By using this approach, \
+  // it is possible to implement an endless list of items (carousel).
+  note legend Note
+  {
+    attr Bounds = <0,500,800,690>;
+  }
+
+  // How to manage scrollable content within an outline box?
+  // 
+  // https://doc.embedded-wizard.de/outline-box
+  note legend Note5
+  {
+    attr Bounds = <820,500,1200,580>;
+  }
+
+  // This is a key press handler.
+  $rect <820,350,1020,390>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = KeySlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+  }
+
+  // This is a slot method.
+  $rect <820,390,1020,430>
+  slot KeySlot
+  {
+    /* start the transition with the desired direction */
+    if ( KeyHandler.Code == Core::KeyCode.Left )
+      Outline.EnsureVisible( LeftPanel, true, PointEffect, onEndAnimation );
+    else if ( KeyHandler.Code == Core::KeyCode.Right )
+      Outline.EnsureVisible( RightPanel, true, PointEffect, onEndAnimation );
+
+  }
+
+  // Slot method to switch to the next panel during the auto demo.
+  $rect <820,440,1020,480>
+  slot OnTriggerAutoDemo
+  {
+    /* start animation to show the right panel */
+    Outline.EnsureVisible( RightPanel, true, PointEffect, onEndAnimation );
+
+  }
+}
+
+// This class implements the interface between the GUI application and the device.
+$rect <30,560,230,600>
+$output false
+class DeviceClass
+{
+  // The property 'SolarPower' represents the solar power in watt.
+  $rect <220,60,420,100>
+  property int32 SolarPower = 0;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <20,60,220,100>
+  $output true
+  method void UpdateSolarPower( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure SolarPower )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure SolarPower = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^SolarPower;
+    }
+  }
+
+  // Data interface of the solar inverter
+  note group Note1
+  {
+    attr Bounds = <10,10,440,420>;
+  }
+
+  // The property 'SolarVoltage' represents the solar voltage in volt.
+  $rect <220,100,420,140>
+  property int32 SolarVoltage = 0;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <20,100,220,140>
+  $output true
+  method void UpdateSolarVoltage( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure SolarVoltage )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure SolarVoltage = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^SolarVoltage;
+    }
+  }
+
+  // The property 'SolarCurrent' represents the solar current in milliampere.
+  $rect <220,140,420,180>
+  property int32 SolarCurrent = 0;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <20,140,220,180>
+  $output true
+  method void UpdateSolarCurrent( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure SolarCurrent )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure SolarCurrent = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^SolarCurrent;
+    }
+  }
+
+  // The property 'InverterPower' represents the resulting power of the solar inverter \
+  // in watt.
+  $rect <220,190,420,230>
+  property int32 InverterPower = 0;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <20,190,220,230>
+  $output true
+  method void UpdateInverterPower( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure InverterPower )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure InverterPower = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^InverterPower;
+    }
+  }
+
+  // The property 'InverterVoltage' represents the solar inverter voltage in volt.
+  $rect <220,230,420,270>
+  property int32 InverterVoltage = 0;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <20,230,220,270>
+  $output true
+  method void UpdateInverterVoltage( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure InverterVoltage )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure InverterVoltage = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^InverterVoltage;
+    }
+  }
+
+  // The property 'InverterCurrent' represents the solar inverter current in milliampere.
+  $rect <220,270,420,310>
+  property int32 InverterCurrent = 0;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <20,270,220,310>
+  $output true
+  method void UpdateInverterCurrent( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure InverterCurrent )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure InverterCurrent = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^InverterCurrent;
+    }
+  }
+
+  // The property 'Runtime' represents the operating hours of the solar inverter.
+  $rect <220,320,420,360>
+  property int32 Runtime = 1854357;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <20,320,220,360>
+  $output true
+  method void UpdateRuntime( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure Runtime )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure Runtime = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^Runtime;
+    }
+  }
+
+  // The property 'EnergyYield' represents the total energy yield in kWh of the solar \
+  // inverter.
+  $rect <220,370,420,410>
+  property int32 EnergyYield = 2384250;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <20,370,220,410>
+  $output true
+  method void UpdateEnergyYield( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure EnergyYield )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure EnergyYield = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^EnergyYield;
+    }
+  }
+
+  // This is a timer object.
+  $rect <460,60,660,100>
+  object Core::Timer SimulationTimer
+  {
+    preset OnTrigger = SimulationSlot;
+    preset Period = 500;
+    preset Enabled = true;
+  }
+
+  // This is a slot method.
+  $rect <660,60,860,100>
+  slot SimulationSlot
+  {
+    /* create some solar voltage and current values */
+    var int32 u = SolarVoltage + math_rand( -7, 8 );
+    var int32 i = SolarCurrent + math_rand( -199, 200 );
+    var int32 p;
+
+    /* limit voltage between 300V and 400V */
+    if ( u < 300 )
+      u = 300;
+    if ( u > 400 )
+      u = 400;
+
+    /* limit current between 5A and 6A */
+    if ( i < 5000 )
+      i = 5000;
+    if ( i > 6000 )
+      i = 6000;
+
+    /* calculate power in W */
+    p = u * i / 1000;
+
+    /* update solar values */
+    UpdateSolarVoltage( u );
+    UpdateSolarCurrent( i );
+    UpdateSolarPower( p ); 
+
+    /* assume the inverter has 95% efficiency */
+    p = p * 95 / 100;
+    u = 230;
+    i = p * 1000 / u;
+
+    /* update inverter values */
+    UpdateInverterVoltage( u );
+    UpdateInverterCurrent( i );
+    UpdateInverterPower( p ); 
+
+    /* update runtime and yield */
+    Counter = Counter + 1;
+    if (( Counter % 8 ) == 0 )
+      UpdateEnergyYield( EnergyYield + 1 );
+    if (( Counter % 10 ) == 0 )
+      UpdateRuntime( Runtime + 1 );
+
+
+  }
+
+  // This is a variable.
+  $rect <660,100,860,140>
+  var int32 Counter = 0;
+
+  // Simulation of solar inverter data
+  note group Note2
+  {
+    attr Bounds = <450,10,870,150>;
+  }
+
+  // This is the data interface class of the solar inverter device.
+  // Within a real system the underlying device driver will update the different \
+  // properties by calling the corresponding 'Update' methods.
+  // Within this demo application a timer driven simulation animates the properties.
+  note legend Note
+  {
+    attr Bounds = <450,160,870,300>;
+  }
+
+  // How to integrate your UI application with a real device?
+  // 
+  // https://doc.embedded-wizard.de/integrating-with-the-device
+  // https://doc.embedded-wizard.de/device-class-and-device-driver
+  note legend Note5
+  {
+    attr Bounds = <450,310,870,420>;
+  }
+}
+
+// This object represents an instance of the device interface implemented in the \
+// class Solar::DeviceClass.
+$rect <30,600,230,640>
+autoobject Solar::DeviceClass Device;
+
+// The class 'DeviceClass' implements the interface between the GUI application and \
+// the solar inverter device.
+// The object 'Device' represents the instance of the device interface. It exists \
+// for convenience. As an autoobject it is globaly available for all GUI components \
+// within the project.
+note legend Note
+{
+  attr Bounds = <10,670,500,790>;
+}
+
+// Solar Demo Panels
+note group Note1
+{
+  attr Bounds = <10,10,250,510>;
+}
+
+// Solar Demo Widgets
+note group Note2
+{
+  attr Bounds = <260,120,1130,510>;
+}
+
+// Panel Carousel
+note group Note3
+{
+  attr Bounds = <260,10,500,110>;
+}
+
+// Device Class
+note group Note4
+{
+  attr Bounds = <10,520,250,660>;
+}
+
+// The class 'PanelCarousel' arranges the different solar demo panels horizontally \
+// and manages them as an endless carousel.
+// The user can slide through the different panels by left/right key or by a simple \
+// slide touch gesture.
+note legend Note5
+{
+  attr Bounds = <510,10,950,110>;
+}
+
+// A set of digital and analog instruments are implemented as independent UI components \
+// (widgets) with their own specific look and feel.
+// The widgets can be configured by a set of properties and they are used to build \
+// up the different solar demo panels.
+note legend Note6
+{
+  attr Bounds = <600,520,1130,630>;
+}

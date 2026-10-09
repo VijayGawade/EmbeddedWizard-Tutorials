@@ -1,0 +1,115 @@
+﻿$version 15.00
+
+// Mosaic Framework
+note group Note1
+{
+  attr Bounds = <20,20,240,370>;
+}
+
+// Profile Configuration
+note group Note2
+{
+  attr Bounds = <250,20,470,120>;
+}
+
+// Languages
+note group Note3
+{
+  attr Bounds = <480,20,700,120>;
+}
+
+// Project Units
+note group Note5
+{
+  attr Bounds = <250,130,700,220>;
+}
+
+// Welcome to Embedded Wizard!
+// 
+// This project complements the 'Quick Tour' documentation article https://doc.embedded-wizard.de/quick-tour
+// 
+// Its intention is to give you the very first view on how to work with Embedded \
+// Wizard.
+note legend Note6
+{
+  attr Bounds = <250,230,700,370>;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,70,230,110>
+unit Core
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,110,230,150>
+unit Resources
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,150,230,190>
+unit Graphics
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,190,230,230>
+unit Effects
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,230,230,270>
+unit Views
+{
+  attr Directory = $Mosaic;
+}
+
+$rect <30,270,230,310>
+unit WidgetSet
+{
+  attr Directory = $Mosaic\;
+}
+
+$rect <30,310,230,350>
+unit Templates
+{
+  attr Directory = $Mosaic\;
+}
+
+// The 'default' Language. Each project has to contain at least one language brick \
+// called 'Default'
+$rect <490,70,690,110>
+language Default;
+
+// This unit is intended to contain the application class and other GUI components.
+$rect <260,170,460,210>
+unit Application
+{
+  attr Directory = .\;
+}
+
+// This is a profile member for the project. This profile controls the code generation \
+// for the target system.
+$rect <260,70,460,110>
+profile Win32 : Windows.Software.RGBA8888
+{
+  attr ScreenSize = <480,272>;
+  attr Optimization = High;
+  attr ApplicationClass = Application::Application;
+  attr CleanOutputDirectories = false;
+  attr Verbose = false;
+  attr ScreenOrientation = Normal;
+  attr FontConversion = Windows;
+  attr OutputFileNameExtension = c;
+  attr StorageOfResources = Code;
+  attr StorageOfConstants = Code;
+
+  $rect <10,10,154,50>
+  macro Author = "Dipl. Ing. Paul Banach and Dipl. Ing. Manfred Schweyer, Copyright (C) TARA Systems GmbH";
+}

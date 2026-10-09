@@ -1,0 +1,1 @@
+The puzzle game sample application implements a kind of photo puzzle. It demonstrates the usage of images and bitmap frames, key handler and touch handler.

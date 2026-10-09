@@ -1,0 +1,1 @@
+The sample application 'WidgetsDemo' presents different sets of widgets with individual styles, based on the Mosaic widget classes. The example demonstrates the customization and usage of widgets.

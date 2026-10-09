@@ -1,0 +1,23 @@
+Embedded Wizard post processing (Embedded Wizard version: 15.07)
+PowerShell version:  5.1.26100.9549
+modifying MSVC project file ...
+
+modifying MSVC project filter file ...
+Post process powershell script finished.
+Include                                                
+-------                                                
+..\..\..\PlatformPackage\RTE\libewrte-msvc.lib         
+..\..\..\PlatformPackage\RTE\libewrte-msvc-x64.lib     
+..\..\..\PlatformPackage\RTE\ewextrte.c                
+..\..\..\PlatformPackage\RGBA8888\libewgfx-msvc.lib    
+..\..\..\PlatformPackage\RGBA8888\libewgfx-msvc-x64.lib
+..\..\GeneratedCode\Application.c                      
+..\..\GeneratedCode\Core.c                             
+..\..\GeneratedCode\Effects.c                          
+..\..\GeneratedCode\Graphics.c                         
+..\..\GeneratedCode\Resources.c                        
+..\..\GeneratedCode\Templates.c                        
+..\..\GeneratedCode\Views.c                            
+..\..\GeneratedCode\WidgetSet.c                        
+
+

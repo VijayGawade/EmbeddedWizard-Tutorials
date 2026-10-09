@@ -1,0 +1,306 @@
+﻿$version 15.00
+
+$rect <220,100,420,140>
+$variant Win32_480x272
+vresource MediumFont_480x272 : Climate::MediumFont
+{
+  attr FontName = Roboto;
+  attr Height = 16;
+}
+
+$rect <220,140,420,180>
+$variant Win32_480x272
+vresource LargeFont_480x272 : Climate::LargeFont
+{
+  attr Height = 36;
+}
+
+$rect <220,60,420,100>
+$variant Win32_480x272
+vresource SmallFont_480x272 : Climate::SmallFont
+{
+  attr FontName = Roboto;
+  attr Height = 12;
+}
+
+$rect <20,60,220,100>
+$variant Win32_480x272
+vconst Spacing_480x272 : Climate::Spacing = <12,12>;
+
+$rect <20,100,220,140>
+$variant Win32_480x272
+vconst MenuItemSize_480x272 : Climate::MenuItemSize = <144,53>;
+
+$rect <20,140,220,180>
+$variant Win32_480x272
+vconst DataItemSize_480x272 : Climate::DataItemSize = <156,53>;
+
+$rect <20,180,220,220>
+$variant Win32_480x272
+vconst DataItemSizeLarge_480x272 : Climate::DataItemSizeLarge = <312,53>;
+
+$rect <20,220,220,260>
+$variant Win32_480x272
+vconst ChartStopPos_480x272 : Climate::ChartStopPos = <156,65,480,272>;
+
+$rect <20,260,220,300>
+$variant Win32_480x272
+vconst ChartStartPos_480x272 : Climate::ChartStartPos = <0,0,480,207>;
+
+$rect <20,300,220,340>
+$variant Win32_480x272
+vconst StartButtonPos_480x272 : Climate::StartButtonPos = <12,195,156,272>;
+
+$rect <20,340,220,380>
+$variant Win32_480x272
+vconst StatusBarPos_480x272 : Climate::StatusBarPos = <156,207,468,260>;
+
+$rect <220,200,420,240>
+$variant Win32_480x272
+vresource Edge_480x272 : Climate::Edge
+{
+  attr FileName = .\Res\Edge_480x272.png;
+}
+
+$rect <220,240,420,280>
+$variant Win32_480x272
+vresource Wiper_480x272 : Climate::Wiper
+{
+  attr FrameSize = <60,12>;
+  attr FileName = .\Res\Wiper_480x272.png;
+}
+
+$rect <670,100,870,140>
+$variant Win32_320x240
+vresource MediumFont_320x240 : Climate::MediumFont
+{
+  attr FontName = Roboto;
+  attr Height = 12;
+}
+
+$rect <670,140,870,180>
+$variant Win32_320x240
+vresource LargeFont_320x240 : Climate::LargeFont
+{
+  attr Height = 32;
+}
+
+$rect <670,60,870,100>
+$variant Win32_320x240
+vresource SmallFont_320x240 : Climate::SmallFont
+{
+  attr FontName = Roboto;
+  attr Height = 12;
+}
+
+$rect <470,60,670,100>
+$variant Win32_320x240
+vconst Spacing_320x240 : Climate::Spacing = <8,12>;
+
+$rect <470,100,670,140>
+$variant Win32_320x240
+vconst MenuItemSize_320x240 : Climate::MenuItemSize = <96,45>;
+
+$rect <470,140,670,180>
+$variant Win32_320x240
+vconst DataItemSize_320x240 : Climate::DataItemSize = <104,45>;
+
+$rect <470,180,670,220>
+$variant Win32_320x240
+vconst DataItemSizeLarge_320x240 : Climate::DataItemSizeLarge = <208,45>;
+
+$rect <470,220,670,260>
+$variant Win32_320x240
+vconst ChartStopPos_320x240 : Climate::ChartStopPos = <104,57,320,240>;
+
+$rect <470,260,670,300>
+$variant Win32_320x240
+vconst ChartStartPos_320x240 : Climate::ChartStartPos = <0,0,320,183>;
+
+$rect <470,300,670,340>
+$variant Win32_320x240
+vconst StartButtonPos_320x240 : Climate::StartButtonPos = <8,171,104,240>;
+
+$rect <470,340,670,380>
+$variant Win32_320x240
+vconst StatusBarPos_320x240 : Climate::StatusBarPos = <104,183,312,228>;
+
+$rect <670,200,870,240>
+$variant Win32_320x240
+vresource Edge_320x240 : Climate::Edge
+{
+  attr FileName = .\Res\Edge_480x272.png;
+}
+
+$rect <670,240,870,280>
+$variant Win32_320x240
+vresource Wiper_320x240 : Climate::Wiper
+{
+  attr FrameSize = <60,12>;
+  attr FileName = .\Res\Wiper_480x272.png;
+}
+
+$rect <20,380,220,420>
+$variant Win32_480x272
+vconst SliderSize_480x272 : Climate::SliderSize = <341,53>;
+
+$rect <470,380,670,420>
+$variant Win32_320x240
+vconst SliderSize_320x240 : Climate::SliderSize = <227,45>;
+
+$rect <1120,100,1320,140>
+$variant Win32_1280x720
+vresource MediumFont_1280x720 : Climate::MediumFont
+{
+  attr FontName = Roboto Light;
+  attr Height = 46;
+}
+
+$rect <1120,140,1320,180>
+$variant Win32_1280x720
+vresource LargeFont_1280x720 : Climate::LargeFont
+{
+  attr Height = 96;
+}
+
+$rect <1120,60,1320,100>
+$variant Win32_1280x720
+vresource SmallFont_1280x720 : Climate::SmallFont
+{
+  attr FontName = Roboto Light;
+  attr Height = 27;
+}
+
+$rect <920,60,1120,100>
+$variant Win32_1280x720
+vconst Spacing_1280x720 : Climate::Spacing = <32,30>;
+
+$rect <920,100,1120,140>
+$variant Win32_1280x720
+vconst MenuItemSize_1280x720 : Climate::MenuItemSize = <384,142>;
+
+$rect <920,140,1120,180>
+$variant Win32_1280x720
+vconst DataItemSize_1280x720 : Climate::DataItemSize = <416,142>;
+
+$rect <920,180,1120,220>
+$variant Win32_1280x720
+vconst DataItemSizeLarge_1280x720 : Climate::DataItemSizeLarge = <832,142>;
+
+$rect <920,220,1120,260>
+$variant Win32_1280x720
+vconst ChartStopPos_1280x720 : Climate::ChartStopPos = <416,172,1280,720>;
+
+$rect <920,260,1120,300>
+$variant Win32_1280x720
+vconst ChartStartPos_1280x720 : Climate::ChartStartPos = <0,0,1280,547>;
+
+$rect <920,300,1120,340>
+$variant Win32_1280x720
+vconst StartButtonPos_1280x720 : Climate::StartButtonPos = <32,517,416,720>;
+
+$rect <920,340,1120,380>
+$variant Win32_1280x720
+vconst StatusBarPos_1280x720 : Climate::StatusBarPos = <416,547,1248,690>;
+
+$rect <1120,200,1320,240>
+$variant Win32_1280x720
+vresource Edge_1280x720 : Climate::Edge
+{
+  attr FileName = .\Res\Edge.png;
+}
+
+$rect <1120,240,1320,280>
+$variant Win32_1280x720
+vresource Wiper_1280x720 : Climate::Wiper
+{
+  attr FrameSize = <60,12>;
+  attr FileName = .\Res\Wiper.png;
+}
+
+$rect <920,380,1120,420>
+$variant Win32_1280x720
+vconst SliderSize_1280x720 : Climate::SliderSize = <908,142>;
+
+// Constant and Resource Variants for 480x272
+note group Note
+{
+  attr Bounds = <0,10,440,440>;
+}
+
+// Constant and Resource Variants for 320x240
+note group Note1
+{
+  attr Bounds = <450,10,890,440>;
+}
+
+// Constant and Resource Variants for 1280x720
+note group Note2
+{
+  attr Bounds = <900,10,1340,440>;
+}
+
+// These are variants of the font and bitmap resources to match the screen size of \
+// 480x272 pixel. 
+// 
+// The variants of the constants are necessary to adapt the layout of the climate \
+// cabinet within a screen of 480x272 pixel.
+// 
+// As soon as the variant condition is fulfilled, these variants are used within \
+// the application.
+note legend Note5
+{
+  attr Bounds = <0,510,440,670>;
+}
+
+note arrow Note10
+{
+  attr Point1 = <220,440>;
+  attr Point2 = <220,510>;
+}
+
+// How to manage project variants?
+// 
+// https://doc.embedded-wizard.de/managing-project-variants
+note legend Note9
+{
+  attr Bounds = <0,680,440,750>;
+}
+
+// These are variants of the font and bitmap resources to match the screen size of \
+// 320x240 pixel. 
+// 
+// The variants of the constants are necessary to adapt the layout of the climate \
+// cabinet within a screen of 320x240 pixel.
+// 
+// As soon as the variant condition is fulfilled, these variants are used within \
+// the application.
+note legend Note6
+{
+  attr Bounds = <450,510,890,670>;
+}
+
+note arrow Note11
+{
+  attr Point1 = <670,440>;
+  attr Point2 = <670,510>;
+}
+
+// These are variants of the font and bitmap resources to match the screen size of \
+// 1280x720 pixel. 
+// 
+// The variants of the constants are necessary to adapt the layout of the climate \
+// cabinet within a screen of 1280x720 pixel.
+// 
+// As soon as the variant condition is fulfilled, these variants are used within \
+// the application.
+note legend Note7
+{
+  attr Bounds = <900,510,1340,670>;
+}
+
+note arrow Note12
+{
+  attr Point1 = <1120,440>;
+  attr Point2 = <1120,510>;
+}

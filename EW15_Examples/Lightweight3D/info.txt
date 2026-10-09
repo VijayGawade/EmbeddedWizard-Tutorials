@@ -1,0 +1,1 @@
+This demo shows the feature 'Lightweight 3D' of Embedded Wizard. It contains an attractive image flow demo, a rotating clock, a world clock carousel and a menu with mirror effects.

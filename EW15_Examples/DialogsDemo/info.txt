@@ -1,0 +1,1 @@
+The 'DialogsDemo' sample application shows the implementation of a GUI application containing multiple dialogs (multiple screens). At the runtime the user can navigate between the dialogs forth and back.

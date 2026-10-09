@@ -1,0 +1,1036 @@
+﻿$version 15.00
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,270,230,310>
+$output false
+resource Resources::Bitmap Pic1
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic1.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,310,230,350>
+$output false
+resource Resources::Bitmap Pic2
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic2.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,350,230,390>
+$output false
+resource Resources::Bitmap Pic3
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic3.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,390,230,430>
+$output false
+resource Resources::Bitmap Pic4
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic4.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,430,230,470>
+$output false
+resource Resources::Bitmap Pic5
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic5.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,470,230,510>
+$output false
+resource Resources::Bitmap Pic6
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic6.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,510,230,550>
+$output false
+resource Resources::Bitmap Pic7
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic7.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,550,230,590>
+$output false
+resource Resources::Bitmap Pic8
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic8.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,590,230,630>
+$output false
+resource Resources::Bitmap Pic9
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic9.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains one of the images used in the 'ImageFlow'
+$rect <30,630,230,670>
+$output false
+resource Resources::Bitmap Pic10
+{
+  attr bitmapfile FileName = .\ImageFlowPics\Pic10.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This UI component implements a simple image flow animation.
+$rect <30,50,230,90>
+$output false
+class ImageFlow : Core::Group
+{
+  $rect <10,630,200,670>
+  inherited property Bounds = <0,0,800,600>;
+
+  $rect <10,990,200,1030>
+  inherited method UpdateLayout()
+  {
+    aSize;
+
+    // Update the image arrangement if screen size is changed
+    Transition( 0.0 );
+
+    // ... also update the mirrors (if any)
+    idlesignal UpdateMirrors;
+  }
+
+  $rect <20,20,160,60>
+  inherited property Focus = BackButton;
+
+  $rect <10,890,200,930>
+  array Views::WarpImage Images[ 9 ] =
+  (
+    Default[0] = ImageL4;
+    Default[1] = ImageL3;
+    Default[2] = ImageL2;
+    Default[3] = ImageL1;
+    Default[4] = ImageC;
+    Default[5] = ImageR1;
+    Default[6] = ImageR2;
+    Default[7] = ImageR3;
+    Default[8] = ImageR4;
+  );
+
+  $rect <10,930,200,970>
+  array Views::WarpImage Mirrors[ 9 ] =
+  (
+    Default[0] = Mirror1;
+    Default[1] = Mirror2;
+    Default[2] = Mirror3;
+    Default[3] = Mirror4;
+    Default[4] = Mirror5;
+    Default[5] = Mirror6;
+    Default[6] = Mirror7;
+    Default[7] = Mirror8;
+    Default[8] = Mirror9;
+  );
+
+  // This effect drives the scroll animation. Durring the animation the effect invokes \
+  // the methods @onAnimate and @onFinished.
+  $rect <10,830,200,870>
+  object Effects::FloatEffect TransitionEffect
+  {
+    preset OnFinished = onFinished;
+    preset OnAnimate = onAnimate;
+    preset NoOfCycles = 1;
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset CycleDuration = 500;
+  }
+
+  // The keyboard handler reacts to user keyboard inputs and calls the associated \
+  // @onPressKey method.
+  $rect <10,730,200,770>
+  object Core::KeyPressHandler KeyHandlerLeft
+  {
+    preset OnPress = onPressKey;
+    preset Filter = Core::KeyCode.Left;
+    preset OnHold = onPressKey;
+  }
+
+  // The keyboard handler reacts to user keyboard inputs and calls the associated \
+  // @onPressKey method.
+  $rect <10,770,200,810>
+  object Core::KeyPressHandler KeyHandlerRight
+  {
+    preset OnPress = onPressKey;
+    preset Filter = Core::KeyCode.Right;
+    preset OnHold = onPressKey;
+  }
+
+  $rect <200,670,390,710>
+  onset Mirroring
+  {
+    // No changes - nothing to do
+    if ( pure Mirroring == value )
+      return;
+
+    // Remember the new mirroring state
+    pure Mirroring = value;
+
+    // Ensure, the position of the mirror images is up to date
+    idlesignal UpdateMirrors;
+  }
+
+  $rect <390,670,580,710>
+  onset OnBack
+  {
+    pure OnBack = value;
+    BackButton.OnActivate = value;
+  }
+
+  $rect <580,670,770,710>
+  onset DataAdapter
+  {
+    // No changes - nothing to do
+    if ( pure DataAdapter == value )
+      return;
+
+    // Remember the new data adapter
+    pure DataAdapter = value;
+
+    // The imageflow control has been detached from the data adapter.
+    // Hide all images.
+    if ( value == null )
+    {
+      var int32 inx; 
+
+      for ( inx = 0; inx < 9; inx = inx + 1 )
+        Images[ inx ].Bitmap = null;
+
+      Caption.String = "";
+    }
+
+    // If a new data adapter has been attached -> load the new content.
+    else
+    {
+      var int32 inx; 
+
+      // The image in the center does correspond to the current data
+      // adapter entry. It also corresponds to the caption.
+      Images[ 4 ].Bitmap = value.GetImage( 0 );
+      Caption.String     = value.GetCaption( 0 );
+
+      // Load the images left/right to the center image
+      for ( inx = 1; inx < 5; inx = inx + 1 )
+      {
+        Images[ 4 - inx ].Bitmap = value.GetImage( -inx );
+        Images[ 4 + inx ].Bitmap = value.GetImage(  inx );
+      }
+
+
+      // Adapt the anchor position of the images to their center positions
+      for ( inx = 0; inx < 9; inx = inx + 1 )
+        Images[ inx ].SourceAnchor = point( Images[ inx ].Bitmap.FrameSize.x / 2,
+                                            Images[ inx ].Bitmap.FrameSize.y / 2 );
+    }
+
+    // Ensure, the mirrors are also up to date
+    idlesignal UpdateMirrors;
+  }
+
+  // This slot method is invoked durring the scroll animation.
+  $rect <200,830,390,870>
+  slot onAnimate
+  {
+    // Perform the next transition step and ...
+    Transition( TransitionEffect.Value );
+
+    // ... update the mirrors if any
+    postsignal UpdateMirrors;
+  }
+
+  // This slot method is invoked at the end of the scroll animation.
+  $rect <390,830,580,870>
+  slot onFinished
+  {
+    // Ensure that the order of entries within the Images/Mirrors arrays
+    // does correspond to the the current image arrangement
+    Reorder( int32( TransitionEffect.Value2 - TransitionEffect.Value1 ));
+
+    // Update the caption of the main image
+    if ( DataAdapter != null )
+      Caption.String  = DataAdapter.GetCaption( 0 );
+    Caption.Opacity = 255;
+
+    // The user will continue the scrolling -> restart the effect as soon
+    // as possible
+    if ( repeat )
+    {
+      idlesignal TransitionEffect.StartEffect;
+      repeat = false;
+    }
+  }
+
+  // This slot method is invoked from the @KeyHandlerLeft or @KeyHandlerRight handler \
+  // as soon as the user has pressed the key left/right. Its job is to start the \
+  // scroll animation.
+  $rect <200,750,390,790>
+  slot onPressKey
+  {
+    var bool scrollRight = false;
+    var bool scrollLeft  = false;
+
+    // The user has pressed the 'Left' key or made a 'wipe left' gesture?
+    // --> Then scroll the images to the left
+    if (
+         ( sender == KeyHandlerLeft ) ||
+         (
+           ( sender == WipeHandler ) &&
+           ( WipeHandler.Direction == Core::Direction.Left )
+         )
+       )
+      scrollLeft = true;
+
+    // The user has pressed the 'Right' key or made a 'wipe right' gesture?
+    // --> Then scroll the images to the right
+    if (
+         ( sender == KeyHandlerRight ) ||
+         (
+           ( sender == WipeHandler ) &&
+           ( WipeHandler.Direction == Core::Direction.Right )
+         )
+       )
+      scrollRight = true;
+
+    // The transition is still running. Has the user caused again the scrolling?
+    if ( TransitionEffect.Enabled )
+    {
+      repeat = ( scrollLeft  && ( TransitionEffect.Value2 == -1.0 )) ||
+               ( scrollRight && ( TransitionEffect.Value2 ==  1.0 ));
+
+      if ( repeat )
+        TransitionEffect.CycleDuration = 300;
+
+      return;
+    }
+
+    // Scroll the images to the left
+    if ( scrollLeft )
+    {
+      TransitionEffect.Value1 =  0.0;
+      TransitionEffect.Value2 = -1.0;
+    }
+
+    // Scroll the images to the right
+    if ( scrollRight )
+    {
+      TransitionEffect.Value1 = 0.0;
+      TransitionEffect.Value2 = 1.0;
+    }
+
+    // Start the transition
+    TransitionEffect.CycleDuration = 500;
+    TransitionEffect.Enabled       = true;
+  }
+
+  // The method Transition() calculates the position of all images accordingly to \
+  // the animation phase. Animation phase can lie between -1.0 .. 0.0 .. +1.0.
+  $rect <200,890,390,930>
+  method void Transition( arg float aPhase )
+  {
+    var float                scale  = float( Bounds.w ) / 800.0;
+    var point                dstPos = point( Bounds.orect.center.x, int32( 180.0 * scale ));
+    var Graphics::WarpMatrix matrix = new Graphics::WarpMatrix;
+
+    // Prepare the tranformation matrix accordingly to the current screen size
+    matrix.EyeDistance = 350.0 * scale;
+    matrix.Scale( scale, scale,  scale );
+
+    matrix.Translate( aPhase * 50.0, 0.0,  100.0 );
+
+    // Transformate the first image
+    if ( aPhase >= 0.0 )
+    {
+      matrix.Push();
+      matrix.Translate( -350.0, 0.0, 0.0 );
+      matrix.Rotate( 0.0, -88.0, 0.0 );
+      Images[0].Warp3D( dstPos, matrix );
+      matrix.Pop();
+    }
+
+    // Transformate the second image
+    matrix.Push();
+    matrix.Translate( -300.0, 0.0, 0.0 );
+    matrix.Rotate( 0.0, -88.0, 0.0 );
+    Images[1].Warp3D( dstPos, matrix );
+    matrix.Pop();
+
+    // Transformate the third image
+    matrix.Push();
+    matrix.Translate( -250.0, 0.0, 0.0 );
+    matrix.Rotate( 0.0, -88.0, 0.0 );
+    Images[2].Warp3D( dstPos, matrix );
+    matrix.Pop();
+
+    // Transformate the fourth image
+    if ( aPhase <= 0.0 )
+    {
+      matrix.Push();
+      matrix.Translate( -200.0, 0.0, 0.0 );
+      matrix.Rotate( 0.0, -88.0, 0.0 );
+      Images[3].Warp3D( dstPos, matrix );
+      matrix.Pop();
+    }
+    else
+    {
+      matrix.Push();
+      matrix.Translate( -200.0 + ( aPhase * 150.0 ), 0.0, -150.0 * aPhase );
+      matrix.Rotate( 0.0, -88.0 + ( aPhase * 88.0 ), 0.0 );
+      Images[3].Warp3D( dstPos, matrix );
+      matrix.Pop();
+    }
+
+    // Transformate the fifth (center) image
+    matrix.Push();
+    if ( aPhase >= 0.0 )
+      matrix.Translate( aPhase * 150.0, 0.0, -150.0 * ( 1.0 - aPhase ));
+    else
+      matrix.Translate( aPhase * 150.0, 0.0, -150.0 * ( 1.0 + aPhase ));
+    matrix.Rotate( 0.0, aPhase * 88.0, 0.0 );
+    Images[4].Warp3D( dstPos, matrix );
+    matrix.Pop();
+
+    // Transformate the sixth image
+    if ( aPhase >= 0.0 )
+    {
+      matrix.Push();
+      matrix.Translate( 200.0, 0.0, 0.0 );
+      matrix.Rotate( 0.0, 88.0, 0.0 );
+      Images[5].Warp3D( dstPos, matrix );
+      matrix.Pop();
+    }
+    else
+    {
+      matrix.Push();
+      matrix.Translate( 200.0 + ( aPhase * 150.0 ), 0.0, 150.0 * aPhase );
+      matrix.Rotate( 0.0, 88.0 + ( aPhase * 88.0 ), 0.0 );
+      Images[5].Warp3D( dstPos, matrix );
+      matrix.Pop();
+    }
+
+    // Transformate the seventh image
+    matrix.Push();
+    matrix.Translate( 250.0, 0.0, 0.0 );
+    matrix.Rotate( 0.0, 88.0, 0.0 );
+    Images[6].Warp3D( dstPos, matrix );
+    matrix.Pop();
+
+    // Transformate the eighth image
+    matrix.Push();
+    matrix.Translate( 300.0, 0.0, 0.0 );
+    matrix.Rotate( 0.0, 88.0, 0.0 );
+    Images[7].Warp3D( dstPos, matrix );
+    matrix.Pop();
+
+    // Transformate the ninth image
+    if ( aPhase <= 0.0 )
+    {
+      matrix.Push();
+      matrix.Translate( 350.0, 0.0, 0.0 );
+      matrix.Rotate( 0.0, 88.0, 0.0 );
+      Images[8].Warp3D( dstPos, matrix );
+      matrix.Pop();
+    }
+
+    // Adapt the Z-order of the images -> the center image should lie
+    // on the top
+    if (( aPhase >= -0.5 ) && ( aPhase <= 0.5 ))
+      RestackTop( Images[4]);
+
+    if ( aPhase < -0.5 )
+      RestackTop( Images[5]);
+
+    if ( aPhase > 0.5 )
+      RestackTop( Images[3]);
+
+    // Images at the end of the list are appearing/disappearing
+    if ( aPhase >= 0.0 )
+    {
+      Images[0].Opacity = int32( aPhase * 255.0 );
+      Images[7].Opacity = 255 - Images[0].Opacity;
+      Images[8].Opacity = 0;
+      Images[1].Opacity = 255;
+    }
+
+    // Images at the end of the list are appearing/disappearing
+    if ( aPhase < 0.0 )
+    {
+      Images[8].Opacity = int32( aPhase * -255.0 );
+      Images[1].Opacity = 255 - Images[8].Opacity;
+      Images[0].Opacity = 0;
+      Images[7].Opacity = 255;
+    }
+
+    // Fade-out the caption
+    if ( aPhase < 0.0 )
+      Caption.Opacity = 255 + int32( aPhase * 255.0 );
+    else
+      Caption.Opacity = 255 - int32( aPhase * 255.0 );
+  }
+
+  // This method is invoked at the end of a scroll animation. Its job is to adapt \
+  // the stack order of images and to load new images for the next animation run.
+  $rect <390,890,580,930>
+  method void Reorder( arg int32 aDirection )
+  {
+    if ( DataAdapter == null )
+      return;
+
+    var int32 inx;
+
+    // Reorder the images and mirrors after rotating the carusel to the right
+    if ( aDirection > 0 )
+    {
+      var Views::WarpImage tmpImage  = Images [8];
+      var Views::WarpImage tmpMirror = Mirrors[8];
+
+      for ( inx = 8; inx > 0; inx = inx - 1 )
+      {
+        Images [ inx ] = Images [ inx - 1 ];
+        Mirrors[ inx ] = Mirrors[ inx - 1 ];
+      }
+
+      Images [0] = tmpImage;
+      Mirrors[0] = tmpMirror;
+      Images [0].Bitmap       = DataAdapter.GetImage( -5 );
+      Mirrors[0].Bitmap       = Images[0].Bitmap;
+      Images [0].SourceAnchor = point( Images[0].Bitmap.FrameSize.x / 2,
+                                       Images[0].Bitmap.FrameSize.y / 2 );
+
+      RestackBack( Images[0]);
+
+      DataAdapter.MoveCursor( -1 );
+    }
+
+    // Reorder the images and mirrors after rotating the carusel to the left
+    if ( aDirection < 0 )
+    {
+      var Views::WarpImage tmpImage  = Images [0];
+      var Views::WarpImage tmpMirror = Mirrors[0];
+
+      for ( inx = 0; inx < 8; inx = inx + 1 )
+      {
+        Images [ inx ] = Images [ inx + 1 ];
+        Mirrors[ inx ] = Mirrors[ inx + 1 ];
+      }
+
+      Images [8] = tmpImage;
+      Mirrors[8] = tmpMirror;
+      Images [8].Bitmap = DataAdapter.GetImage( 5 );
+      Mirrors[8].Bitmap = Images[0].Bitmap;
+      Images [8].SourceAnchor = point( Images[8].Bitmap.FrameSize.x / 2,
+                                       Images[8].Bitmap.FrameSize.y / 2 );
+
+      RestackBack( Images[8]);
+
+      DataAdapter.MoveCursor( 1 );
+    }
+  }
+
+  // This method is invoked in order to update the position and visibility of mirror \
+  // images.
+  $rect <200,930,390,970>
+  slot UpdateMirrors
+  {
+    var int32 inx = 0;
+    var bool show = Mirroring;
+
+    // First arrange the mirrors below the corresponding images
+    for ( ; inx < 9; inx = inx + 1 )
+    {
+      var Views::WarpImage image  = Images[ inx ];
+      var Views::WarpImage mirror = Mirrors[ inx ];
+
+      mirror.Visible  = show;
+
+      if ( show )
+      {
+        mirror.Point4       = image.Point4;
+        mirror.Point3       = image.Point3;
+        mirror.Point2       = image.Point2 + point( 0, 2 * ( image.Point3.y - image.Point2.y ));
+        mirror.Point1       = image.Point1 + point( 0, 2 * ( image.Point4.y - image.Point1.y ));
+        mirror.Bitmap       = image.Bitmap;
+        mirror.Color3.alpha = uint8( image.Opacity / 3 );
+        mirror.Color4       = mirror.Color3;
+      }
+    }
+
+    // No visible mirrors ....
+    if ( !show )
+      return;
+
+    var rect bounds = Bounds.orect;
+
+    // Because the mirros images are displayed semitransparently and they do overlap 
+    // themselves - ensure that the edges of overlapped images are clipped correctly.
+    Mirrors[ 0 ].Clipping = bounds;
+    Mirrors[ 1 ].Clipping = bounds;
+    Mirrors[ 2 ].Clipping = bounds;
+    Mirrors[ 3 ].Clipping = bounds;
+    Mirrors[ 4 ].Clipping = bounds;
+    Mirrors[ 5 ].Clipping = bounds;
+    Mirrors[ 6 ].Clipping = bounds;
+    Mirrors[ 7 ].Clipping = bounds;
+    Mirrors[ 8 ].Clipping = bounds;
+
+    // The following images are only moved durring the animation - therefore all 
+    // affected images are simply clipped by their left/right neighbors
+    Mirrors[ 0 ].Clipping.x2 = Mirrors[ 1 ].Point1.x - 1;
+    Mirrors[ 1 ].Clipping.x2 = Mirrors[ 2 ].Point1.x - 1;
+    Mirrors[ 2 ].Clipping.x2 = Mirrors[ 3 ].Point1.x - 1;
+    Mirrors[ 6 ].Clipping.x1 = Mirrors[ 5 ].Point2.x + 1;
+    Mirrors[ 7 ].Clipping.x1 = Mirrors[ 6 ].Point2.x + 1;
+    Mirrors[ 8 ].Clipping.x1 = Mirrors[ 7 ].Point2.x + 1;
+
+    // Determine the 'main' image or the image which is about to become the 'main' image.
+    // Ensure that the corresponding mirror always lies on top of other mirror images
+    var Core::View topView = FindPrevView( null, Core::ViewState[]);
+
+    if ( topView == Images[4])
+    {
+      Mirrors[ 3 ].Clipping.x2 = Mirrors[ 4 ].Point1.x - 1;
+      Mirrors[ 5 ].Clipping.x1 = Mirrors[ 4 ].Point2.x + 1;
+    }
+
+    if ( topView == Images[3])
+    {
+      Mirrors[ 4 ].Clipping.x1 = Mirrors[ 3 ].Point2.x + 1;
+      Mirrors[ 5 ].Clipping.x1 = Mirrors[ 4 ].Point2.x + 1;
+    }
+
+    if ( topView == Images[5])
+    {
+      Mirrors[ 4 ].Clipping.x2 = Mirrors[ 5 ].Point1.x - 1;
+      Mirrors[ 3 ].Clipping.x2 = Mirrors[ 4 ].Point1.x - 1;
+    }
+
+  }
+
+  $rect <20,20,160,60>
+  object Core::WipeTouchHandler WipeHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,800,490>;
+    preset OnRight = onPressKey;
+    preset OnLeft = onPressKey;
+    preset Threshold = 0.02;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ImageR4
+  {
+    preset Point4 = <730,250>;
+    preset Point3 = <830,290>;
+    preset Point2 = <830,70>;
+    preset Point1 = <730,110>;
+    preset SourceAnchor = <16,16>;
+    preset Opacity = 0;
+    preset Bitmap = Resources::DefaultBitmap;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ImageL4
+  {
+    preset Point4 = <-30,290>;
+    preset Point3 = <70,250>;
+    preset Point2 = <70,110>;
+    preset Point1 = <-30,70>;
+    preset SourceAnchor = <16,16>;
+    preset Opacity = 0;
+    preset Bitmap = Resources::DefaultBitmap;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ImageR3
+  {
+    preset Point4 = <670,250>;
+    preset Point3 = <770,290>;
+    preset Point2 = <770,70>;
+    preset Point1 = <670,110>;
+    preset SourceAnchor = <150,150>;
+    preset Bitmap = Watch::Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ImageL3
+  {
+    preset Point4 = <30,290>;
+    preset Point3 = <130,250>;
+    preset Point2 = <130,110>;
+    preset Point1 = <30,70>;
+    preset SourceAnchor = <150,150>;
+    preset Bitmap = Watch::Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ImageR2
+  {
+    preset Point4 = <610,250>;
+    preset Point3 = <710,290>;
+    preset Point2 = <710,70>;
+    preset Point1 = <610,110>;
+    preset SourceAnchor = <150,150>;
+    preset Bitmap = Watch::Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ImageL2
+  {
+    preset Point4 = <90,290>;
+    preset Point3 = <190,250>;
+    preset Point2 = <190,110>;
+    preset Point1 = <90,70>;
+    preset SourceAnchor = <150,150>;
+    preset Bitmap = Watch::Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ImageR1
+  {
+    preset Point4 = <550,250>;
+    preset Point3 = <650,290>;
+    preset Point2 = <650,70>;
+    preset Point1 = <550,110>;
+    preset SourceAnchor = <150,150>;
+    preset Bitmap = Watch::Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ImageL1
+  {
+    preset Point4 = <150,290>;
+    preset Point3 = <250,250>;
+    preset Point2 = <250,110>;
+    preset Point1 = <150,70>;
+    preset SourceAnchor = <150,150>;
+    preset Bitmap = Watch::Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ImageC
+  {
+    preset Point4 = <210,330>;
+    preset Point3 = <590,330>;
+    preset Point2 = <590,30>;
+    preset Point1 = <210,30>;
+    preset SourceAnchor = <150,150>;
+    preset Bitmap = Watch::Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Mirror1
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Color2 = #00000000;
+    preset Color1 = #00000000;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Mirror2
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Color2 = #00000000;
+    preset Color1 = #00000000;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Mirror3
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Color2 = #00000000;
+    preset Color1 = #00000000;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Mirror4
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Color2 = #00000000;
+    preset Color1 = #00000000;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Mirror5
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Color2 = #00000000;
+    preset Color1 = #00000000;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Mirror6
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Color2 = #00000000;
+    preset Color1 = #00000000;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Mirror7
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Color2 = #00000000;
+    preset Color1 = #00000000;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Mirror8
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Color2 = #00000000;
+    preset Color1 = #00000000;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Mirror9
+  {
+    preset Point4 = <0,430>;
+    preset Point3 = <100,430>;
+    preset Point2 = <100,330>;
+    preset Point1 = <0,330>;
+    preset Quality = false;
+    preset Visible = false;
+    preset Color2 = #00000000;
+    preset Color1 = #00000000;
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuButton BackButton
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToRight, ResizeHorz, ResizeVert];
+    preset Bounds = <720,520,790,590>;
+    preset Face = Application::BackItem;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Caption
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, ResizeHorz];
+    preset Bounds = <30,470,770,510>;
+    preset String = "Caption";
+    preset Font = ImageFlow::CaptionFont;
+  }
+
+  // The property 'Mirroring' determines whether the mirror images should be shown \
+  // or not.
+  $rect <200,630,390,670>
+  property bool Mirroring = false;
+
+  // The property 'OnBack' can be connected with a slot method. As soon as the user \
+  // has activated the back button, the attached slot method is invoked.
+  $rect <390,630,580,670>
+  property slot OnBack = null;
+
+  // The property 'DataAdapter' is intended to refer to the data source, which provides \
+  // the image flow with images.
+  $rect <580,630,770,670>
+  property ImageFlow::DataAdapter DataAdapter = null;
+
+  // This is a variable.
+  $rect <390,750,580,790>
+  var bool repeat;
+}
+
+// Font resource used to display the image caption in the image flow
+$rect <240,270,440,310>
+$output false
+resource Resources::Font CaptionFont
+{
+  attr fontname FontName = Verdana;
+  attr fontheight Height = 40;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0xFF;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// This class implements an abstraction of a 'data source', which is able to provide \
+// the image flow UI component with images.
+$rect <30,160,230,200>
+$output false
+class DataAdapter
+{
+  // The method MoveCursor() adapts the internal cursor position of the data source. \
+  // The cursor is moved by the given offset.
+  $rect <10,10,210,50>
+  method void MoveCursor( arg int32 aOffset )
+  {
+    Cursor = ( aOffset + Cursor + 10 ) % 10;
+  }
+
+  // The method GetImage() returns the image at the given offset position relative \
+  // to the current cursor position of the data source.
+  $rect <10,50,210,90>
+  method Resources::Bitmap GetImage( arg int32 aOffset )
+  {
+    var int32 index = ( aOffset + Cursor + 10 ) % 10;
+
+    switch ( index )
+    {
+      case 0  : return ImageFlow::Pic1;
+      case 1  : return ImageFlow::Pic2;
+      case 2  : return ImageFlow::Pic3;
+      case 3  : return ImageFlow::Pic4;
+      case 4  : return ImageFlow::Pic5;
+      case 5  : return ImageFlow::Pic6;
+      case 6  : return ImageFlow::Pic7;
+      case 7  : return ImageFlow::Pic8;
+      case 8  : return ImageFlow::Pic9;
+      case 9  : return ImageFlow::Pic10;
+      default : return null;
+    }
+
+  }
+
+  // The method GetCaption() returns the caption of the image at the given offset \
+  // position relative to the current cursor position of the data source.
+  $rect <10,90,210,130>
+  method string GetCaption( arg int32 aOffset )
+  {
+    var int32 index = ( aOffset + Cursor + 10 ) % 10;
+
+    switch ( index )
+    {
+      case 0  : return "Mediterranean Sea";
+      case 1  : return "Kitty";
+      case 2  : return "Mediterranean Sea";
+      case 3  : return "The Cyclades";
+      case 4  : return "Olive tree";
+      case 5  : return "Treetop";
+      case 6  : return "Mediterranean Sea";
+      case 7  : return "Old Town";
+      case 8  : return "Sea view";
+      case 9  : return "Dewdrops";
+      default : return "";
+    }
+
+  }
+
+  // The cursor stores the current position in the data source.
+  $rect <230,10,430,50>
+  var int32 Cursor = 0;
+}
+
+// A global instance of the data source containing all the images to display in the \
+// image flow UI component.
+$rect <240,160,440,200>
+$output false
+autoobject ImageFlow::DataAdapter BuildInDataAdapter;
+
+// Resources
+note group Note
+{
+  attr Bounds = <10,230,460,690>;
+}
+
+// Image Provider
+note group Note1
+{
+  attr Bounds = <10,120,460,220>;
+}
+
+// Image Flow Component
+note group Note2
+{
+  attr Bounds = <10,10,460,110>;
+}

@@ -1,0 +1,2726 @@
+<!DOCTYPE HTML PUBLIC>
+<HTML>
+<HEAD>
+  <META http-equiv="content-type" content="text/html; charset=UTF-8">
+  </META>
+  <TITLE>Embedded Wizard Code Generation Report</TITLE>
+  <STYLE>
+    *
+    {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+    }
+    html
+    {
+      background-color: #FFFFFF;
+    }
+    body
+    {
+      font-family: Segoe UI, Segoe, Helvetica Neue, Helvetica, Tahoma, Verdana, Arial, sans-serif;
+      margin-left: 0em;
+      margin-right: 0em;
+      -webkit-font-smoothing: antialiased;
+    }
+    div.CodeMetrics table, div.Files table
+    {
+      border-collapse: collapse;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 2em;
+      margin-bottom: 2em;
+      border-spacing: 0;
+    }
+    div.CodeMetrics th, div.Files th
+    {
+      border: 1px solid #DDDDDD;
+      background-color: #F4F4F4;
+      padding: 0.5em;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      cursor: pointer;
+      color: #666666;
+    }
+    div.CodeMetrics th:hover, div.Files th:hover
+    {
+      border: 1px solid #CCCCCC;
+      background-color: #E4E4E4;
+    }
+    div.CodeMetrics th:active, div.Files th:active
+    {
+      border: 1px solid #BBBBBB;
+      background-color: #C4C4C4;
+      color: #000000;
+    }
+    div.CodeMetrics td, div.Files td
+    {
+      border: 1px solid #DDDDDD;
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+      padding-top: 0.25em;
+      padding-bottom: 0.25em;
+    }
+    div.CodeMetrics tr:nth-child(odd), div.Files tr:nth-child(odd)
+    {
+      background-color: #F8F8F8;
+    }
+    div.CodeMetrics tr td:nth-child(3)
+    {
+      text-align: right;
+    }
+    div.CodeMetrics tr td:nth-child(2)
+    {
+      text-align: center;
+    }
+    div.Files tr td:nth-child(2)
+    {
+      text-align: center;
+    }
+    div.Files tr td:nth-child(3)
+    {
+      text-align: right;
+    }
+    div.CodeMetrics tr:last-child, div.Files tr:last-child
+    {
+      font-size: 100%;
+      font-weight: bold;
+    }
+    div.CodeMetrics tr:last-child td, div.Files tr:last-child td
+    {
+      padding: 0.5em;
+    }
+    div.Summary
+    {
+      margin-left:  2em;
+      margin-right: 2em;
+    }
+    div.Summary table
+    {
+      border-collapse: collapse;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 2em;
+      margin-bottom: 2em;
+      border-spacing: 0;
+    }
+    div.Summary tr p:nth-child(1)
+    {
+      line-height: 180%;
+      margin-top: -0.3em;
+    }
+    div.Summary tr p:nth-child(2)
+    {
+      margin-top: -0.5em;
+      margin-bottom: 0.2em;
+    }
+    div.Summary td
+    {
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+      padding-top: 0.3em;
+      padding-bottom: 0.3em;
+    }
+    div.Summary td p:nth-child(1)
+    {
+      padding-top: 0.25em;
+      padding-bottom: 0.25em;
+    }
+    div.Summary td p:nth-child(2)
+    {
+      color: #999999;
+      padding-top: 0.25em;
+      font-size: 80%;
+      line-height: 145%;
+    }
+    div.Summary tr td:nth-child(1)
+    {
+    }
+    div.Summary tr td:nth-child(2)
+    {
+      text-align: right;
+    }
+    th
+    {
+      font-weight: normal;
+    }
+    div.Summary tr
+    {
+      border-top: 1px solid #DDDDDD;
+      border-bottom: 1px solid #DDDDDD;
+    }
+    div.Summary tr.HintRow p
+    {
+      padding-top: 1em;
+      padding-bottom: 1em;
+      line-height: 145%;
+      color: #FF0000;
+      font-size: 80%;
+    }
+    div.footer
+    {
+      height: 4em;
+      background-color: #FFFFFF;
+      margin-top: 1em;
+      margin-bottom: 2em;
+      padding-top: 0em;
+      text-align: center;
+    }
+    div.footer p.footer-1
+    {
+      margin-bottom: 0.1em;
+      font-size: 80%;
+      padding-top: 1em;
+      color: #999999;
+      line-height: 145%;
+    }
+    div.footer p.footer-2
+    {
+      margin-top: 0.1em;
+      margin-bottom: 0.1em;
+      font-size: 80%;
+      color: #999999;
+      line-height: 145%;
+    }
+    div.footer p.footer-3
+    {
+      margin-top: 0.1em;
+      padding-bottom: 2em;
+      font-size: 80%;
+      color: #999999;
+      line-height: 145%;
+    }
+    div.Caption
+    {
+      margin-top: 3em;
+      padding-bottom: 0em;
+      text-align: center;
+    }
+    div.Caption p:nth-child(1)
+    {
+      font-size: 180%;
+      color: #000000;
+    }
+    div.Caption p:nth-child(2)
+    {
+      margin-top: 0.5em;
+      font-size: 100%;
+      color: #999999;
+    }
+    a.LocalLink
+    {
+      text-decoration: none;
+      border-radius: 0.5em;
+      padding-top: 0.0em;
+      padding-bottom: 0.15em;
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+      margin-left: 2em;
+      border: 1px solid #E4E4E4;
+      background-color: #F8F8F8;
+      color: #888888;
+      font-size: 80%;
+    }
+    a.LocalLink:hover
+    {
+      border: 1px solid #CCCCCC;
+      background-color: #E4E4E4;
+      color: #444444;
+    }
+    a.LocalLink:active
+    {
+      border: 1px solid #BBBBBB;
+      background-color: #C4C4C4;
+      color: #000000;
+    }
+  </STYLE>
+</HEAD>
+<BODY>
+  <DIV CLASS=Caption>
+    <P>Code Generation Report</p>
+    <P>created by Embedded Wizard</p>
+  </DIV>
+  <DIV ID=Summary CLASS=Summary>
+    <TABLE>
+      <TR CLASS=InfoRow>
+        <TD>
+          <P>
+            Version of Embedded Wizard
+          </P>
+        </TD>
+        <TD>
+          15.07
+        </TD>
+      </TR>
+      <TR CLASS=InfoRow>
+        <TD>
+          <P>
+            Date of code generation
+          </P>
+        </TD>
+        <TD>
+          29&nbsp;Sep&nbsp;2026<BR>12:43:13
+        </TD>
+      </TR>
+      <TR CLASS=InfoRow>
+        <TD>
+          <P>
+            Selected <a href="https://doc.embedded-wizard.de/profile-member">Profile</a>
+          </P>
+          <P>
+            The Profile contains configuration parameters affecting the code generation.
+          </P>
+        </TD>
+        <TD>
+          Win32
+        </TD>
+      </TR>
+      <TR CLASS=InfoRow>
+        <TD>
+          <P>
+            <a href="https://doc.embedded-wizard.de/platformpackage-attr">Platform Package</a> name
+          </P>
+          <P>
+            Identifies the Code Generator and Resource Converters used during the code generation.
+          </P>
+        </TD>
+        <TD>
+          Windows.Software.RGBA8888
+        </TD>
+      </TR>
+      <TR CLASS=InfoRow>
+        <TD>
+          <P>
+            Default <a href="https://doc.embedded-wizard.de/formatofbitmapresources-attr">conversion mode</a> of Bitmap Resources
+          </P>
+          <P>
+            Controls how pixel data of Bitmap Resources are processed if no other mode has been specified for the respective Bitmap Resource project member. See also the Bitmap Resource attribute <a href="https://doc.embedded-wizard.de/mode-attr">Mode</a>.
+          </P>
+        </TD>
+        <TD>
+          Compressed
+        </TD>
+      </TR>
+      <TR CLASS=InfoRow>
+        <TD>
+          <P>
+            <a href="https://doc.embedded-wizard.de/formatofstringconstants-attr">Conversion mode</a> of all String constants
+          </P>
+          <P>
+            Controls how contents of string Constant members and string literals are processed.
+          </P>
+        </TD>
+        <TD>
+          Compressed
+        </TD>
+      </TR>
+      <TR CLASS=SizeRow>
+        <TD>
+          <P>
+            Estimated total memory (flash) usage
+          </P>
+          <P>
+            It includes the implementation (the logic) of your application, all constant data and all resources.
+          </P>
+        </TD>
+        <TD>
+          335&nbsp;KB
+        </TD>
+      </TR>
+      <TR CLASS=HintRow>
+        <TD colspan='2'>
+          <P>
+            IMPORTANT: All memory (flash) usage values are roughly estimated.  The size of the resulting binary depends on the target CPU architecture, your C/C++ compiler and the selected compiler optimization modes. Also the estimated size does not include the <a href='https://doc.embedded-wizard.de/platform-package#4'>Runtime Environment</a>, the <a href='https://doc.embedded-wizard.de/platform-package#3'>Graphics Engine</a>, the C standard library (libc), BSP, drivers, etc.. In order to get an exact size of the resulting binary please evaluate the linker's MAP file.
+          </P>
+        </TD>
+      </TR>
+      <TR CLASS=SizeRow>
+        <TD>
+          <P>
+            Estimated memory (flash) usage for <a href="https://doc.embedded-wizard.de/class-member">Classes</a> only <a class=LocalLink href='#Classes'>Show&nbsp;detailed&nbsp;list</a>
+          </P>
+          <P>
+            It includes the implementation (the logic) of the application.
+          </P>
+        </TD>
+        <TD>
+          127&nbsp;KB
+        </TD>
+      </TR>
+      <TR CLASS=SizeRow>
+        <TD>
+          <P>
+            Estimated memory (flash) usage for <a href="https://doc.embedded-wizard.de/constant-member">Constants</a> only <a class=LocalLink href='#Constants'>Show&nbsp;detailed&nbsp;list</a>
+          </P>
+          <P>
+            It includes all Constant members found in your project.
+          </P>
+        </TD>
+        <TD>
+          1&nbsp;KB
+        </TD>
+      </TR>
+      <TR CLASS=SizeRow>
+        <TD>
+          <P>
+            Estimated memory (flash) usage for Strings only <a class=LocalLink href='#Strings'>Show&nbsp;detailed&nbsp;list</a>
+          </P>
+          <P>
+            It includes the converted contents of all string Constant members and string literals found in your project.
+          </P>
+        </TD>
+        <TD>
+          2&nbsp;KB
+        </TD>
+      </TR>
+      <TR CLASS=SizeRow>
+        <TD>
+          <P>
+            Estimated memory (flash) usage for <a href="https://doc.embedded-wizard.de/autoobject-member">Autoobjects</a> only <a class=LocalLink href='#Autoobjects'>Show&nbsp;detailed&nbsp;list</a>
+          </P>
+          <P>
+            It includes the initialization for all Autoobject members (global objects) found in your project.
+          </P>
+        </TD>
+        <TD>
+          1&nbsp;KB
+        </TD>
+      </TR>
+      <TR CLASS=SizeRow>
+        <TD>
+          <P>
+            Estimated memory (flash) usage for <a href="https://doc.embedded-wizard.de/bitmap-resource-member">Bitmap Resources</a> only <a class=LocalLink href='#BitmapResources'>Show&nbsp;detailed&nbsp;list</a>
+          </P>
+          <P>
+            It includes all Bitmap Resource members found in your project together with the converted pixel data.
+          </P>
+        </TD>
+        <TD>
+          186&nbsp;KB
+        </TD>
+      </TR>
+      <TR CLASS=SizeRow>
+        <TD>
+          <P>
+            Estimated memory (flash) usage for <a href="https://doc.embedded-wizard.de/font-resource-member">Font Resources</a> only <a class=LocalLink href='#FontResources'>Show&nbsp;detailed&nbsp;list</a>
+          </P>
+          <P>
+            It includes all Font Resource members found in your project. The font data is managed separately. See the information below.
+          </P>
+        </TD>
+        <TD>
+          1&nbsp;KB
+        </TD>
+      </TR>
+      <TR CLASS=SizeRow>
+        <TD>
+          <P>
+            Estimated memory (flash) usage for font data only <a class=LocalLink href='#FontData'>Show&nbsp;detailed&nbsp;list</a>
+          </P>
+          <P>
+            It includes the fonts used in your project together with the converted glyph pixel data and metrics. The font data can be used by multiple Font Resources.
+          </P>
+        </TD>
+        <TD>
+          20&nbsp;KB
+        </TD>
+      </TR>
+      <TR CLASS=SizeRow>
+        <TD>
+          <P>
+            Total size of all generated files <a class=LocalLink href='#Files'>Show&nbsp;detailed&nbsp;list</a>
+          </P>
+          <P>
+            It is the sum of all code files (e.g. C++, C, H, JS) and resource files (e.g. PNG) created during the code generation process.
+          </P>
+        </TD>
+        <TD>
+          2020&nbsp;KB
+        </TD>
+      </TR>
+    </TABLE>
+  </DIV>
+  <DIV ID=Classes CLASS=CodeMetrics>
+    <TABLE>
+      <TR>
+        <TH>
+          Project Member Name
+        </TH>
+        <TH>
+          Content Type
+        </TH>
+        <TH>
+          Size (Bytes)
+        </TH>
+      </TR>
+      <TR>
+        <TD>
+          Application::Application
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          897
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::BrewingDialog
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          1047
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::DeviceClass
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          413
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::SelectionDialog
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          1177
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::CursorEvent
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          630
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::CursorGrabEvent
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          326
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::CursorHit
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          272
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::DialogContext
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          172
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::DragEvent
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          324
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::Event
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          220
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::Group
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          18840
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::KeyEvent
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          1703
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::KeyPressHandler
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          598
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::LayoutContext
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          172
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::LayoutLineContext
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          176
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::LayoutQuadContext
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          176
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::LineView
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          4907
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::Outline
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          1626
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::QuadView
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          7639
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::RectView
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          3699
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::Resource
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          239
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::Root
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          10351
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::SimpleTouchHandler
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          4329
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::SystemEvent
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          250
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::SystemEventHandler
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          377
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::SystemEventTask
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          286
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::Task
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          387
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::TaskQueue
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          1136
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::Timer
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          760
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::View
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          2399
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::Effect
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          7292
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::EffectTimerClass
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          210
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::FadeInOutTransition
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          1213
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::Fader
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          331
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::FaderTask
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          1315
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::Int32Effect
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          285
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::OpacityFader
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          1482
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::PointEffect
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          349
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::PositionFader
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          2055
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::ShowHideTransition
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          860
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::TimingList
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          172
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::Transition
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          308
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::VisibilityFader
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          725
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Graphics::ArcPath
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          5366
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Graphics::Canvas
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          3823
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Graphics::Path
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          683
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Resources::Bitmap
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          718
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Resources::Font
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          712
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Resources::FontSet
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          851
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Templates::DeviceClass
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          175
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Views::Frame
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          4249
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Views::Image
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          4337
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Views::Line
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          2184
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Views::Rectangle
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          657
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Views::StrokePath
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          1410
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Views::Text
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          6256
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          WidgetSet::HorizontalSlider
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          7672
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          WidgetSet::HorizontalSliderConfig
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          2102
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          WidgetSet::PushButton
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          4894
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          WidgetSet::PushButtonConfig
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          632
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          WidgetSet::WidgetConfig
+        </TD>
+        <TD>
+          Class
+        </TD>
+        <TD>
+          196
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          TOTAL
+        </TD>
+        <TD>
+        </TD>
+        <TD>
+          129042
+        </TD>
+      </TR>
+    </TABLE>
+  </DIV>
+  <DIV ID=Constants CLASS=CodeMetrics>
+    <TABLE>
+      <TR>
+        <TH>
+          Unit Name
+        </TH>
+        <TH>
+          Content Type
+        </TH>
+        <TH>
+          Size (Bytes)
+        </TH>
+      </TR>
+      <TR>
+        <TD>
+          Application
+        </TD>
+        <TD>
+          Constants
+        </TD>
+        <TD>
+          236
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core
+        </TD>
+        <TD>
+          Constants
+        </TD>
+        <TD>
+          158
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects
+        </TD>
+        <TD>
+          Constants
+        </TD>
+        <TD>
+          32
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Graphics
+        </TD>
+        <TD>
+          Constants
+        </TD>
+        <TD>
+          74
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Resources
+        </TD>
+        <TD>
+          Constants
+        </TD>
+        <TD>
+          20
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Views
+        </TD>
+        <TD>
+          Constants
+        </TD>
+        <TD>
+          36
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          WidgetSet
+        </TD>
+        <TD>
+          Constants
+        </TD>
+        <TD>
+          116
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          TOTAL
+        </TD>
+        <TD>
+        </TD>
+        <TD>
+          672
+        </TD>
+      </TR>
+    </TABLE>
+  </DIV>
+  <DIV ID=Strings CLASS=CodeMetrics>
+    <TABLE>
+      <TR>
+        <TH>
+          Unit Name
+        </TH>
+        <TH>
+          Content Type
+        </TH>
+        <TH>
+          Size (Bytes)
+        </TH>
+      </TR>
+      <TR>
+        <TD>
+          Application
+        </TD>
+        <TD>
+          Strings
+        </TD>
+        <TD>
+          88
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core
+        </TD>
+        <TD>
+          Strings
+        </TD>
+        <TD>
+          640
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects
+        </TD>
+        <TD>
+          Strings
+        </TD>
+        <TD>
+          224
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Graphics
+        </TD>
+        <TD>
+          Strings
+        </TD>
+        <TD>
+          400
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Resources
+        </TD>
+        <TD>
+          Strings
+        </TD>
+        <TD>
+          156
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          TOTAL
+        </TD>
+        <TD>
+        </TD>
+        <TD>
+          1508
+        </TD>
+      </TR>
+    </TABLE>
+  </DIV>
+  <DIV ID=BitmapResources CLASS=CodeMetrics>
+    <TABLE>
+      <TR>
+        <TH>
+          Project Member Name
+        </TH>
+        <TH>
+          Content Type
+        </TH>
+        <TH>
+          Size (Bytes)
+        </TH>
+      </TR>
+      <TR>
+        <TD>
+          Application::BackgroundCup
+        </TD>
+        <TD>
+          Bitmap Resource
+        </TD>
+        <TD>
+          175313
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::ButtonFace
+        </TD>
+        <TD>
+          Bitmap Resource
+        </TD>
+        <TD>
+          3074
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::Cup
+        </TD>
+        <TD>
+          Bitmap Resource
+        </TD>
+        <TD>
+          8283
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::PlayIcon
+        </TD>
+        <TD>
+          Bitmap Resource
+        </TD>
+        <TD>
+          384
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::SliderBack
+        </TD>
+        <TD>
+          Bitmap Resource
+        </TD>
+        <TD>
+          978
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::SliderFront
+        </TD>
+        <TD>
+          Bitmap Resource
+        </TD>
+        <TD>
+          767
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::SliderThumb
+        </TD>
+        <TD>
+          Bitmap Resource
+        </TD>
+        <TD>
+          1227
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Resources::WhiteBitmapStripe
+        </TD>
+        <TD>
+          Bitmap Resource
+        </TD>
+        <TD>
+          187
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          TOTAL
+        </TD>
+        <TD>
+        </TD>
+        <TD>
+          190213
+        </TD>
+      </TR>
+    </TABLE>
+  </DIV>
+  <DIV ID=FontResources CLASS=CodeMetrics>
+    <TABLE>
+      <TR>
+        <TH>
+          Project Member Name
+        </TH>
+        <TH>
+          Content Type
+        </TH>
+        <TH>
+          Size (Bytes)
+        </TH>
+      </TR>
+      <TR>
+        <TD>
+          Application::BigFont
+        </TD>
+        <TD>
+          Font Resource
+        </TD>
+        <TD>
+          131
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::SmallFont
+        </TD>
+        <TD>
+          Font Resource
+        </TD>
+        <TD>
+          133
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          TOTAL
+        </TD>
+        <TD>
+        </TD>
+        <TD>
+          264
+        </TD>
+      </TR>
+    </TABLE>
+  </DIV>
+  <DIV ID=FontData CLASS=CodeMetrics>
+    <TABLE>
+      <TR>
+        <TH>
+          Font Name
+        </TH>
+        <TH>
+          Content Type
+        </TH>
+        <TH>
+          Size (Bytes)
+        </TH>
+      </TR>
+      <TR>
+        <TD>
+          Asap Condensed Medium 29px height
+        </TD>
+        <TD>
+          Font Data
+        </TD>
+        <TD>
+          5622
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Asap Medium 50px height
+        </TD>
+        <TD>
+          Font Data
+        </TD>
+        <TD>
+          14850
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          TOTAL
+        </TD>
+        <TD>
+        </TD>
+        <TD>
+          20472
+        </TD>
+      </TR>
+    </TABLE>
+  </DIV>
+  <DIV ID=Autoobjects CLASS=CodeMetrics>
+    <TABLE>
+      <TR>
+        <TH>
+          Project Member Name
+        </TH>
+        <TH>
+          Content Type
+        </TH>
+        <TH>
+          Size (Bytes)
+        </TH>
+      </TR>
+      <TR>
+        <TD>
+          Application::Device
+        </TD>
+        <TD>
+          Autoobject
+        </TD>
+        <TD>
+          32
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::FadeInOutCentered
+        </TD>
+        <TD>
+          Autoobject
+        </TD>
+        <TD>
+          40
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::HorizontalSliderConfig
+        </TD>
+        <TD>
+          Autoobject
+        </TD>
+        <TD>
+          452
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Application::PushButtonConfig
+        </TD>
+        <TD>
+          Autoobject
+        </TD>
+        <TD>
+          140
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Core::SystemEventQueue
+        </TD>
+        <TD>
+          Autoobject
+        </TD>
+        <TD>
+          32
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::EffectTimer
+        </TD>
+        <TD>
+          Autoobject
+        </TD>
+        <TD>
+          56
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          Effects::ShowHideCentered
+        </TD>
+        <TD>
+          Autoobject
+        </TD>
+        <TD>
+          32
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          TOTAL
+        </TD>
+        <TD>
+        </TD>
+        <TD>
+          784
+        </TD>
+      </TR>
+    </TABLE>
+  </DIV>
+  <DIV ID=Files CLASS=Files>
+    <TABLE>
+      <TR>
+        <TH>
+          Generated File Name
+        </TH>
+        <TH>
+          File Type
+        </TH>
+        <TH>
+          Size (Bytes)
+        </TH>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Application.c
+        </TD>
+        <TD>
+          c
+        </TD>
+        <TD>
+          38487
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Application.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5537
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Core.c
+        </TD>
+        <TD>
+          c
+        </TD>
+        <TD>
+          319385
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Core.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          32720
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Effects.c
+        </TD>
+        <TD>
+          c
+        </TD>
+        <TD>
+          95911
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Effects.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          7310
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Graphics.c
+        </TD>
+        <TD>
+          c
+        </TD>
+        <TD>
+          57963
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Graphics.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5297
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Resources.c
+        </TD>
+        <TD>
+          c
+        </TD>
+        <TD>
+          19295
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Resources.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3256
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Templates.c
+        </TD>
+        <TD>
+          c
+        </TD>
+        <TD>
+          4175
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Templates.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3089
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Views.c
+        </TD>
+        <TD>
+          c
+        </TD>
+        <TD>
+          73319
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\Views.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5721
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\WidgetSet.c
+        </TD>
+        <TD>
+          c
+        </TD>
+        <TD>
+          72753
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\WidgetSet.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3254
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationApplication.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          7851
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationBigFont.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3122
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationBrewingDialog.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          7089
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationDeviceClass.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          6314
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationSelectionDialog.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          7083
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationSmallFont.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3156
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreCursorEvent.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          8904
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreCursorGrabEvent.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          6744
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreCursorHit.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          4747
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreDialogContext.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          4185
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreDragEvent.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5336
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreEvent.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          4414
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreGroup.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          58112
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreKeyEvent.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          7508
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreKeyPressHandler.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5913
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreLayoutContext.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3868
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreLayoutLineContext.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3889
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreLayoutQuadContext.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3973
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreLineView.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          7661
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreOutline.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          12708
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreQuadView.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          8189
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreRectView.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          7299
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreResource.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3757
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreRoot.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          39970
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreSimpleTouchHandler.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          16070
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreSystemEvent.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5543
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreSystemEventHandler.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5563
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreSystemEventTask.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5997
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreTask.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          9584
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreTaskQueue.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          7370
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreTimer.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          6007
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_CoreView.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          20679
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsEffect.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          8982
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsEffectTimerClass.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          4131
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsFadeInOutTransition.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          8225
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsFader.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          10629
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsFaderTask.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          7812
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsInt32Effect.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          6895
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsOpacityFader.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          9826
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsPointEffect.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          6853
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsPositionFader.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          10589
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsShowHideTransition.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          8345
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsTimingList.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3647
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsTransition.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          9146
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EffectsVisibilityFader.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          9618
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_GraphicsArcPath.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5261
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_GraphicsCanvas.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          17334
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_GraphicsPath.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          13661
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ResourcesBitmap.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          6008
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ResourcesFont.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          6215
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ResourcesFontSet.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5021
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_TemplatesDeviceClass.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3592
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ViewsFrame.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          12079
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ViewsImage.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          11793
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ViewsLine.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          9072
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ViewsRectangle.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          8738
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ViewsStrokePath.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          10678
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ViewsText.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          14942
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_WidgetSetHorizontalSlider.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          15024
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_WidgetSetHorizontalSliderConfig.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          28028
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_WidgetSetPushButton.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          13489
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_WidgetSetPushButtonConfig.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          15087
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_WidgetSetWidgetConfig.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3770
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\ewfiles.cmake
+        </TD>
+        <TD>
+          cmake
+        </TD>
+        <TD>
+          209
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\ewfiles.inc
+        </TD>
+        <TD>
+          inc
+        </TD>
+        <TD>
+          189
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\ewfiles.lst
+        </TD>
+        <TD>
+          lst
+        </TD>
+        <TD>
+          414
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\ewlocale.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          2935
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationBackgroundCup.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          560120
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationButtonFace.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          12617
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationCup.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          29166
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationPlayIcon.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          4072
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationSliderBack.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5971
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationSliderFront.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          5301
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ApplicationSliderThumb.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          6766
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EwFont_Asap_Condensed_Medium_HC29_C16.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          23638
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_EwFont_Asap_Medium_HC50_C16.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          52928
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          C:\Users\vijay\Documents\Embedded Wizard 15\Examples\QuickTour\Win32\_ResourcesWhiteBitmapStripe.h
+        </TD>
+        <TD>
+          h
+        </TD>
+        <TD>
+          3471
+        </TD>
+      </TR>
+      <TR>
+        <TD>
+          TOTAL
+        </TD>
+        <TD>
+        </TD>
+        <TD>
+          2068364
+        </TD>
+      </TR>
+    </TABLE>
+  </DIV>
+    <div class='footer'>
+      <p class='footer-1'><a href='http://www.embedded-wizard.de' target='_blank'>Embedded Wizard</a> is a product of <a href='http://www.tara-systems.de' target='_blank'>TARA Systems GmbH</a></p>
+      <p class='footer-2'>Concept and implementation by <span class='autor'>Paul Banach</span> and <span class='autor'>Manfred Schweyer</span></p>
+      <p class='footer-3'><span>Copyright © TARA Systems GmbH</span></p>
+    </div>
+    <SCRIPT>
+      if ( !Array.from )
+        Array.from = function( arrayLike )
+        {
+          var temp_array = [];
+          var length     = arrayLike.length;
+          for ( var i = 0; i < length; i++ )
+            temp_array.push( arrayLike[i]);
+          return temp_array;
+        };
+      var ths = document.querySelectorAll( 'th' );
+      function hookTable( th )
+      {
+        th.addEventListener( 'click', function()
+        {
+          const tbody   = th.parentNode.parentNode;
+          var   content = Array.from( tbody.querySelectorAll( 'tr' ));
+          var   first   = content.shift();
+          var   last    = content.pop();
+          var   inx     = Array.from( th.parentNode.children ).indexOf( th );
+          var   asc     = !!this.asc;
+          content.sort( function( a, b )
+          {
+            a = a.children[ inx ].innerText || a.children[ inx ].textContent;
+            b = b.children[ inx ].innerText || b.children[ inx ].textContent;
+            if (( a !== '' ) && ( b !== '' ) && !isNaN( a ) && !isNaN( b ))
+              return asc? a - b : b - a;
+            else
+              return asc? a.toString().localeCompare( b ) :
+                          b.toString().localeCompare( a );
+          });
+          content.forEach( function( tr ){ tbody.appendChild( tr ); });
+          tbody.appendChild( last );
+          this.asc = !asc;
+        });
+      }
+      for ( var i = 0; i < ths.length; i++ )
+        hookTable( ths[i]);
+    </SCRIPT>
+  </BODY>

@@ -1,0 +1,1 @@
+The sample application 'BezierClock' implements a fancy digital clock and timer application with animated digits. The application uses the Embedded Wizard vector graphics to render dynamically the different digits for clock and timer. The change from one digit to another is handled by moving the vector points to get a smooth transition animation.

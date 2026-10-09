@@ -1,0 +1,69 @@
+﻿$version 15.00
+
+// This is the Application class of the GUI.
+$rect <30,60,200,100>
+class Application : Core::Root
+{
+  $rect <820,10,1020,50>
+  inherited property Bounds = <0,0,800,480>;
+
+  $rect <820,60,1020,100>
+  inherited method DriveKeyboardHitting()
+  {
+    /* just overriding this method to restart the auto demo timer when the user has pressed a key on the keyboard */
+    AutoDemoTimer.Enabled = false;
+    AutoDemoTimer.Enabled = true;
+
+    /* don't forget to make the default implementation */
+    return super( aCode, aCharCode, aDown );
+  }
+
+  $rect <820,100,1020,140>
+  inherited method DriveCursorHitting()
+  {
+    /* just overriding this method to restart the auto demo timer when the user has touched the screen */
+    AutoDemoTimer.Enabled = false;
+    AutoDemoTimer.Enabled = true;
+
+    /* don't forget to make the default implementation */
+    return super( aDown, aFinger, aPos );
+  }
+
+  // This is a timer object.
+  $rect <820,250,1020,290>
+  object Core::Timer AutoDemoTimer
+  {
+    preset OnTrigger = AutoDemoSlot;
+    preset Period = 10000;
+    preset Begin = 20000;
+    preset Enabled = true;
+  }
+
+  // This is a slot method.
+  $rect <820,300,1020,340>
+  slot AutoDemoSlot
+  {
+    postsignal PanelCarousel.OnTriggerAutoDemo;
+
+
+  }
+
+  $rect <20,20,160,60>
+  object Solar::PanelCarousel PanelCarousel
+  {
+    preset Bounds = <0,0,800,480>;
+  }
+
+  // The application class contains only the Solar::PanelCarousel and implements \
+  // an auto demo mode.
+  note legend Note
+  {
+    attr Bounds = <10,500,800,550>;
+  }
+}
+
+// Application
+note group Note7
+{
+  attr Bounds = <10,10,220,120>;
+}

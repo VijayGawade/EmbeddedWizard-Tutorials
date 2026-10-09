@@ -1,0 +1,1 @@
+This application demonstrates the possibilities and the usage of the chart classes LineChart, BarChart and PieChart. The appearance of each chart diagram can be configured easily by using their corresponding properties. Additionally, this demo shows the usage of an outline box to manage scrollable content.

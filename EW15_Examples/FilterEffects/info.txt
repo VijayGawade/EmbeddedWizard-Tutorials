@@ -1,0 +1,1 @@
+This example demonstrates the usage of the Filter Image, Filter Group and Filter Screen views to perform blur, shadow, tint and mask effects on image and screen contents.

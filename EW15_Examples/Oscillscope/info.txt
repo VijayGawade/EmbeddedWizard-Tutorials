@@ -1,0 +1,1 @@
+This demo application simulates a cathode ray oscilloscope. Several parameters can be configured, like amplification and velocity, beam color and its intensity, the luminous period and the data source.

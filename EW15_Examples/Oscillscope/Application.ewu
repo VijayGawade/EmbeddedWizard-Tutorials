@@ -1,0 +1,3046 @@
+﻿$version 15.00
+
+// The oscilloscope class. An oscilloscope (abbreviated sometimes as scope or O-scope) \
+// is a type of electronic test instrument that allows signal voltages to be viewed, \
+// usually as a two-dimensional graph of one or more electrical potential differences \
+// (vertical axis) plotted as a function of time or of some other voltage (horizontal \
+// axis). Although an oscilloscope displays voltage on its vertical axis, any other \
+// quantity that can be converted to a voltage can be displayed as well. In most \
+// instances, oscilloscopes show events that repeat with either no change, or change \
+// slowly. The oscilloscope is one of the most versatile and widely-used electronic \
+// instruments. Within this demo application the oscilloscope displays the given \
+// set of data by using a simulated electronic beam.
+$rect <30,170,230,210>
+$output false
+class Oscilloscope : Core::Group
+{
+  $rect <0,270,200,310>
+  inherited property Bounds = <0,0,320,240>;
+
+  $rect <200,270,400,310>
+  inherited method UpdateLayout()
+  {
+    /* create canvas */
+    if ( Canvas == null )
+      Canvas = new Graphics::Canvas;
+
+    /* set size to bounds area */
+    Canvas.FrameSize = aSize;
+
+    /* and clear the complete bitmap with black color */
+    var rect r = rect( 0, 0, aSize.x, aSize.y );
+    Canvas.FillRectangle( r, r, #000000FF, #000000FF, #000000FF, #000000FF, false );
+
+    /* assign the canvas to the image object */
+    Image.Bitmap = Canvas;
+    Image.Bounds.size = aSize;
+
+    /* arrange all scale lines */
+    var int32 x = aSize.x - 1;
+    var int32 y = aSize.y - 1;
+
+    /* all horizontal lines */
+    LineH0.Point1 = point( 0, y * 0 / 10 );
+    LineH0.Point2 = point( x, y * 0 / 10 );
+    LineH1.Point1 = point( 0, y * 1 / 10 );
+    LineH1.Point2 = point( x, y * 1 / 10 );
+    LineH2.Point1 = point( 0, y * 2 / 10 );
+    LineH2.Point2 = point( x, y * 2 / 10 );
+    LineH3.Point1 = point( 0, y * 3 / 10 );
+    LineH3.Point2 = point( x, y * 3 / 10 );
+    LineH4.Point1 = point( 0, y * 4 / 10 );
+    LineH4.Point2 = point( x, y * 4 / 10 );
+    LineH5.Point1 = point( 0, y * 5 / 10 );
+    LineH5.Point2 = point( x, y * 5 / 10 );
+    LineH6.Point1 = point( 0, y * 6 / 10 );
+    LineH6.Point2 = point( x, y * 6 / 10 );
+    LineH7.Point1 = point( 0, y * 7 / 10 );
+    LineH7.Point2 = point( x, y * 7 / 10 );
+    LineH8.Point1 = point( 0, y * 8 / 10 );
+    LineH8.Point2 = point( x, y * 8 / 10 );
+    LineH9.Point1 = point( 0, y * 9 / 10 );
+    LineH9.Point2 = point( x, y * 9 / 10 );
+    LineH10.Point1 = point( 0, y * 10 / 10 );
+    LineH10.Point2 = point( x, y * 10 / 10 );
+
+    /* and all vertical lines */
+    LineV0.Point1 = point( x * 0 / 10, 0 );
+    LineV0.Point2 = point( x * 0 / 10, y );
+    LineV1.Point1 = point( x * 1 / 10, 0 );
+    LineV1.Point2 = point( x * 1 / 10, y );
+    LineV2.Point1 = point( x * 2 / 10, 0 );
+    LineV2.Point2 = point( x * 2 / 10, y );
+    LineV3.Point1 = point( x * 3 / 10, 0 );
+    LineV3.Point2 = point( x * 3 / 10, y );
+    LineV4.Point1 = point( x * 4 / 10, 0 );
+    LineV4.Point2 = point( x * 4 / 10, y );
+    LineV5.Point1 = point( x * 5 / 10, 0 );
+    LineV5.Point2 = point( x * 5 / 10, y );
+    LineV6.Point1 = point( x * 6 / 10, 0 );
+    LineV6.Point2 = point( x * 6 / 10, y );
+    LineV7.Point1 = point( x * 7 / 10, 0 );
+    LineV7.Point2 = point( x * 7 / 10, y );
+    LineV8.Point1 = point( x * 8 / 10, 0 );
+    LineV8.Point2 = point( x * 8 / 10, y );
+    LineV9.Point1 = point( x * 9 / 10, 0 );
+    LineV9.Point2 = point( x * 9 / 10, y );
+    LineV10.Point1 = point( x * 10 / 10, 0 );
+    LineV10.Point2 = point( x * 10 / 10, y );
+
+    /* now intialize the clipping variable, which is used later 
+       as clipping for all drawing operations */
+    Clipping = rect( 0, 0, aSize.x, aSize.y );
+
+  }
+
+  $rect <200,310,400,350>
+  inherited method UpdateViewState()
+  {
+    var bool enabled = aState.contains( Core::ViewState[ Enabled ]);
+
+    UpdateTimer.Enabled = enabled;
+
+    // center beam position on left side
+    BeamPosition = point( 0, Bounds.h / 2 );
+
+    // clear buffer in case of disabling
+    if ( !enabled && Canvas != null )
+    {
+      /* clear complete area */
+      var rect r = rect( 0, 0, Bounds.w, Bounds.h );
+      Canvas.FillRectangle( r, r, #000000FF, #000000FF, #000000FF, #000000FF, false );
+      InvalidateArea( r );
+    }
+  }
+
+  // The property 'GridColor' stores the color value of all horizontal and vertical \
+  // lines used for drawing the grid.
+  $rect <410,0,610,40>
+  property color GridColor = #88888888;
+
+  // The onset method for the property 'GridColor' changes the color of all horizontal \
+  // and vertical grid lines.
+  $rect <410,40,610,80>
+  onset GridColor
+  {
+    /* if color does not change, nothing to do... */
+    if ( GridColor == value )
+      return;
+
+    /* assign the color */
+    pure GridColor = value;
+
+    /* now set the color value to all horizontal grid lines */
+    LineH0.Color = value;
+    LineH1.Color = value;
+    LineH2.Color = value;
+    LineH3.Color = value;
+    LineH4.Color = value;
+    LineH5.Color = value;
+    LineH6.Color = value;
+    LineH7.Color = value;
+    LineH8.Color = value;
+    LineH9.Color = value;
+    LineH10.Color = value;
+
+    /* and set the color value to all vertical grid lines */
+    LineV0.Color = value;
+    LineV1.Color = value;
+    LineV2.Color = value;
+    LineV3.Color = value;
+    LineV4.Color = value;
+    LineV5.Color = value;
+    LineV6.Color = value;
+    LineV7.Color = value;
+    LineV8.Color = value;
+    LineV9.Color = value;
+    LineV10.Color = value;
+
+
+  }
+
+  // The property 'Speed' stores the speed of the beam in milliseconds per division. \
+  // Depending on the speed, the necessary number of samples are displayed.
+  $rect <620,180,820,220>
+  property int32 Speed = 100;
+
+  // The onset method for the property 'Speed' changes the speed of the beam in the \
+  // range from 1 to 1000.
+  $rect <620,220,820,260>
+  onset Speed
+  {
+    /* limit the milliseconds per division to a range from 1 to 1000 */
+    if ( value < 1 )
+      value = 1;
+
+    if ( value > 1000 )
+      value = 1000;
+
+    /* assign the value */
+    pure Speed = value;
+
+    /* and inform the data provider */
+    if ( DataProvider != null )
+      DataProvider.Speed = value;
+  }
+
+  // The property 'RefreshRate' stores the number of milliseconds between the single \
+  // display updates. Depending on the RefreshRate, the necessary number of samples \
+  // are displayed.
+  $rect <830,0,1030,40>
+  property int32 RefreshRate = 50;
+
+  // The onset method for the property 'RefreshRate' changes the update interval \
+  // in the range from 10 to 1000 ms.
+  $rect <830,40,1030,80>
+  onset RefreshRate
+  {
+    /* limit the refresh rate to a range from 10 to 1000 */
+    if ( value < 10 )
+      value = 10;
+
+    if ( value > 1000 )
+      value = 1000;
+
+    /* assign the value and set the update timer to the new period */
+    pure RefreshRate = value;
+    UpdateTimer.Period = value;
+  }
+
+  // The property 'ScreenWiper' stores the width of the screen wiper in the range \
+  // from 0 to 100 (percent). The screen wiper clears the area right of the current \
+  // beam position with a soft fade our effect.
+  $rect <620,0,820,40>
+  property int32 ScreenWiper = 20;
+
+  // The onset method for the property 'ScreenWiper' changes the width of the screen \
+  // wiper in the range from 0 (off) to 100 percent.
+  $rect <620,40,820,80>
+  onset ScreenWiper
+  {
+    /* limit size of screen wiper to a range from 0 to 100 */
+    if ( value < 0 )
+      value = 0;
+
+    if ( value > 100 )
+      value = 100;
+
+    /* assign the value */
+    pure ScreenWiper = value;
+  }
+
+  // The property 'BeamColor' stores the color value of the simulated beam.
+  $rect <410,90,610,130>
+  property color BeamColor = #00FF06FF;
+
+  // The onset method for the property 'BeamColor' changes the color of the simulated \
+  // beam.
+  $rect <410,130,610,170>
+  onset BeamColor
+  {
+    /* if color does not change, nothing to do... */
+    if ( BeamColor == value )
+      return;
+
+    /* assign the color */
+    pure BeamColor = value;
+
+
+  }
+
+  // The property 'BeamGlow' stores the width of the simulated beam point in the \
+  // range from 0 to 3.
+  $rect <410,180,610,220>
+  property int32 BeamGlow = 1;
+
+  // The onset method for the property 'BeamGlow' changes the size of the simulated \
+  // beam point.
+  $rect <410,220,610,260>
+  onset BeamGlow
+  {
+    /* limit size of beam glow to a range from 0 to 3 */
+    if ( value < 0 )
+      value = 0;
+
+    if ( value > 3 )
+      value = 3;
+
+    pure BeamGlow = value;
+  }
+
+  // The property 'Gain' stores the scaling factor in vertical direction in the range \
+  // from 0 to 1000 (percent).
+  $rect <620,90,820,130>
+  property int32 Gain = 100;
+
+  // The onset method for the property 'Gain' changes the vertical scaling factor \
+  // in the range from 0 to 1000 percent.
+  $rect <620,130,820,170>
+  onset Gain
+  {
+    /* limit size of gain to a range from 10 to 1000 */
+    if ( value < 0 )
+      value = 0;
+
+    if ( value > 1000 )
+      value = 1000;
+
+    /* assign the value */
+    pure Gain = value;
+  }
+
+  // The 'Image' view contains the prepared data bitmap of the oscilloscope.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <0,0,48,48>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH0
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH1
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH2
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH3
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH4
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH5
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH6
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH7
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH8
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH9
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineH10
+  {
+    preset Color = #88888888;
+    preset Point2 = <500,0>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV0
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV1
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV2
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV3
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV4
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV5
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV6
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV7
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV8
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV9
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // This is a simple line view.
+  $rect <20,20,160,60>
+  object Views::Line LineV10
+  {
+    preset Color = #88888888;
+    preset Point2 = <0,410>;
+    preset Point1 = <0,0>;
+  }
+
+  // The variable 'Canvas' stores the internal bitmap used to prepare all drawing \
+  // operations.
+  $rect <0,310,200,350>
+  var Graphics::Canvas Canvas = null;
+
+  // The variable 'Clipping' contains the clipping area used for all drawing operations \
+  // within the Canvas.
+  $rect <0,350,200,390>
+  var rect Clipping = <0,0,0,0>;
+
+  // The variable 'BeamPosition' stores the current position of the simulated beam \
+  // in horizontal and vertical direction.
+  $rect <200,350,400,390>
+  var point BeamPosition = <0,0>;
+
+  // The 'UpdateTimer' object is responsible to trigger the update of the scope.
+  $rect <410,270,610,310>
+  object Core::Timer UpdateTimer
+  {
+    preset OnTrigger = UpdateSlot;
+    preset Period = 50;
+    preset Enabled = true;
+  }
+
+  // The method 'DrawBeamLine' is called to draw the beam at the given horizontal \
+  // position 'aX' from the vertical start position 'aY1' to the end position 'aY2'.
+  $rect <620,310,820,350>
+  method void DrawBeamLine( arg int32 aX, arg int32 aY1, arg int32 aY2 )
+  {
+    var int32 y1;
+    var int32 y2;
+    var rect  r;
+    var color c;
+
+    /* just to be sure... */
+    if ( Canvas == null )
+      return;
+
+    /* sort the give y values */
+    if ( aY1 < aY2 )
+    {
+      y1 = aY1;
+      y2 = aY2;
+    }  
+    else
+    {
+      y1 = aY2;
+      y2 = aY1;
+    }  
+
+    /* draw the outer glow */
+    if ( BeamGlow > 2 )
+    {
+      c = color( BeamColor.red, BeamColor.green, BeamColor.blue, 0x10 );
+      r = rect( aX - 3, y1 - 2, aX + 4, y2 + 3 );
+      Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+
+      r = rect( aX - 2, y1 - 3, aX + 3, y2 + 4 );
+      Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+    }
+
+    /* draw the middle glow */
+    if ( BeamGlow > 1 )
+    {
+      c = color( BeamColor.red, BeamColor.green, BeamColor.blue, 0x20 );
+      r = rect( aX - 2, y1 - 1, aX + 3, y2 + 2 );
+      Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+
+      r = rect( aX - 1, y1 - 2, aX + 2, y2 + 3 );
+      Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+    }  
+
+    /* draw the inner glow */
+    if ( BeamGlow > 0 )
+    {
+      c = color( BeamColor.red, BeamColor.green, BeamColor.blue, 0x40 );
+      r = rect( aX - 1, y1    , aX + 2, y2 + 1 );
+      Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+
+      r = rect( aX    , y1 - 1, aX + 1, y2 + 2 );
+      Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+    }  
+
+    /* draw the center point of the beam */
+    c = color( BeamColor.red, BeamColor.green, BeamColor.blue, 0x80 );
+    r = rect( aX    , y1    , aX + 1, y2 + 1 );
+    Canvas.FillRectangle( Clipping, r, c, c, c, c, true );
+
+  }
+
+  // The 'UpdateSlot' is responsible to draw the next sequence of data samples. The \
+  // number of samples depends on the current settings of 'RefreshRate' and the 'MillisecPerDiv'.
+  $rect <410,310,610,350>
+  slot UpdateSlot
+  {
+    /* Remark: In order to simplifiy this demo application, we assume, that for 
+       each horizontal position one samples is read from the underlying measurement 
+       equipment and that each sample is in the range from -100 ... + 100 */
+
+    var int32 noOfSamples;
+    var int32 x;
+    var int32 y1;
+    var int32 y2;
+    var rect r;
+    var rect invalidateRect;
+    var int32 wiper;
+
+    /* just to be sure... */
+    if ( Canvas == null )
+      return;
+
+    /* calculate size of screen wiper */
+    wiper = ScreenWiper * Bounds.w / 100;
+
+    /* first we have to decide, whether a full screen update is necessary or just
+       part of the screen are redrawn */
+
+    if ( RefreshRate / Speed >= 10 )
+    {
+      /* we have to make a full screen update */
+      noOfSamples = Bounds.w;
+
+      /* clear complete area */
+      r = rect( 0, 0, Bounds.w, Bounds.h );
+      Canvas.FillRectangle( r, r, #000000FF, #000000FF, #000000FF, #000000FF, false );
+
+      /* complete area needs to be updated at the end */
+      invalidateRect = rect( 0, 0, Bounds.w, Bounds.h );
+    }
+    else
+    {
+      /* only part of the screen will be drawn */
+      noOfSamples = ( Bounds.w * RefreshRate ) / ( Speed * 10 );
+
+      /* here we make a small simplification: at least one sample is drawn */
+      if ( noOfSamples == 0 )
+        noOfSamples = 1;
+
+      /* get current beam position */
+      x = BeamPosition.x + 1;
+
+      /* clear area right of the beam position */
+      r = rect( x + 2, 0, x + 5 + noOfSamples, Bounds.h );
+      Canvas.FillRectangle( r, r, #000000FF, #000000FF, #000000FF, #000000FF, false );
+
+      /* calculate the necessary update area */
+      invalidateRect = rect( x - 4, 0, x + 4 + noOfSamples, Bounds.h );
+
+      /* check for wrap around */
+      if ( x + noOfSamples > Bounds.w )
+      {
+        /* clear area at the left side */
+        r = rect( 0, 0, x + 5 + noOfSamples - Bounds.w, Bounds.h );
+        Canvas.FillRectangle( r, r, #000000FF, #000000FF, #000000FF, #000000FF, false );
+        
+        /* due to wrap around complete area needs to be updated at the end */
+        invalidateRect = rect( 0, 0, Bounds.w, Bounds.h );
+      }
+
+      /* blend area right of the beam position if screen wiper is active */
+      if ( wiper > 0 )
+      {
+        /* blend area right of the beam position */
+        r = rect( x + 2 + noOfSamples, 0, x + wiper + noOfSamples, Bounds.h );
+        Canvas.FillRectangle( r, r, #0000001F, #0000001F, #0000001F, #0000001F, true );
+      
+        /* calculate the necessary update area */
+        invalidateRect = rect( x - 4, 0, x + 4 + wiper + noOfSamples, Bounds.h );
+
+        /* check for wrap around of wiper */
+        if ( x + wiper + noOfSamples > Bounds.w )
+        {
+          /* blend area at the left side */
+          r = rect( 0, 0, x + wiper + noOfSamples - Bounds.w, Bounds.h );
+          Canvas.FillRectangle( r, r, #0000001F, #0000001F, #0000001F, #0000001F, true );
+      
+          /* due to wrap around complete area needs to be updated at the end */
+          invalidateRect = rect( 0, 0, Bounds.w, Bounds.h );
+        }
+      }
+    }
+
+    /* now, all samples are drawn... */
+    while ( noOfSamples > 0 )
+    {
+      /* get next beam position */
+      x = BeamPosition.x + 1;
+      if ( x >= Bounds.w )
+        x = 0;
+      
+      /* calculate start and end value in vertical direction */
+      y1 = BeamPosition.y;
+      y2 = Bounds.h / 2 - GetSampleData( x ) * Bounds.h / 200;
+
+      /* adjust start position for one pixel to avoid double drawing */
+      if ( y2 > y1 )
+        y1 = y1 + 1;
+      if ( y2 < y1 )
+        y1 = y1 - 1;
+
+      /* draw the beam from the last sample value to the new sample value */
+      DrawBeamLine( x, y1, y2 );
+
+      /* store the current beam position */
+      BeamPosition.x = x;
+      BeamPosition.y = y2;
+
+      /* next one... */
+      noOfSamples = noOfSamples - 1;
+    }
+
+    /* finally, we set the calculated area as invalid area of the image object
+       to force the redrawing */
+    InvalidateArea( invalidateRect );
+
+  }
+
+  // This function returns the data of the given index from an simulated measurement \
+  // equipment. 
+  $rect <830,310,1030,350>
+  method int32 GetSampleData( arg int32 aIndex )
+  {
+    var int32 value;
+
+    if ( DataProvider == null )
+      value = aIndex % 100 - 50;
+
+    else
+      value = DataProvider.GetSampleData( aIndex );
+      
+    /* modify the value with the gain */
+    value = value * Gain / 100;
+
+    if ( value < -100 )
+      value = -100;
+    if ( value > 100 )
+      value = 100;
+
+    return value;
+
+  }
+
+  // The property 'DataProvider' stores the source for getting the data to display.
+  $rect <830,90,1030,130>
+  property Application::DataSource DataProvider = null;
+
+  // The onset method for the property 'DataProvider' updates the data provider with \
+  // the current settings.
+  $rect <830,130,1030,170>
+  onset DataProvider
+  {
+    pure DataProvider = value;
+
+    if ( DataProvider != null )
+    {
+      DataProvider.Speed = Speed;
+    }
+  }
+
+  // The oscilloscope class. An oscilloscope is a type of electronic test instrument \
+  // that allows signal voltages to be viewed, usually as a two-dimensional graph \
+  // of one or more electrical potential differences (vertical axis) plotted as a \
+  // function of time or of some other voltage (horizontal axis). Although an oscilloscope \
+  // displays voltage on its vertical axis, any other quantity that can be converted \
+  // to a voltage can be displayed as well. In most instances, oscilloscopes show \
+  // events that repeat with either no change, or change slowly. The oscilloscope \
+  // is one of the most versatile and widely-used electronic instruments.
+  // 
+  // Within this demo application the oscilloscope displays the given set of data \
+  // by using a simulated electronic beam. The appearance of the beam can be configured \
+  // with the properties 'BeamColor', 'BeamGlow' and 'ScreenWiper'. The properties \
+  // 'Gain' and 'Speed' determines the vertical amplification and the horizontal \
+  // beam speed.
+  // 
+  // The update of the oscilloscope is timer driven - each time a new position of \
+  // the beam has to be drawn, the current value is read from the data source that \
+  // is given by the property 'DataProvider'. 
+  note legend Note
+  {
+    attr Bounds = <0,400,1030,630>;
+  }
+}
+
+// Simple data storage class to provide dummy data - in a real oscilloscope an interface \
+// to provide real measured data should replace this data source.
+$rect <30,390,230,430>
+$output false
+class DataSource
+{
+  // This is an array.
+  $rect <20,70,220,110>
+  array int32 DummyData[ 100 ] =
+  (
+    Default[0] = 0;
+    Default[1] = 0;
+    Default[2] = 0;
+    Default[3] = 0;
+    Default[4] = 0;
+    Default[5] = 0;
+    Default[6] = 0;
+    Default[7] = 0;
+    Default[8] = 0;
+    Default[9] = 0;
+    Default[10] = 0;
+    Default[11] = 0;
+    Default[12] = 0;
+    Default[13] = 0;
+    Default[14] = 0;
+    Default[15] = 0;
+    Default[16] = 0;
+    Default[17] = 0;
+    Default[18] = 0;
+    Default[19] = 0;
+    Default[20] = 0;
+    Default[21] = 0;
+    Default[22] = 0;
+    Default[23] = 0;
+    Default[24] = 0;
+    Default[25] = 0;
+    Default[26] = 0;
+    Default[27] = 0;
+    Default[28] = 0;
+    Default[29] = 0;
+    Default[30] = 0;
+    Default[31] = 0;
+    Default[32] = 0;
+    Default[33] = 0;
+    Default[34] = 0;
+    Default[35] = 0;
+    Default[36] = 0;
+    Default[37] = 0;
+    Default[38] = 0;
+    Default[39] = 0;
+    Default[40] = 0;
+    Default[41] = 0;
+    Default[42] = 0;
+    Default[43] = 0;
+    Default[44] = 0;
+    Default[45] = 0;
+    Default[46] = 0;
+    Default[47] = 0;
+    Default[48] = 0;
+    Default[49] = 0;
+    Default[50] = 0;
+    Default[51] = 0;
+    Default[52] = 0;
+    Default[53] = 0;
+    Default[54] = 0;
+    Default[55] = 0;
+    Default[56] = 0;
+    Default[57] = 0;
+    Default[58] = 0;
+    Default[59] = 0;
+    Default[60] = 0;
+    Default[61] = 0;
+    Default[62] = 0;
+    Default[63] = 0;
+    Default[64] = 0;
+    Default[65] = 0;
+    Default[66] = 0;
+    Default[67] = 0;
+    Default[68] = 0;
+    Default[69] = 0;
+    Default[70] = 0;
+    Default[71] = 0;
+    Default[72] = 0;
+    Default[73] = 0;
+    Default[74] = 0;
+    Default[75] = 0;
+    Default[76] = 0;
+    Default[77] = 0;
+    Default[78] = 0;
+    Default[79] = 0;
+    Default[80] = 0;
+    Default[81] = 0;
+    Default[82] = 0;
+    Default[83] = 0;
+    Default[84] = 0;
+    Default[85] = 0;
+    Default[86] = 0;
+    Default[87] = 0;
+    Default[88] = 0;
+    Default[89] = 0;
+    Default[90] = 0;
+    Default[91] = 0;
+    Default[92] = 0;
+    Default[93] = 0;
+    Default[94] = 0;
+    Default[95] = 0;
+    Default[96] = 0;
+    Default[97] = 0;
+    Default[98] = 0;
+    Default[99] = 0;
+  );
+
+  // This function returns the data of the given index from an simulated measurement \
+  // equipment. 
+  $rect <20,20,220,60>
+  method int32 GetSampleData( arg int32 aIndex )
+  {
+    var int32 i = ( aIndex * Speed / 100 ) % DummyData.size;
+
+    return DummyData[ i ];
+
+  }
+
+  // The property 'Speed' stores the speed of the associated beam in milliseconds \
+  // per division. Depending on the speed, the necessary number of samples have to \
+  // be provided.
+  $rect <220,20,420,60>
+  property int32 Speed = 1000;
+}
+
+$rect <240,470,440,510>
+$output false
+class DataSource2 : Application::DataSource
+{
+  $rect <20,70,220,110>
+  inherited array DummyData[] =
+  (
+    Default[1] = 0;
+    Default[2] = 0;
+    Default[3] = 0;
+    Default[4] = 0;
+    Default[5] = 0;
+    Default[6] = 0;
+    Default[7] = 0;
+    Default[8] = 0;
+    Default[9] = 0;
+    Default[10] = 0;
+    Default[11] = -1;
+    Default[12] = -2;
+    Default[13] = -3;
+    Default[14] = -5;
+    Default[15] = -6;
+    Default[16] = -7;
+    Default[17] = -9;
+    Default[18] = -13;
+    Default[19] = -14;
+    Default[20] = -15;
+    Default[21] = -15;
+    Default[22] = -14;
+    Default[23] = -13;
+    Default[24] = -10;
+    Default[25] = -6;
+    Default[26] = 0;
+    Default[27] = 9;
+    Default[28] = 19;
+    Default[29] = 29;
+    Default[30] = 42;
+    Default[31] = 50;
+    Default[32] = 54;
+    Default[33] = 56;
+    Default[34] = 56;
+    Default[35] = 53;
+    Default[36] = 46;
+    Default[37] = 31;
+    Default[38] = 16;
+    Default[39] = 6;
+    Default[40] = -1;
+    Default[41] = -9;
+    Default[42] = -16;
+    Default[43] = -20;
+    Default[44] = -23;
+    Default[45] = -24;
+    Default[46] = -24;
+    Default[47] = -23;
+    Default[48] = -19;
+    Default[49] = -15;
+    Default[50] = -11;
+    Default[51] = -6;
+    Default[52] = -2;
+    Default[53] = 1;
+    Default[54] = 5;
+    Default[55] = 6;
+    Default[56] = 5;
+    Default[57] = 3;
+    Default[58] = 1;
+    Default[59] = -1;
+    Default[60] = -4;
+    Default[61] = -6;
+    Default[62] = -7;
+    Default[63] = -7;
+    Default[64] = -4;
+    Default[65] = -2;
+    Default[66] = -1;
+    Default[67] = -1;
+    Default[68] = 0;
+    Default[69] = 0;
+    Default[70] = 0;
+    Default[71] = 0;
+    Default[72] = 0;
+    Default[73] = 0;
+    Default[74] = 0;
+    Default[75] = 0;
+    Default[76] = 0;
+    Default[77] = 0;
+    Default[78] = 0;
+    Default[79] = 0;
+    Default[80] = 0;
+    Default[81] = 0;
+    Default[82] = 0;
+    Default[83] = 0;
+    Default[84] = 0;
+    Default[85] = 0;
+    Default[86] = 0;
+    Default[87] = 0;
+    Default[88] = 0;
+    Default[89] = 0;
+    Default[90] = 0;
+    Default[91] = 0;
+    Default[92] = 0;
+    Default[93] = 0;
+    Default[94] = 0;
+    Default[95] = 0;
+    Default[96] = 0;
+    Default[97] = 0;
+    Default[98] = 0;
+    Default[99] = 0;
+  );
+
+  $rect <20,20,220,60>
+  inherited method GetSampleData()
+  {
+    var int32 i = ( aIndex * Speed / 200 ) % DummyData.size;
+    return DummyData[ i ];
+
+  }
+}
+
+$rect <240,430,440,470>
+$output false
+class DataSource1 : Application::DataSource
+{
+  $rect <20,70,220,110>
+  inherited array DummyData[] =
+  (
+    Default[1] = 0;
+    Default[2] = 2;
+    Default[3] = 0;
+    Default[4] = -2;
+    Default[5] = 0;
+    Default[6] = 4;
+    Default[7] = 0;
+    Default[8] = -4;
+    Default[9] = 0;
+    Default[10] = 6;
+    Default[11] = 0;
+    Default[12] = -6;
+    Default[13] = 0;
+    Default[14] = 8;
+    Default[15] = 0;
+    Default[16] = -8;
+    Default[17] = 0;
+    Default[18] = 10;
+    Default[19] = 0;
+    Default[20] = -10;
+    Default[21] = 0;
+    Default[22] = 12;
+    Default[23] = 0;
+    Default[24] = -12;
+    Default[25] = 0;
+    Default[26] = 14;
+    Default[27] = 0;
+    Default[28] = -14;
+    Default[29] = 0;
+    Default[30] = 16;
+    Default[31] = 0;
+    Default[32] = -16;
+    Default[33] = 0;
+    Default[34] = 18;
+    Default[35] = 0;
+    Default[36] = -18;
+    Default[37] = 0;
+    Default[38] = 20;
+    Default[39] = 0;
+    Default[40] = -20;
+    Default[41] = 0;
+    Default[42] = 22;
+    Default[43] = 0;
+    Default[44] = -22;
+    Default[45] = 0;
+    Default[46] = 24;
+    Default[47] = 0;
+    Default[48] = -24;
+    Default[49] = 0;
+    Default[50] = 26;
+    Default[51] = 0;
+    Default[52] = -26;
+    Default[53] = 0;
+    Default[54] = 28;
+    Default[55] = 0;
+    Default[56] = -28;
+    Default[57] = 0;
+    Default[58] = 30;
+    Default[59] = 0;
+    Default[60] = -30;
+    Default[61] = 0;
+    Default[62] = 32;
+    Default[63] = 0;
+    Default[64] = -32;
+    Default[65] = 0;
+    Default[66] = 34;
+    Default[67] = 0;
+    Default[68] = -34;
+    Default[69] = 0;
+    Default[70] = 36;
+    Default[71] = 0;
+    Default[72] = -36;
+    Default[73] = 0;
+    Default[74] = 38;
+    Default[75] = 0;
+    Default[76] = -38;
+    Default[77] = 0;
+    Default[78] = 40;
+    Default[79] = 0;
+    Default[80] = -40;
+    Default[81] = 0;
+    Default[82] = 42;
+    Default[83] = 0;
+    Default[84] = -42;
+    Default[85] = 0;
+    Default[86] = 44;
+    Default[87] = 0;
+    Default[88] = -44;
+    Default[89] = 0;
+    Default[90] = 46;
+    Default[91] = 0;
+    Default[92] = -46;
+    Default[93] = 0;
+    Default[94] = 48;
+    Default[95] = 0;
+    Default[96] = -48;
+    Default[97] = 0;
+    Default[98] = 0;
+    Default[99] = 0;
+  );
+
+  $rect <20,20,220,60>
+  inherited method GetSampleData()
+  {
+    var int32 i = ( aIndex * Speed / 1000 ) % DummyData.size;
+    return DummyData[ i ];
+
+  }
+}
+
+$rect <240,510,440,550>
+$output false
+class DataSource3 : Application::DataSource
+{
+  $rect <20,70,220,110>
+  inherited array DummyData[] =
+  (
+    Default[0] = -50;
+    Default[1] = -50;
+    Default[2] = -50;
+    Default[3] = -50;
+    Default[4] = 50;
+    Default[5] = 50;
+    Default[6] = 50;
+    Default[7] = -50;
+    Default[8] = -50;
+    Default[9] = -50;
+    Default[10] = 50;
+    Default[11] = -50;
+    Default[12] = -50;
+    Default[13] = 50;
+    Default[14] = 50;
+    Default[15] = 50;
+    Default[16] = -50;
+    Default[17] = -50;
+    Default[18] = -50;
+    Default[19] = 50;
+    Default[20] = 50;
+    Default[21] = -50;
+    Default[22] = 50;
+    Default[23] = -50;
+    Default[24] = -50;
+    Default[25] = -50;
+    Default[26] = 50;
+    Default[27] = 50;
+    Default[28] = -50;
+    Default[29] = 50;
+    Default[30] = -50;
+    Default[31] = -50;
+    Default[32] = 50;
+    Default[33] = 50;
+    Default[34] = -50;
+    Default[35] = 50;
+    Default[36] = -50;
+    Default[37] = -50;
+    Default[38] = -50;
+    Default[39] = -50;
+    Default[40] = -50;
+    Default[41] = -50;
+    Default[42] = -50;
+    Default[43] = 50;
+    Default[44] = 50;
+    Default[45] = -50;
+    Default[46] = 50;
+    Default[47] = 50;
+    Default[48] = 50;
+    Default[49] = 50;
+    Default[50] = -50;
+    Default[51] = -50;
+    Default[52] = 50;
+    Default[53] = 50;
+    Default[54] = -50;
+    Default[55] = -50;
+    Default[56] = 50;
+    Default[57] = 50;
+    Default[58] = 50;
+    Default[59] = 50;
+    Default[60] = -50;
+    Default[61] = -50;
+    Default[62] = 50;
+    Default[63] = 50;
+    Default[64] = -50;
+    Default[65] = 50;
+    Default[66] = -50;
+    Default[67] = 50;
+    Default[68] = -50;
+    Default[69] = 50;
+    Default[70] = 50;
+    Default[71] = 50;
+    Default[72] = -50;
+    Default[73] = -50;
+    Default[74] = -50;
+    Default[75] = -50;
+    Default[76] = 50;
+    Default[77] = -50;
+    Default[78] = -50;
+    Default[79] = 50;
+    Default[80] = 50;
+    Default[81] = -50;
+    Default[82] = -50;
+    Default[83] = 50;
+    Default[84] = 50;
+    Default[85] = -50;
+    Default[86] = 50;
+    Default[87] = -50;
+    Default[88] = 50;
+    Default[89] = -50;
+    Default[90] = -50;
+    Default[91] = 50;
+    Default[92] = -50;
+    Default[93] = -50;
+    Default[94] = 50;
+    Default[95] = 50;
+    Default[96] = -50;
+    Default[97] = -50;
+    Default[98] = -50;
+    Default[99] = -50;
+  );
+
+  $rect <20,20,220,60>
+  inherited method GetSampleData()
+  {
+    var int32 i = ( aIndex * Speed / 200 ) % DummyData.size;
+    return DummyData[ i ];
+
+  }
+}
+
+$rect <30,280,230,320>
+$output false
+class Button : Core::Group
+{
+  $rect <0,180,200,220>
+  inherited property Bounds = <0,0,40,40>;
+
+  $rect <0,220,200,260>
+  inherited method UpdateViewState()
+  {
+    // Select one of the following states:
+    // frame #0: disabled
+    // frame #1: enabled released
+    // frame #2: enabled pressed
+    // frame #3: enabled released focused
+    // frame #4: enabled pressed focused
+
+    // From the current state derive the corresponding image 
+    // frame
+    if ( aState.contains( Core::ViewState[ Enabled ]))
+    {
+      if ( aState.contains( Core::ViewState[ Focused ]))
+      {
+        if ( Active )
+          Image.FrameNumber = 4;
+        else
+          Image.FrameNumber = 3;
+      }
+      if ( TouchHandler.Down && TouchHandler.Inside )
+        Image.FrameNumber = 4;
+      else if ( Active )
+        Image.FrameNumber = 2;
+      else
+        Image.FrameNumber = 1;
+    }
+    else
+      Image.FrameNumber = 0;
+
+  }
+
+  // This slot method will receive a signal, if the value of the property assigned \
+  // to @Outlet has been changed by another widget or by the application logic. In \
+  // response to this notification, the widget will update itself.
+  $rect <200,180,400,220>
+  slot outletSlot
+  {
+    /* update the current state of the widget */
+    if ( Outlet != null )
+      Active = Outlet^;
+  }
+
+  // This internal slot method is used to receive the corresponding signals form \
+  // the touch handler.
+  $rect <200,220,400,260>
+  slot enterLeaveSlot
+  {
+    InvalidateViewState();
+  }
+
+  // This internal slot method is used to receive the corresponding signals form \
+  // the touch handler.
+  $rect <200,260,400,300>
+  slot pressReleaseSlot
+  {
+    /* releasing the finger outside the button area is ignored */
+    if ( !TouchHandler.Down && TouchHandler.Inside )
+    {
+      if ( ToggleSwitch )
+        Active = !Active;
+      else
+        Active = false;
+
+      /* update the attached outlet */
+      if ( ToggleSwitch && ( Outlet != null ))
+        Outlet^ = Active;
+
+      /* in case of a monostable button, just 'tickle' the outlet */
+      if ( !ToggleSwitch && ( Outlet != null ))
+      {
+        Outlet^ = true;
+        Outlet^ = false;
+      }
+
+      /* and inform other observers, that the outlet has changed its value */
+      notifyobservers Outlet;
+
+      /* inform the OnChange slot method */
+      signal OnChange;
+
+      /* inform about the state change with the corresponding slot method */
+      if ( ToggleSwitch )
+        if ( Active )
+          postsignal OnSwitchOn;
+        else
+          postsignal OnSwitchOff;
+    }
+  }
+
+  $rect <200,130,400,170>
+  onset Outlet
+  {
+    /* check if the new outlet differs from the currently used outlet */
+    if ( pure Outlet == value )
+      return;
+
+    /* detach from the previous outlet */
+    if ( pure Outlet != null )
+      detachobserver outletSlot, pure Outlet;
+
+    /* store the new outlet */
+    pure Outlet = value;
+
+    /* ... and attach to the new one */
+    if ( value != null )
+      attachobserver outletSlot, value;
+
+    /* finally, update the current state of the widget by posting a signal to the outlet slot */
+    if ( value != null )
+      postsignal outletSlot;
+  }
+
+  $rect <400,40,600,80>
+  onset ToggleSwitch
+  {
+    /* check if the given value differs from the current value */
+    if ( pure ToggleSwitch == value )
+      return;
+
+    /* store the new value */// Rember the new state ...
+    pure ToggleSwitch = value;
+
+    /* monostable button can not appear pressed */
+    if ( !value )
+      Active = false;
+  }
+
+  $rect <200,40,400,80>
+  onset Active
+  {
+    /* check if the given value differs from the current value */
+    if ( pure Active == value )
+      return;
+
+    /* store the new value */
+    pure Active = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The property 'OnSwitchOff' can refer to a slot method, which will receive a \
+  // signal as soon the button has changed its state to 'switched-off' (bistable \
+  // buttons only). Thereupon the method's logic will be executed.
+  $rect <600,260,800,300>
+  property slot OnSwitchOff = null;
+
+  // The property 'OnSwitchOn' can refer to a slot method, which will receive a signal \
+  // as soon the button has changed its state to 'switched-on' (bistable buttons \
+  // only). Thereupon the method's logic will be executed.
+  $rect <600,220,800,260>
+  property slot OnSwitchOn = null;
+
+  // The property 'OnChange' can refer to a slot method, which will receive a signal \
+  // as soon the user has pressed the button. Thereupon the method's logic will be \
+  // executed.
+  $rect <400,260,600,300>
+  property slot OnChange = null;
+
+  // The property Outlet provides an interface for the Model-View-Controller (MVC). \
+  // In the MVC, the widgets (views) and the application logic (model) are always \
+  // kept apart. An automatism behind this model ensures, that widgets are notified \
+  // automatically as soon as the affected model has changed its state. On the other \
+  // hand, user interactions on a widget cause the affected model to execute the \
+  // application logic. Usually, a model is a simple Chora object containg several \
+  // properties and the implementation of onget/onset method.
+  // By assigning a property reference, Outlet establishes a connection between the \
+  // widget and the model object, the affected property belongs to. After this, the \
+  // widget is able to read and modify the referred property in response to the user \
+  // interactions. It is also able to adapt the widget appearance, if the value of \
+  // the referred property has been modified by another widget or by the application \
+  // logic itself.
+  $rect <200,90,400,130>
+  property ^bool Outlet = null;
+
+  // The property 'ToggleSwitch' determines whether the button is bistable or monostable. \
+  // Bistable buttons have two states: pressed and released. Each time the button \
+  // is activated by the user, its state is toggled between pressed and released. \
+  // In contrast, monostable buttons restore the released state immediately as soon \
+  // the user has released 'his finger from the button's face'.
+  $rect <400,0,600,40>
+  property bool ToggleSwitch = false;
+
+  // The property 'Active' stores the current state of the button. As long as the \
+  // property is 'false', the widget represents the status switched-off and should \
+  // appear released. As long as the property is 'true', the widget represents the \
+  // status switched-on and should appear pressed. 
+  // Usually this property is used by bistable buttons only, which can toggle its \
+  // state. Whether the button is bistable or monostable is determined by the button's \
+  // property @ToggleSwitch.
+  $rect <200,0,400,40>
+  property bool Active = false;
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Layout = Core::Layout[];
+    preset Bounds = <0,0,40,40>;
+    preset AutoSize = true;
+    preset Bitmap = Res::PushButtonImages;
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler TouchHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Point4 = <0,40>;
+    preset Point3 = <40,40>;
+    preset Point2 = <40,0>;
+    preset Point1 = <0,0>;
+    preset OnLeave = enterLeaveSlot;
+    preset OnEnter = enterLeaveSlot;
+    preset OnRelease = pressReleaseSlot;
+    preset OnPress = pressReleaseSlot;
+  }
+
+  // The class 'Button' implements a push button to start a certain action or to \
+  // toggle a boolean state.
+  // 
+  // When the property 'ToggleSwitch' is true, the widget operates with two states: \
+  // 'on' or 'off'. In this case, the property 'Active' represents the momentary \
+  // state of the widget. 
+  // A toggle switch button can be connected with a boolean 'Outlet' property to \
+  // show the current value of the property and to change it. 
+  // Additionally, a toggle button can trigger the slot methods 'OnChange', 'OnSwitchOn' \
+  // and 'OnSwitchOff', whenever the user has changed the state of the widget.
+  // 
+  // When the property 'ToggleSwitch' is false, the widget operates as simple push \
+  // button: Each time the user has pressed the button a signal is sent to the slot \
+  // method 'OnChange'.
+  note legend Note
+  {
+    attr Bounds = <10,310,800,540>;
+  }
+}
+
+$rect <240,280,440,320>
+$output false
+class ButtonRed : Application::Button
+{
+  $rect <60,0,260,40>
+  inherited property ToggleSwitch = true;
+
+  $rect <20,20,160,60>
+  inherited object Image
+  {
+    preset Bitmap = Res::PushButtonImagesRed;
+  }
+}
+
+$rect <450,280,650,320>
+$output false
+class ButtonGreen : Application::Button
+{
+  $rect <60,0,260,40>
+  inherited property ToggleSwitch = true;
+
+  $rect <20,20,160,60>
+  inherited object Image
+  {
+    preset Bitmap = Res::PushButtonImagesGreen;
+  }
+}
+
+// Application class of the oscilloscope demo.
+$rect <30,60,230,100>
+$output false
+class Application : Core::Root
+{
+  $rect <350,200,550,240>
+  inherited property Bounds = <0,0,320,240>;
+
+  $rect <350,10,550,50>
+  object Application::DataSource0 DataSource0;
+
+  $rect <350,90,550,130>
+  object Application::DataSource2 DataSource2;
+
+  $rect <350,50,550,90>
+  object Application::DataSource1 DataSource1;
+
+  $rect <350,130,550,170>
+  object Application::DataSource3 DataSource3;
+
+  // This is a wallpaper view.
+  $rect <20,20,160,60>
+  object Views::Wallpaper Wallpaper
+  {
+    preset Bounds = <0,0,320,240>;
+    preset Bitmap = Res::SteelBitmap;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Oscilloscope Oscilloscope
+  {
+    preset Bounds = <0,0,320,180>;
+    preset GridColor = Res::GridColor0;
+    preset Speed = 200;
+    preset BeamColor = Res::BeamColor0;
+    preset DataProvider = DataSource1;
+  }
+
+  // This application class contains just the background, the oscilloscope view and \
+  // the data sources.
+  // It is intended to be used as a base for variants of the application class in \
+  // order to support different screen sizes.
+  note legend Note
+  {
+    attr Bounds = <0,260,550,390>;
+  }
+}
+
+$rect <240,60,440,100>
+$variant Win32_VGA
+vclass Application_VGA : Application::Application
+{
+  $rect <660,400,860,440>
+  inherited property Bounds = <0,0,640,480>;
+
+  $rect <20,20,160,60>
+  inherited object Wallpaper
+  {
+    preset Bounds = <0,0,640,480>;
+  }
+
+  $rect <20,20,160,60>
+  inherited object Oscilloscope
+  {
+    preset Bounds = <10,10,470,340>;
+  }
+
+  // This slot method is called when the user pressed the power button.
+  $rect <660,10,860,50>
+  slot PowerSlot
+  {
+    // switch on/off scope and all buttons
+    Oscilloscope.Enabled = PushButtonPower.Active;
+    PushButtonInfo.Enabled = PushButtonPower.Active;
+    PushButtonAmplificationUp.Enabled = PushButtonPower.Active;
+    PushButtonAmplificationDown.Enabled = PushButtonPower.Active;
+    PushButtonVelocityUp.Enabled = PushButtonPower.Active;
+    PushButtonVelocityDown.Enabled = PushButtonPower.Active;
+    PushButtonBeamColor.Enabled = PushButtonPower.Active;
+    PushButtonGridColor.Enabled = PushButtonPower.Active;
+    PushButtonBeamIntensity.Enabled = PushButtonPower.Active;
+    PushButtonLuminousPeriod.Enabled = PushButtonPower.Active;
+    PushButtonSource0.Enabled = PushButtonPower.Active;
+    PushButtonSource1.Enabled = PushButtonPower.Active;
+    PushButtonSource2.Enabled = PushButtonPower.Active;
+    PushButtonSource3.Enabled = PushButtonPower.Active;
+    PreviewSource0.Enabled = PushButtonPower.Active;
+    PreviewSource1.Enabled = PushButtonPower.Active;
+    PreviewSource2.Enabled = PushButtonPower.Active;
+    PreviewSource3.Enabled = PushButtonPower.Active;
+
+    PushButtonInfo.Active = false;
+    AboutText.Visible = false;
+  }
+
+  // This slot method is called when the user pressed the info button. As a result \
+  // the info text is switched on and off.
+  $rect <660,50,860,90>
+  slot InfoSlot
+  {
+    AboutText.Visible = PushButtonInfo.Active;
+    Oscilloscope.Enabled = !PushButtonInfo.Active;
+
+  }
+
+  // This is a slot method.
+  $rect <660,90,860,130>
+  slot AmplificationSlot
+  {
+    /* query value from device */
+    var int32 gain = Oscilloscope.Gain;
+
+    if ( sender == PushButtonAmplificationUp )
+    {
+      /* increase the amplification */
+      switch ( gain )
+      {
+        case 1: gain = 2;
+        case 2: gain = 5;
+        case 5: gain = 10;
+        case 10: gain = 20;
+        case 20: gain = 50;
+        case 50: gain = 100;
+        case 100: gain = 200;
+        case 200: gain = 500;
+        case 500: gain = 1000;
+        case 1000: gain = 1000;
+        default: gain = 100;
+      }
+    }
+
+    if ( sender == PushButtonAmplificationDown )
+    {
+      /* decrease the amplification */
+      switch ( gain )
+      {
+        case 1: gain = 1;
+        case 2: gain = 1;
+        case 5: gain = 2;
+        case 10: gain = 5;
+        case 20: gain = 10;
+        case 50: gain = 20;
+        case 100: gain = 50;
+        case 200: gain = 100;
+        case 500: gain = 200;
+        case 1000: gain = 500;
+        default: gain = 100;
+      }
+    }
+
+    /* assign the new value to device */
+    Oscilloscope.Gain = gain;
+
+    /* create the string for value text */
+    ActiveValueText.String = "Amplification: " + string( gain ) + "%";
+
+    /* restart timer */
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // This is a slot method.
+  $rect <660,130,860,170>
+  slot VelocitySlot
+  {
+    /* query value from device */
+    var int32 speed = Oscilloscope.Speed;
+
+    if ( sender == PushButtonVelocityUp )
+    {
+      /* increase the velocity */
+      switch ( speed )
+      {
+        case 10: speed = 10;
+        case 20: speed = 10;
+        case 50: speed = 20;
+        case 100: speed = 50;
+        case 200: speed = 100;
+        case 500: speed = 200;
+        case 1000: speed = 500;
+        default: speed = 100;
+      }
+    }
+
+    if ( sender == PushButtonVelocityDown )
+    {
+      /* decrease the velocity */
+      switch ( speed )
+      {
+        case 10: speed = 20;
+        case 20: speed = 50;
+        case 50: speed = 100;
+        case 100: speed = 200;
+        case 200: speed = 500;
+        case 500: speed = 1000;
+        case 1000: speed = 1000;
+        default: speed = 100;
+      }
+    }
+
+    /* assign the new value to device */
+    Oscilloscope.Speed = speed;
+
+    /* create the string for value text */
+    ActiveValueText.String = "Velocity: " + string( speed ) + " ms/Div";
+
+    /* restart timer */
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // This is a slot method.
+  $rect <660,170,860,210>
+  slot BeamColorSlot
+  {
+    /* select next beam color */
+    BeamColorIndex = BeamColorIndex + 1;
+    if ( BeamColorIndex > 4 )
+      BeamColorIndex = 0;
+
+    switch ( BeamColorIndex )
+    {
+      case 0: 
+      { 
+        Oscilloscope.BeamColor = Res::BeamColor0;
+        ActiveValueText.String = Res::BeamColorText0;
+      }
+      case 1: 
+      {
+        Oscilloscope.BeamColor = Res::BeamColor1;
+        ActiveValueText.String = Res::BeamColorText1;
+      }
+      case 2: 
+      {
+        Oscilloscope.BeamColor = Res::BeamColor2;
+        ActiveValueText.String = Res::BeamColorText2;
+      }
+      case 3: 
+      {
+        Oscilloscope.BeamColor = Res::BeamColor3;
+        ActiveValueText.String = Res::BeamColorText3;
+      }
+      case 4: 
+      {
+        Oscilloscope.BeamColor = Res::BeamColor4;
+        ActiveValueText.String = Res::BeamColorText4;
+      }
+      default:;
+    }
+
+
+    // restart timer
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // This is a slot method.
+  $rect <660,210,860,250>
+  slot GridColorSlot
+  {
+    /* select next grid color */
+    GridColorIndex = GridColorIndex + 1;
+    if ( GridColorIndex > 4 )
+      GridColorIndex = 0;
+
+    switch ( GridColorIndex )
+    {
+      case 0: 
+      { 
+        Oscilloscope.GridColor = Res::GridColor0;
+        ActiveValueText.String = Res::GridColorText0;
+      }
+      case 1: 
+      {
+        Oscilloscope.GridColor = Res::GridColor1;
+        ActiveValueText.String = Res::GridColorText1;
+      }
+      case 2: 
+      {
+        Oscilloscope.GridColor = Res::GridColor2;
+        ActiveValueText.String = Res::GridColorText2;
+      }
+      case 3: 
+      {
+        Oscilloscope.GridColor = Res::GridColor3;
+        ActiveValueText.String = Res::GridColorText3;
+      }
+      case 4: 
+      {
+        Oscilloscope.GridColor = Res::GridColor4;
+        ActiveValueText.String = Res::GridColorText4;
+      }
+      default:;
+    }
+
+
+    // restart timer
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // This is a slot method.
+  $rect <660,250,860,290>
+  slot BeamIntensitySlot
+  {
+    /* query value from device */
+    var int32 glow = Oscilloscope.BeamGlow;
+
+    /* select next glow value */
+    glow = glow + 1;
+    if ( glow > 3 )
+      glow = 0;
+
+    /* assign the new value to device */
+    Oscilloscope.BeamGlow = glow;
+
+    /* create the string for value text */
+    ActiveValueText.String = "BeamIntensity: " + string( glow );
+
+    /* restart timer */
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // This is a slot method.
+  $rect <660,290,860,330>
+  slot LuminousPeriodSlot
+  {
+    /* query value from device */
+    var int32 wiper = Oscilloscope.ScreenWiper;
+
+    /* increase the luminous period means decreasing the size of screen wiper */
+    if ( wiper > 66 )
+      wiper = 50;
+    else if ( wiper  > 33 )
+      wiper = 0;
+    else
+      wiper = 100;
+
+    /* assign the new value to device */
+    Oscilloscope.ScreenWiper = wiper;
+
+    /* create the string for value text */
+    if ( wiper < 33 )
+      ActiveValueText.String = "Luminous Period: High";
+    else if ( wiper > 66 )
+      ActiveValueText.String = "Luminous Period: Low";
+    else
+      ActiveValueText.String = "Luminous Period: Medium";
+
+    /* restart timer */
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // This is a slot method.
+  $rect <660,350,860,390>
+  slot SelectSourceSlot
+  {
+    var int32 sourceIndex;
+
+    if ( sender == PushButtonSource0 )
+    {
+      Oscilloscope.DataProvider = DataSource0;
+      sourceIndex = 0;
+    }
+    else if ( sender == PushButtonSource1 )
+    {
+      Oscilloscope.DataProvider = DataSource1;
+      sourceIndex = 1;
+    }
+    else if ( sender == PushButtonSource2 )
+    {
+      Oscilloscope.DataProvider = DataSource2;
+      sourceIndex = 2;
+    }
+    else if ( sender == PushButtonSource3 )
+    {
+      Oscilloscope.DataProvider = DataSource3;
+      sourceIndex = 3;
+    }
+
+    ActiveValueText.String = "Data Source: Source " + string( sourceIndex );
+
+    // restart timer
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // Internal variable to store the index of the currently selected beam color.
+  $rect <860,170,1060,210>
+  var int32 BeamColorIndex = 0;
+
+  // Internal variable to store the index of the currently selected grid color.
+  $rect <860,210,1060,250>
+  var int32 GridColorIndex = 0;
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonAmplificationUp
+  {
+    preset Bounds = <500,85,540,125>;
+    preset OnChange = AmplificationSlot;
+  }
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonAmplificationDown
+  {
+    preset Bounds = <500,125,540,165>;
+    preset OnChange = AmplificationSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::ButtonRed PushButtonInfo
+  {
+    preset Bounds = <580,15,620,55>;
+    preset OnChange = InfoSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::ButtonGreen PushButtonPower
+  {
+    preset Bounds = <500,15,540,55>;
+    preset OnChange = PowerSlot;
+    preset Active = true;
+  }
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonVelocityUp
+  {
+    preset Bounds = <580,85,620,125>;
+    preset OnChange = VelocitySlot;
+  }
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonVelocityDown
+  {
+    preset Bounds = <580,125,620,165>;
+    preset OnChange = VelocitySlot;
+  }
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonBeamIntensity
+  {
+    preset Bounds = <500,270,540,310>;
+    preset OnChange = BeamIntensitySlot;
+  }
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonBeamColor
+  {
+    preset Bounds = <500,200,540,240>;
+    preset OnChange = BeamColorSlot;
+  }
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonGridColor
+  {
+    preset Bounds = <580,200,620,240>;
+    preset OnChange = GridColorSlot;
+  }
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonLuminousPeriod
+  {
+    preset Bounds = <580,270,620,310>;
+    preset OnChange = LuminousPeriodSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button PushButtonSource0
+  {
+    preset Bounds = <20,350,60,390>;
+    preset OnChange = SelectSourceSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button PushButtonSource1
+  {
+    preset Bounds = <180,350,220,390>;
+    preset OnChange = SelectSourceSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button PushButtonSource2
+  {
+    preset Bounds = <340,350,380,390>;
+    preset OnChange = SelectSourceSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button PushButtonSource3
+  {
+    preset Bounds = <500,350,540,390>;
+    preset OnChange = SelectSourceSlot;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextPower
+  {
+    preset Bounds = <500,55,540,75>;
+    preset String = "Power";
+    preset Font = Res::DescriptionFont;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextInfo
+  {
+    preset Bounds = <580,55,620,75>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Info";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextUp
+  {
+    preset Bounds = <545,95,575,112>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Up";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextDown
+  {
+    preset Bounds = <545,138,575,155>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Down";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextVelocity
+  {
+    preset Bounds = <580,165,620,185>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Velocity";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextAmplification
+  {
+    preset Bounds = <490,165,550,185>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Amplification";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextBeamColor
+  {
+    preset Bounds = <490,240,550,260>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Beam Color";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextGridColor
+  {
+    preset Bounds = <570,240,630,260>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Grid Color";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextSource0
+  {
+    preset Bounds = <67,373,127,393>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Source 0";
+    preset Font = Res::DescriptionFont;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextSource1
+  {
+    preset Bounds = <227,373,287,393>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Source 1";
+    preset Font = Res::DescriptionFont;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextSource2
+  {
+    preset Bounds = <387,373,447,393>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Source 2";
+    preset Font = Res::DescriptionFont;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextSource3
+  {
+    preset Bounds = <547,373,607,393>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Source 3";
+    preset Font = Res::DescriptionFont;
+  }
+
+  // This is a multiline text object.
+  $rect <20,20,160,60>
+  object Views::Text TextLuminousPeriod
+  {
+    preset Bounds = <570,310,630,340>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Luminous\nPeriod";
+  }
+
+  // This is a multiline text object.
+  $rect <20,20,160,60>
+  object Views::Text TextBeamIntensity
+  {
+    preset Bounds = <490,310,550,340>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Beam\nIntensity";
+  }
+
+  // This is a multiline text object.
+  $rect <20,20,160,60>
+  object Views::Text AboutText
+  {
+    preset Bounds = <10,10,470,300>;
+    preset String = "Welcome to Embedded Wizard\nOscilloscope Demo\n\nwww.embedded-wizard.de";
+    preset Font = Res::DisplayFont;
+    preset Visible = false;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ActiveValueText
+  {
+    preset Bounds = <20,310,330,330>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Active Value";
+    preset Font = Res::DisplayFont;
+    preset Visible = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Oscilloscope PreviewSource0
+  {
+    preset Bounds = <10,400,150,470>;
+    preset GridColor = Res::GridColor0;
+    preset Speed = 200;
+    preset BeamColor = Res::BeamColor0;
+    preset BeamGlow = 0;
+    preset DataProvider = DataSource0;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Oscilloscope PreviewSource1
+  {
+    preset Bounds = <170,400,310,470>;
+    preset GridColor = Res::GridColor0;
+    preset Speed = 200;
+    preset BeamColor = Res::BeamColor2;
+    preset BeamGlow = 0;
+    preset DataProvider = DataSource1;
+    preset Gain = 200;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Oscilloscope PreviewSource2
+  {
+    preset Bounds = <330,400,470,470>;
+    preset GridColor = Res::GridColor0;
+    preset Speed = 500;
+    preset BeamColor = Res::BeamColor3;
+    preset BeamGlow = 0;
+    preset DataProvider = DataSource2;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Oscilloscope PreviewSource3
+  {
+    preset Bounds = <490,400,630,470>;
+    preset GridColor = Res::GridColor0;
+    preset BeamColor = Res::BeamColor4;
+    preset BeamGlow = 0;
+    preset DataProvider = DataSource3;
+  }
+
+  // This is a pulse color effect to fade out the active value text.
+  $rect <660,450,860,490>
+  object Effects::ColorEffect ColorEffectValueText
+  {
+    preset NoOfCycles = 1;
+    preset InitialDelay = 5000;
+    preset Value2 = #FFFFFF00;
+    preset Value1 = #FFFFFFFF;
+    preset Outlet = ^ActiveValueText.Color;
+  }
+
+  // This is the variant of the application class for a screen size of 640x480 pixels \
+  // (VGA).
+  // It contains a couple of buttons to configure the oscilloscope and it contains \
+  // previews of the four data sources.
+  // 
+  // This variant is used when the profile Win32_VGA is used.
+  note legend Note
+  {
+    attr Bounds = <0,500,650,620>;
+  }
+}
+
+$rect <450,60,650,100>
+$variant Win32_QVGA
+vclass Application_QVGA : Application::Application
+{
+  // Slot method for changing the grid color of the oscilloscope.
+  $rect <340,240,540,280>
+  slot ChangeGridColorSlot
+  {
+    if ( sender == PushButtonUp )
+    {
+      GridColorIndex = GridColorIndex + 1;
+      if ( GridColorIndex > 4 )
+        GridColorIndex = 0;
+    }
+
+    if ( sender == PushButtonDown )
+    {
+      GridColorIndex = GridColorIndex - 1;
+      if ( GridColorIndex < 0 )
+        GridColorIndex = 4;
+    }
+
+    switch ( GridColorIndex )
+    {
+      case 0: 
+      { 
+        Oscilloscope.GridColor = Res::GridColor0;
+        ActiveValueText.String = Res::GridColorText0;
+      }
+      case 1: 
+      {
+        Oscilloscope.GridColor = Res::GridColor1;
+        ActiveValueText.String = Res::GridColorText1;
+      }
+      case 2: 
+      {
+        Oscilloscope.GridColor = Res::GridColor2;
+        ActiveValueText.String = Res::GridColorText2;
+      }
+      case 3: 
+      {
+        Oscilloscope.GridColor = Res::GridColor3;
+        ActiveValueText.String = Res::GridColorText3;
+      }
+      case 4: 
+      {
+        Oscilloscope.GridColor = Res::GridColor4;
+        ActiveValueText.String = Res::GridColorText4;
+      }
+      default:;
+    }
+
+
+    // restart timer
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // Internal variable to store the index of the currently selected beam color.
+  $rect <540,120,740,160>
+  var int32 BeamColorIndex = 0;
+
+  // Internal variable to store the index of the currently selected grid color.
+  $rect <540,240,740,280>
+  var int32 GridColorIndex = 0;
+
+  // Slot method for changing the amplification of the oscilloscope.
+  $rect <340,0,540,40>
+  slot ChangeAmplificationSlot
+  {
+    /* query value from device */
+    var int32 gain = Oscilloscope.Gain;
+
+    if ( sender == PushButtonUp )
+    {
+      /* increase the amplification */
+      switch ( gain )
+      {
+        case 1: gain = 2;
+        case 2: gain = 5;
+        case 5: gain = 10;
+        case 10: gain = 20;
+        case 20: gain = 50;
+        case 50: gain = 100;
+        case 100: gain = 200;
+        case 200: gain = 500;
+        case 500: gain = 1000;
+        case 1000: gain = 1000;
+        default: gain = 100;
+      }
+    }
+
+    if ( sender == PushButtonDown )
+    {
+      /* decrease the amplification */
+      switch ( gain )
+      {
+        case 1: gain = 1;
+        case 2: gain = 1;
+        case 5: gain = 2;
+        case 10: gain = 5;
+        case 20: gain = 10;
+        case 50: gain = 20;
+        case 100: gain = 50;
+        case 200: gain = 100;
+        case 500: gain = 200;
+        case 1000: gain = 500;
+        default: gain = 100;
+      }
+    }
+
+    /* assign the new value to device */
+    Oscilloscope.Gain = gain;
+
+    /* create the string for value text */
+    ActiveValueText.String = "Amplification: " + string( gain ) + "%";
+
+    /* restart timer */
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // Slot method for changing the velocity of the oscilloscope.
+  $rect <340,40,540,80>
+  slot ChangeVelocitySlot
+  {
+    /* query value from device */
+    var int32 speed = Oscilloscope.Speed;
+
+    if ( sender == PushButtonUp )
+    {
+      /* increase the velocity */
+      switch ( speed )
+      {
+        case 10: speed = 10;
+        case 20: speed = 10;
+        case 50: speed = 20;
+        case 100: speed = 50;
+        case 200: speed = 100;
+        case 500: speed = 200;
+        case 1000: speed = 500;
+        default: speed = 100;
+      }
+    }
+
+    if ( sender == PushButtonDown )
+    {
+      /* decrease the velocity */
+      switch ( speed )
+      {
+        case 10: speed = 20;
+        case 20: speed = 50;
+        case 50: speed = 100;
+        case 100: speed = 200;
+        case 200: speed = 500;
+        case 500: speed = 1000;
+        case 1000: speed = 1000;
+        default: speed = 100;
+      }
+    }
+
+    /* assign the new value to device */
+    Oscilloscope.Speed = speed;
+
+    /* create the string for value text */
+    ActiveValueText.String = "Velocity: " + string( speed ) + " ms/Div";
+
+    /* restart timer */
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // Slot method for changing the source of the oscilloscope.
+  $rect <340,80,540,120>
+  slot ChangeSourceSlot
+  {
+    if ( sender == PushButtonUp )
+    {
+      SourceIndex = SourceIndex + 1;
+      if ( SourceIndex > 3 )
+        SourceIndex = 0;
+    }
+
+    if ( sender == PushButtonDown )
+    {
+      SourceIndex = SourceIndex - 1;
+      if ( SourceIndex < 0 )
+        SourceIndex = 3;
+    }
+
+    switch ( SourceIndex )
+    {
+      case 0: 
+      { 
+        Oscilloscope.DataProvider = DataSource0;
+      }
+      case 1: 
+      {
+        Oscilloscope.DataProvider = DataSource1;
+      }
+      case 2: 
+      {
+        Oscilloscope.DataProvider = DataSource2;
+      }
+      case 3: 
+      {
+        Oscilloscope.DataProvider = DataSource3;
+      }
+      default:;
+    }
+
+    ActiveValueText.String = "Data Source: Source " + string( SourceIndex );
+
+    // restart timer
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // Slot method for changing the beam color of the oscilloscope.
+  $rect <340,120,540,160>
+  slot ChangeBeamColorSlot
+  {
+    if ( sender == PushButtonUp )
+    {
+      BeamColorIndex = BeamColorIndex + 1;
+      if ( BeamColorIndex > 4 )
+        BeamColorIndex = 0;
+    }
+
+    if ( sender == PushButtonDown )
+    {
+      BeamColorIndex = BeamColorIndex - 1;
+      if ( BeamColorIndex < 0 )
+        BeamColorIndex = 4;
+    }
+
+    switch ( BeamColorIndex )
+    {
+      case 0: 
+      { 
+        Oscilloscope.BeamColor = Res::BeamColor0;
+        ActiveValueText.String = Res::BeamColorText0;
+      }
+      case 1: 
+      {
+        Oscilloscope.BeamColor = Res::BeamColor1;
+        ActiveValueText.String = Res::BeamColorText1;
+      }
+      case 2: 
+      {
+        Oscilloscope.BeamColor = Res::BeamColor2;
+        ActiveValueText.String = Res::BeamColorText2;
+      }
+      case 3: 
+      {
+        Oscilloscope.BeamColor = Res::BeamColor3;
+        ActiveValueText.String = Res::BeamColorText3;
+      }
+      case 4: 
+      {
+        Oscilloscope.BeamColor = Res::BeamColor4;
+        ActiveValueText.String = Res::BeamColorText4;
+      }
+      default:;
+    }
+
+
+    // restart timer
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // Slot method for changing the beam intensity of the oscilloscope.
+  $rect <340,160,540,200>
+  slot ChangeBeamIntensitySlot
+  {
+    /* query value from device */
+    var int32 glow = Oscilloscope.BeamGlow;
+
+    if ( sender == PushButtonUp )
+    {
+      /* increase the glow */
+      glow = glow + 1;
+      if ( glow > 3 )
+        glow = 3;
+    }
+
+    if ( sender == PushButtonDown )
+    {
+      /* decrease the glow */
+      glow = glow - 1;
+      if ( glow < 0 )
+        glow = 0;
+    }
+
+    /* assign the new value to device */
+    Oscilloscope.BeamGlow = glow;
+
+    /* create the string for value text */
+    ActiveValueText.String = "BeamIntensity: " + string( glow );
+
+    /* restart timer */
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // Slot method for changing the luminous period (screen wiper) of the oscilloscope.
+  $rect <340,200,540,240>
+  slot ChangeLuminousPeriodSlot
+  {
+    /* query value from device */
+    var int32 wiper = Oscilloscope.ScreenWiper;
+
+    if ( sender == PushButtonUp )
+    {
+      /* increase the luminous period means decreasing the size of screen wiper */
+      if ( wiper > 66 )
+        wiper = 50;
+      else
+        wiper = 0;
+    }
+
+    if ( sender == PushButtonDown )
+    {
+      /* decrease the luminous period means increasing the size of screen wiper */
+      if ( wiper < 33 )
+        wiper = 50;
+      else
+        wiper = 100;
+    }
+
+    /* assign the new value to device */
+    Oscilloscope.ScreenWiper = wiper;
+
+    /* create the string for value text */
+    if ( wiper < 33 )
+      ActiveValueText.String = "Luminous Period: High";
+    else if ( wiper > 66 )
+      ActiveValueText.String = "Luminous Period: Low";
+    else
+      ActiveValueText.String = "Luminous Period: Medium";
+
+    /* restart timer */
+    ActiveValueText.Color = #FFFFFFFF;
+    ActiveValueText.Visible = true;
+    ColorEffectValueText.Enabled = false; 
+    ColorEffectValueText.Enabled = true; 
+  }
+
+  // Internal variable to store the index of the currently selected data source.
+  $rect <540,80,740,120>
+  var int32 SourceIndex = 0;
+
+  // This slot method is called when the user pressed the power button.
+  $rect <10,270,210,310>
+  slot PowerSlot
+  {
+    // switch on/off scope and all buttons
+    Oscilloscope.Enabled = PushButtonPower.Active;
+    PushButtonInfo.Enabled = PushButtonPower.Active;
+    PushButtonFunction.Enabled = PushButtonPower.Active;
+    PushButtonUp.Enabled = PushButtonPower.Active;
+    PushButtonDown.Enabled = PushButtonPower.Active;
+
+    PushButtonInfo.Active = false;
+    AboutText.Visible = false;
+  }
+
+  // This slot method is called when the user pressed the info button. As a result \
+  // the info text is switched on and off.
+  $rect <10,320,210,360>
+  slot InfoSlot
+  {
+    AboutText.Visible = PushButtonInfo.Active;
+    Oscilloscope.Enabled = !PushButtonInfo.Active;
+
+  }
+
+  // This slot method is called when the user pressed the function button. According \
+  // the currently selected function, the buttons 'Up' and 'Down' are connected with \
+  // the corresponding ChangeXxxSlot method.
+  $rect <10,370,210,410>
+  slot FunctionSlot
+  {
+    /* if there is currently the active function visible, the next function 
+       will be selected, otherwise, the last active function appears again */
+    if ( ColorEffectFunctionText.Enabled == true )
+    {
+      ActiveFunction = ActiveFunction + 1;
+      if ( ActiveFunction > 6 )
+        ActiveFunction = 0;
+    }
+
+    /* assign the corresponding text and connect the up/down butten with the corresponding slot */
+    switch ( ActiveFunction )
+    {
+      case 0: 
+      {
+        ActiveFunctionText.String = "Active Function: Amplification";
+        PushButtonUp.OnChange   = ChangeAmplificationSlot;
+        PushButtonDown.OnChange = ChangeAmplificationSlot;
+      }
+      case 1: 
+      {
+        ActiveFunctionText.String = "Active Function: Velocity";
+        PushButtonUp.OnChange   = ChangeVelocitySlot;
+        PushButtonDown.OnChange = ChangeVelocitySlot;
+      }
+      case 2: 
+      {
+        ActiveFunctionText.String = "Active Function: Source";
+        PushButtonUp.OnChange   = ChangeSourceSlot;
+        PushButtonDown.OnChange = ChangeSourceSlot;
+      }
+      case 3: 
+      {
+        ActiveFunctionText.String = "Active Function: Beam Color";
+        PushButtonUp.OnChange   = ChangeBeamColorSlot;
+        PushButtonDown.OnChange = ChangeBeamColorSlot;
+      }
+      case 4: 
+      {
+        ActiveFunctionText.String = "Active Function: Beam Intensity";
+        PushButtonUp.OnChange   = ChangeBeamIntensitySlot;
+        PushButtonDown.OnChange = ChangeBeamIntensitySlot;
+      }
+      case 5: 
+      {
+        ActiveFunctionText.String = "Active Function: Luminous Period";
+        PushButtonUp.OnChange   = ChangeLuminousPeriodSlot;
+        PushButtonDown.OnChange = ChangeLuminousPeriodSlot;
+      }
+      case 6: 
+      {  
+        ActiveFunctionText.String = "Active Function: Grid Color";
+        PushButtonUp.OnChange   = ChangeGridColorSlot;
+        PushButtonDown.OnChange = ChangeGridColorSlot;
+      }
+      default:;
+    }
+
+
+    /* make text visible and restart timer */
+    ActiveFunctionText.Color = #FFFFFFFF;
+    ActiveFunctionText.Visible = true;
+    ColorEffectFunctionText.Enabled = false; 
+    ColorEffectFunctionText.Enabled = true; 
+
+    /* clear value text */
+    ActiveValueText.String = "";
+
+  }
+
+  // This variable stores the index of the currently active function.
+  $rect <210,370,410,410>
+  var int32 ActiveFunction = 0;
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonFunction
+  {
+    preset Bounds = <150,185,190,225>;
+    preset OnChange = FunctionSlot;
+  }
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonUp
+  {
+    preset Bounds = <270,185,310,225>;
+  }
+
+  // This is a push button control.
+  $rect <20,20,160,60>
+  object Application::Button PushButtonDown
+  {
+    preset Bounds = <220,185,260,225>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::ButtonRed PushButtonInfo
+  {
+    preset Bounds = <60,185,100,225>;
+    preset OnChange = InfoSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::ButtonGreen PushButtonPower
+  {
+    preset Bounds = <10,185,50,225>;
+    preset OnChange = PowerSlot;
+    preset Active = true;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextPower
+  {
+    preset Bounds = <10,225,50,241>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Power";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextInfo
+  {
+    preset Bounds = <60,225,100,241>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Info";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextFunction
+  {
+    preset Bounds = <150,225,190,241>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Function";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextUp
+  {
+    preset Bounds = <270,225,310,241>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Up";
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextDown
+  {
+    preset Bounds = <220,225,260,241>;
+    preset Font = Res::DescriptionFont;
+    preset String = "Down";
+  }
+
+  // This is a multiline text object.
+  $rect <20,20,160,60>
+  object Views::Text AboutText
+  {
+    preset Bounds = <0,0,320,150>;
+    preset String = "Welcome to Embedded Wizard\nOscilloscope Demo\n\nwww.embedded-wizard.de";
+    preset Font = Res::DisplayFont;
+    preset Visible = false;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ActiveFunctionText
+  {
+    preset Bounds = <5,142,315,162>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Active Function";
+    preset Font = Res::DisplayFont;
+    preset Visible = false;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text ActiveValueText
+  {
+    preset Bounds = <5,160,315,180>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Active Value";
+    preset Font = Res::DisplayFont;
+    preset Visible = false;
+  }
+
+  // This is a pulse color effect to fade out the active value text.
+  $rect <340,300,540,340>
+  object Effects::ColorEffect ColorEffectValueText
+  {
+    preset NoOfCycles = 1;
+    preset InitialDelay = 5000;
+    preset Value2 = #FFFFFF00;
+    preset Value1 = #FFFFFFFF;
+    preset Outlet = ^ActiveValueText.Color;
+  }
+
+  // This is a pulse color effect to fade out the active value text.
+  $rect <540,300,740,340>
+  object Effects::ColorEffect ColorEffectFunctionText
+  {
+    preset NoOfCycles = 1;
+    preset InitialDelay = 5000;
+    preset Value2 = #FFFFFF00;
+    preset Value1 = #FFFFFFFF;
+    preset Outlet = ^ActiveFunctionText.Color;
+  }
+
+  // This is the variant of the application class for a screen size of 320x240 pixels \
+  // (QVGA).
+  // It contains a few buttons to configure the oscilloscope. The 'Function' button \
+  // is used to select the parameter that can be increased / decreased with the 'Up' \
+  // / 'Down' buttons.
+  // 
+  // This variant is used when the profile Win32_QVGA is used.
+  note legend Note
+  {
+    attr Bounds = <0,420,650,540>;
+  }
+}
+
+// How to manage project variants?
+// 
+// https://doc.embedded-wizard.de/managing-project-variants
+note legend Note6
+{
+  attr Bounds = <680,10,1070,120>;
+}
+
+// Application class and variants
+note group Note2
+{
+  attr Bounds = <10,10,670,120>;
+}
+
+// Oscilloscope class
+note group Note3
+{
+  attr Bounds = <10,130,250,230>;
+}
+
+// Button widgets
+note group Note4
+{
+  attr Bounds = <10,240,670,340>;
+}
+
+$rect <240,390,440,430>
+$output false
+class DataSource0 : Application::DataSource
+{
+  $rect <20,70,220,110>
+  inherited array DummyData[] =
+  (
+    Default[1] = 0;
+    Default[2] = 2;
+    Default[3] = 0;
+    Default[4] = -2;
+    Default[5] = 0;
+    Default[6] = 4;
+    Default[7] = 0;
+    Default[8] = -4;
+    Default[9] = 0;
+    Default[10] = 6;
+    Default[11] = 0;
+    Default[12] = -6;
+    Default[13] = 0;
+    Default[14] = 8;
+    Default[15] = 0;
+    Default[16] = -8;
+    Default[17] = 0;
+    Default[18] = 10;
+    Default[19] = 0;
+    Default[20] = -10;
+    Default[21] = 0;
+    Default[22] = 12;
+    Default[23] = 0;
+    Default[24] = -12;
+    Default[25] = 0;
+    Default[26] = 14;
+    Default[27] = 0;
+    Default[28] = -14;
+    Default[29] = 0;
+    Default[30] = 16;
+    Default[31] = 0;
+    Default[32] = -16;
+    Default[33] = 0;
+    Default[34] = 18;
+    Default[35] = 0;
+    Default[36] = -18;
+    Default[37] = 0;
+    Default[38] = 20;
+    Default[39] = 0;
+    Default[40] = -20;
+    Default[41] = 0;
+    Default[42] = 22;
+    Default[43] = 0;
+    Default[44] = -22;
+    Default[45] = 0;
+    Default[46] = 24;
+    Default[47] = 0;
+    Default[48] = -24;
+    Default[49] = 0;
+    Default[50] = 26;
+    Default[51] = 0;
+    Default[52] = -26;
+    Default[53] = 0;
+    Default[54] = 28;
+    Default[55] = 0;
+    Default[56] = -28;
+    Default[57] = 0;
+    Default[58] = 30;
+    Default[59] = 0;
+    Default[60] = -30;
+    Default[61] = 0;
+    Default[62] = 32;
+    Default[63] = 0;
+    Default[64] = -32;
+    Default[65] = 0;
+    Default[66] = 34;
+    Default[67] = 0;
+    Default[68] = -34;
+    Default[69] = 0;
+    Default[70] = 36;
+    Default[71] = 0;
+    Default[72] = -36;
+    Default[73] = 0;
+    Default[74] = 38;
+    Default[75] = 0;
+    Default[76] = -38;
+    Default[77] = 0;
+    Default[78] = 40;
+    Default[79] = 0;
+    Default[80] = -40;
+    Default[81] = 0;
+    Default[82] = 42;
+    Default[83] = 0;
+    Default[84] = -42;
+    Default[85] = 0;
+    Default[86] = 44;
+    Default[87] = 0;
+    Default[88] = -44;
+    Default[89] = 0;
+    Default[90] = 46;
+    Default[91] = 0;
+    Default[92] = -46;
+    Default[93] = 0;
+    Default[94] = 48;
+    Default[95] = 0;
+    Default[96] = -48;
+    Default[97] = 0;
+    Default[98] = 0;
+    Default[99] = 0;
+  );
+
+  $rect <20,20,220,60>
+  inherited method GetSampleData()
+  {
+    var int32 i = ( aIndex * Speed / 1000 ) % DummyData.size;
+    return DummyData[ i ];
+
+  }
+}
+
+// The class 'DataSource' implements the interface between the GUI application and \
+// the measured data. It is a simple data storage class to provide dummy data - in \
+// a real oscilloscope an interface to provide real measured data should replace \
+// this data source.
+note legend Note
+{
+  attr Bounds = <470,450,960,570>;
+}
+
+// Data source
+note group Note5
+{
+  attr Bounds = <10,350,460,570>;
+}

@@ -1,0 +1,520 @@
+﻿$version 15.00
+
+// This class implements a single 7-segment digit view. The number of the displayed \
+// digit is stored in the property @Digit.
+$rect <10,10,210,50>
+$output false
+class Digit : Core::Group
+{
+  // This method has been overriden in order to ensure, that the size of the view \
+  // still keep fixed.
+  $rect <50,140,250,180>
+  inherited onset Bounds
+  {
+    // The size of this view can not be changed.
+    value.size = <36,52>;
+    super( value );
+  }
+
+  $rect <50,100,250,140>
+  inherited property Bounds = <0,0,36,52>;
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image BackgroundImage
+  {
+    preset Bounds = <0,0,36,52>;
+    preset FrameNumber = 10;
+    preset Bitmap = Application::DigitImages;
+    preset Opacity = 40;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image DigitImage
+  {
+    preset Bounds = <0,0,36,52>;
+    preset Bitmap = Application::DigitImages;
+  }
+
+  // This onset method is invoked automatically, when the value of the property @Digit \
+  // is changed. This method forces the view to display the digit with the given \
+  // number.
+  $rect <50,40,250,80>
+  onset Digit
+  {
+    // Ensure, the passed value is valid.
+    if ( value > 9 ) value = 9;
+    if ( value < 0 ) value = -1;
+
+    // No changes - nothing to do.
+    if ( value == pure Digit )
+      return;
+
+    // Remember the new value
+    pure Digit = value;
+
+    // ... and update the displayed digit.
+    DigitImage.Visible     = value != -1;
+    DigitImage.FrameNumber = value;
+
+  }
+
+  // The number to display in range form 0 .. 9. If Digit is -1, no digit sign is \
+  // displayed and the shadow in the background appears.
+  $rect <50,0,250,40>
+  property int32 Digit = 0;
+}
+
+// This class implements a digital clock with a day of the week view.
+$rect <10,130,210,170>
+$output false
+class Clock : Core::Group
+{
+  $rect <10,90,210,130>
+  inherited property Bounds = <0,0,237,67>;
+
+  // The method Init() is invoked automatically after the component has been created. \
+  // This method can be overriden and filled with logic containing additional initialization \
+  // statements.
+  $rect <210,90,410,130>
+  inherited method Init()
+  {
+    // Force the updateSlot method to perform its job.
+    postsignal updateSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Digit Hour1
+  {
+    preset Bounds = <0,0,36,52>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Digit Hour2
+  {
+    preset Bounds = <36,0,72,52>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Dots Dots1
+  {
+    preset Bounds = <71,9,81,39>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Digit Min1
+  {
+    preset Bounds = <82,0,118,52>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Digit Min2
+  {
+    preset Bounds = <118,0,154,52>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Dots Dots2
+  {
+    preset Bounds = <153,9,163,39>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Digit Sec1
+  {
+    preset Bounds = <164,0,200,52>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Digit Sec2
+  {
+    preset Bounds = <200,0,236,52>;
+  }
+
+  // This is a timer object. The timer forces the clock update. Each time the timer \
+  // expires, a signal is sent to the @updateSlot method.
+  $rect <10,140,210,180>
+  object Core::Timer Timer
+  {
+    preset OnTrigger = updateSlot;
+    preset Period = 500;
+    preset Enabled = true;
+  }
+
+  // This method will receive signals from the timer object @Timer. It performs the \
+  // clock update.
+  $rect <210,140,410,180>
+  slot updateSlot
+  {
+    // Ask for the current time ...
+    var Core::Time current = Time.CurrentTime;
+
+    // Update the time
+    Hour1.Digit = current.Hour / 10;
+    Hour2.Digit = current.Hour % 10;
+    Min1.Digit = current.Minute / 10;
+    Min2.Digit = current.Minute % 10;
+    Sec1.Digit = current.Second / 10;
+    Sec2.Digit = current.Second % 10;
+
+    // The dots are flashing every 2 seconds.
+    Dots1.Active = ( current.Second % 2 ) == 0;
+    Dots2.Active = Dots1.Active;
+
+    // What day of the week we do have now?
+    DayOfWeek0.Active = current.DayOfWeek == 0;
+    DayOfWeek1.Active = current.DayOfWeek == 1;
+    DayOfWeek2.Active = current.DayOfWeek == 2;
+    DayOfWeek3.Active = current.DayOfWeek == 3;
+    DayOfWeek4.Active = current.DayOfWeek == 4;
+    DayOfWeek5.Active = current.DayOfWeek == 5;
+    DayOfWeek6.Active = current.DayOfWeek == 6;
+
+  }
+
+  // This Core::Time object provides the clock with the current time.
+  $rect <10,180,210,220>
+  object Core::Time Time;
+
+  $rect <20,20,160,60>
+  object Application::DayOfWeek DayOfWeek0
+  {
+    preset Bounds = <204,52,232,66>;
+    preset Day = 0;
+    preset Active = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::DayOfWeek DayOfWeek1
+  {
+    preset Bounds = <6,52,34,66>;
+    preset Day = 1;
+    preset Active = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::DayOfWeek DayOfWeek2
+  {
+    preset Bounds = <39,52,67,66>;
+    preset Day = 2;
+    preset Active = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::DayOfWeek DayOfWeek3
+  {
+    preset Bounds = <72,52,100,66>;
+    preset Day = 3;
+    preset Active = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::DayOfWeek DayOfWeek4
+  {
+    preset Bounds = <105,52,133,66>;
+    preset Day = 4;
+    preset Active = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::DayOfWeek DayOfWeek5
+  {
+    preset Bounds = <138,52,166,66>;
+    preset Day = 5;
+    preset Active = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::DayOfWeek DayOfWeek6
+  {
+    preset Bounds = <171,52,199,66>;
+    preset Day = 6;
+    preset Active = false;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder GetIndexOfView 1
+  $reorder GetViewAtIndex 1
+  $reorder CountViews 1
+  $reorder FindViewInDirection 1
+  $reorder FindViewWithinArea 1
+  $reorder FindViewAtPosition 1
+  $reorder FindPrevView 1
+  $reorder FindNextView 1
+  $reorder FindSiblingView 1
+  $reorder GetContentArea 1
+  $reorder RestackBehind 1
+  $reorder RestackBack 1
+  $reorder RestackTop 1
+  $reorder Restack 1
+  $reorder Remove 1
+  $reorder AddBehind 1
+  $reorder Add 1
+  $reorder Focus 1
+  $reorder Buffered 1
+  $reorder Opacity 1
+  $reorder Embedded 1
+  $reorder AlphaBlended 1
+  $reorder Visible 1
+  $reorder Hour1 1
+  $reorder Hour2 1
+  $reorder Dots1 1
+  $reorder Min1 1
+  $reorder Min2 1
+  $reorder Dots2 1
+  $reorder Sec1 1
+  $reorder Sec2 1
+  $reorder Timer 1
+  $reorder updateSlot 1
+  $reorder Time 1
+}
+
+// This class implements a simple view, which is able to display double dots (a colon).
+$rect <10,50,210,90>
+$output false
+class Dots : Core::Group
+{
+  // This method has been overriden in order to ensure, that the size of the view \
+  // still keep fixed.
+  $rect <50,140,250,180>
+  inherited onset Bounds
+  {
+    // The size of this view can not be changed.
+    value.size = <10,30>;
+    super( value );
+  }
+
+  $rect <50,100,250,140>
+  inherited property Bounds = <0,0,10,30>;
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image BackgroundImage
+  {
+    preset Bounds = <0,0,10,30>;
+    preset FrameNumber = 1;
+    preset Bitmap = Application::DotsImages;
+    preset Opacity = 40;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image DotsImage
+  {
+    preset Bounds = <0,0,10,30>;
+    preset Bitmap = Application::DotsImages;
+  }
+
+  // This onset method is invoked automatically, when the value of the property @Active \
+  // is changed. This method forces the view to display or to hide the dots.
+  $rect <50,40,250,80>
+  onset Active
+  {
+    // No changes - Nothing to do.
+    if ( value == pure Active )
+      return;
+
+    // Remember the new value and update the view.
+    pure Active = value;
+    DotsImage.Visible = value;
+  }
+
+  // Determinates, whether the both dots do appear or not. If Active == false, only \
+  // the shadow in the background is visible.
+  $rect <50,0,250,40>
+  property bool Active = true;
+}
+
+// This is the only one application root class. Each Embedded Wizard application \
+// needs such root class.
+$rect <10,170,210,210>
+class Application : Core::Root
+{
+  $rect <10,100,210,140>
+  inherited property Bounds = <0,0,250,80>;
+
+  // This is a filled rectangle view.
+  $rect <20,20,160,60>
+  object Views::Rectangle Background
+  {
+    preset Bounds = <0,0,250,80>;
+    preset Color = #DDDDB1FF;
+  }
+
+  // This is a simple border view.
+  $rect <20,20,160,60>
+  object Views::Border Border
+  {
+    preset Width = 4;
+    preset Color = #AAAA78FF;
+    preset Bounds = <0,0,250,80>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Clock ClockView
+  {
+    preset Bounds = <8,10,246,76>;
+  }
+
+  // This is a filled rectangle view.
+  $rect <20,20,160,60>
+  object Views::Rectangle Glas1
+  {
+    preset Bounds = <0,0,250,30>;
+    preset ColorBL = #FFFFFFA0;
+    preset ColorBR = #FFFFFFA0;
+    preset ColorTR = #FFFFFF00;
+    preset ColorTL = #FFFFFF00;
+  }
+
+  // This is a filled rectangle view.
+  $rect <20,20,160,60>
+  object Views::Rectangle Glas2
+  {
+    preset Bounds = <0,30,250,80>;
+    preset ColorBL = #FFFFFF00;
+    preset ColorBR = #FFFFFF00;
+    preset ColorTR = #FFFFFFA0;
+    preset ColorTL = #FFFFFFA0;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder regions 1
+  $reorder Initialize 1
+}
+
+// This class implements a view, which display the week of the day name. The number \
+// of the displayed day is stored in the property @Day.
+$rect <10,90,210,130>
+$output false
+class DayOfWeek : Core::Group
+{
+  // This method has been overriden in order to ensure, that the size of the view \
+  // still keep fixed.
+  $rect <50,140,250,180>
+  inherited onset Bounds
+  {
+    // The size of this view can not be changed.
+    value.size = <28,14>;
+    super( value );
+  }
+
+  $rect <50,100,250,140>
+  inherited property Bounds = <0,0,28,14>;
+
+  // This onset method is invoked automatically, when the value of the property @Day \
+  // is changed. This method forces the view to display the day of the week with \
+  // the given number.
+  $rect <250,40,450,80>
+  onset Day
+  {
+    // Ensure, the passed value is valid.
+    if ( value < 0 ) value = 0;
+    if ( value > 6 ) value = 6;
+
+    // No changes - nothing to do.
+    if ( value == pure Day )
+      return;
+
+    // Remember the new value.
+    pure Day = value;
+
+    value = value - 1;
+    if ( value == -1 ) value = 6;
+
+    // Display the affected day of the week name.
+    BackgroundImage.FrameNumber = ( value * 2 );
+    DOWImage.FrameNumber        = ( value * 2 );
+  }
+
+  // The number of the desired day of the week. 0 is Sunday, 1 is Monday, ...
+  $rect <250,0,450,40>
+  property int32 Day = 0;
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image BackgroundImage
+  {
+    preset Bounds = <0,0,28,14>;
+    preset FrameNumber = 13;
+    preset Bitmap = Application::DOWImages;
+    preset Opacity = 40;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image DOWImage
+  {
+    preset Bounds = <0,0,28,14>;
+    preset FrameNumber = 12;
+    preset Bitmap = Application::DOWImages;
+  }
+
+  // This onset method is invoked automatically, when the value of the property @Active \
+  // is changed. This method forces the view to display or to hide the day of the \
+  // week name.
+  $rect <50,40,250,80>
+  onset Active
+  {
+    // No changes - Nothing to do.
+    if ( value == pure Active )
+      return;
+
+    // Remember the new value and update the view.
+    pure Active = value;
+    DOWImage.Visible = value;
+  }
+
+  // Determinates, whether the name does appear or not. If Active == false, only \
+  // the shadow in the background is visible.
+  $rect <50,0,250,40>
+  property bool Active = true;
+}
+
+// This is a bitmap stripe, containing all 10 digits.
+$rect <240,10,440,50>
+$output false
+resource Resources::Bitmap DigitImages
+{
+  attr bitmapfile FileName = .\Res\Digits.png;
+  attr framesize FrameSize = <36,52>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a bitmap stripe, containing the flashing dots.
+$rect <240,50,440,90>
+$output false
+resource Resources::Bitmap DotsImages
+{
+  attr bitmapfile FileName = .\Res\Dots.png;
+  attr framesize FrameSize = <10,30>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a bitmap stripe containing the names of the day of the week.
+$rect <240,90,440,130>
+$output false
+resource Resources::Bitmap DOWImages
+{
+  attr bitmapfile FileName = .\Res\DayOfWeek.png;
+  attr framesize FrameSize = <28,14>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}

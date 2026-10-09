@@ -1,0 +1,1515 @@
+﻿$version 15.00
+
+// Airspeed indicator class. The airspeed indicator shows the aircraft's speed (usually \
+// in knots) relative to the surrounding air. It works by measuring the ram-air pressure \
+// in the aircraft's pitot tube. Normally, the indicated airspeed must be corrected \
+// for air density (which varies with altitude, temperature and humidity) in order \
+// to obtain the true airspeed, and for wind conditions in order to obtain the speed \
+// over the ground. In this demo application the airspeed indicator just displays \
+// the given speed value.
+$rect <30,170,230,210>
+$output false
+class AirspeedIndicator : Core::Group
+{
+  $rect <740,50,940,90>
+  inherited property Bounds = <0,0,200,200>;
+
+  $rect <740,90,940,130>
+  inherited method UpdateLayout()
+  {
+    /* adjust bitmap to full component size */
+    Background.Bounds.size = aSize;
+
+    /* calculate the size and position of the needle */
+    var point needleSize = Needle.Bitmap.FrameSize;
+    var point needleCenter = point( needleSize.x / 2, needleSize.y * 23 / 28 );
+    var point imageCenter = point( aSize.x / 2, aSize.y / 2 );
+
+    Needle.SourceAnchor = needleCenter;
+
+    Needle.Point1 = point( imageCenter.x - needleCenter.x, imageCenter.y - needleCenter.y );
+    Needle.Point2 = point( imageCenter.x + needleCenter.x, imageCenter.y - needleCenter.y );
+    Needle.Point3 = point( imageCenter.x + needleCenter.x, imageCenter.y + ( needleSize.y - needleCenter.y ));
+    Needle.Point4 = point( imageCenter.x - needleCenter.x, imageCenter.y + ( needleSize.y - needleCenter.y ));
+
+
+  }
+
+  $rect <740,10,940,50>
+  inherited method Init()
+  {
+    /* the size of the complete instrument depends on the size of the background image */
+    Bounds.size = Background.Bitmap.FrameSize;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <0,0,256,256>;
+    preset AutoSize = false;
+    preset Bitmap = Res::Airspeed_Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Needle
+  {
+    preset Point4 = <100,180>;
+    preset Point3 = <120,180>;
+    preset Point2 = <230,40>;
+    preset Point1 = <100,40>;
+    preset SourceAnchor = <8,92>;
+    preset Bitmap = Res::Airspeed_Needle;
+  }
+
+  // This 'int32' change effect is used to move the needles of the instrument smoothly \
+  // to the given set-value.
+  $rect <340,280,540,320>
+  object Effects::FloatEffect TrackDisplayValue
+  {
+    preset OnAnimate = animateNeedle;
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1000;
+    preset Enabled = true;
+    preset Value2 = 20.0;
+    preset Value1 = 200.0;
+  }
+
+  // The property 'Speed' is the interface to the airspeed indicator. The value represents \
+  // the set-value of the instrument.
+  $rect <340,10,540,50>
+  property float Speed = 20.0;
+
+  $rect <540,10,740,50>
+  onset Speed
+  {
+    /* limit given value to allowed ranges */
+    if ( value < 20.0 )
+      value = 20.0;
+    if ( value > 180.0 )
+      value = 180.0;
+
+    pure Speed = value;
+
+    /* start effect timer to move needle to new set value */
+    if ((( value - TrackDisplayValue.Value ) > 0.1 ) || (( TrackDisplayValue.Value - value ) > 0.1 ))
+    {
+      /* start effect timer to move needle to new set value */
+      TrackDisplayValue.Value1  = TrackDisplayValue.Value;
+      TrackDisplayValue.Value2  = value;
+      TrackDisplayValue.Enabled = false;
+      TrackDisplayValue.Enabled = true;
+    }
+
+
+  }
+
+  // This is a key press handler to get cursor up/down/left/right events.
+  $rect <30,400,230,440>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = TestSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = TestSlot;
+  }
+
+  // Slot method to handle key events - only for test during development.
+  $rect <30,440,230,480>
+  slot TestSlot
+  {
+    /* key handler slot method is just used for testing the instrument during development... */
+
+    $if $prototyper
+
+    if ( KeyHandler.Code == Core::KeyCode.Up )
+      Speed = Speed + 3.0;
+    if ( KeyHandler.Code == Core::KeyCode.Down )
+      Speed = Speed - 3.0;
+
+    trace "Speed:", (int32)Speed, "knots";
+
+    $endif
+
+  }
+
+  // Key handler for test
+  note group Note
+  {
+    attr Bounds = <10,350,250,500>;
+  }
+
+  // Airspeed indicator class. The airspeed indicator shows the aircraft's speed \
+  // (usually in knots) relative to the surrounding air. It works by measuring the \
+  // ram-air pressure in the aircraft's pitot tube. Normally, the indicated airspeed \
+  // must be corrected for air density (which varies with altitude, temperature and \
+  // humidity) in order to obtain the true airspeed, and for wind conditions in order \
+  // to obtain the speed over the ground.
+  // 
+  // In this demo application the airspeed indicator just displays the given speed \
+  // value.
+  // 
+  // To test this airspeed indicator stand-alone, just press 'F5' to launch the class \
+  // into the Prototyper and change the current speed by using the 'Up' / 'Down' \
+  // keys.
+  note legend Note1
+  {
+    attr Bounds = <260,350,950,530>;
+  }
+
+  // Slot method to rotate needle according value of float effect.
+  $rect <540,280,740,320>
+  slot animateNeedle
+  {
+    /* calculate the rotation angle to display the needle according the currently value */
+    var float angle = (TrackDisplayValue.Value - 20.0) * 2.0;
+
+    /* make the 3d transformation */
+    Needle.RotateAndScale( point( Bounds.w / 2, Bounds.h / 2 ), -angle, 1.0, 1.0 );
+
+  }
+}
+
+// Application class of the aviation demo
+$rect <30,50,230,90>
+$output false
+class Application : Core::Root
+{
+  $rect <1200,50,1400,90>
+  inherited property Bounds = <0,0,320,240>;
+
+  // This slot method is triggered by a timer and it is responsible to calculate \
+  // the next step of the simple flight simulator, in order to provide the values \
+  // for all instruments.
+  $rect <1200,210,1400,250>
+  slot AnimationTimerSlot
+  {
+    // Calculate next animation phase...
+    // Bank angle and attack angle is directly set by user inputs
+    // All other values are calculated to make a nice demo...
+
+    // calculate speed as a very simple function of the attack angle...
+    Speed = 90.0 - (AttackAngle * 0.8);
+
+    // calculate heading as avery simple function of the bank angle...
+    Heading = Heading + BankAngle * 0.02;
+
+    // calculate altitude as a very simple function of the attack angle and speed...
+    Altitude = Altitude + AttackAngle * 0.1 * Speed / 100.0;
+    if ( Altitude < 0.0 )
+      Altitude = 0.0;
+    if ( Altitude > 10000.0 )
+      Altitude = 10000.0;
+
+    // update all instruments...
+    AirspeedIndicator.Speed       = Speed;
+    AttitudeIndicator.BankAngle   = (int32)( BankAngle * 100.0 );
+    AttitudeIndicator.AttackAngle = (int32)( AttackAngle * 100.0 );
+    Altimeter.Altitude            = (int32)Altitude;
+    TurnCoordinator.BankAngle     = (int32)( BankAngle * 100.0 );
+    HeadingIndicator.Heading      = (int32)( Heading * 100.0 );
+    Variometer.Altitude           = (int32)Altitude;
+
+  }
+
+  $rect <1000,90,1200,130>
+  inherited method UpdateLayout()
+  {
+    /* the size of the complete instrument panel depends on the size of single memberse */
+    var int32 x;
+    var int32 y;
+    var int32 w;
+    var int32 h;
+
+    /* analyse the size of a single instrument */
+    w = AirspeedIndicator.Background.Bitmap.FrameSize.x;
+    h = AirspeedIndicator.Background.Bitmap.FrameSize.y;
+
+    x = ( aSize.x - 3 * w ) / 2;
+    y = ( aSize.y - 2 * h ) /  2;
+
+    /* arrange the different members... */
+    AirspeedIndicator.Bounds = rect( x + 0 * w, y + 0 * h, x + 1 * w, y + 1 * h );
+    AttitudeIndicator.Bounds = rect( x + 1 * w, y + 0 * h, x + 2 * w, y + 1 * h );
+    Altimeter.Bounds         = rect( x + 2 * w, y + 0 * h, x + 3 * w, y + 1 * h );
+    TurnCoordinator.Bounds   = rect( x + 0 * w, y + 1 * h, x + 1 * w, y + 2 * h );
+    HeadingIndicator.Bounds  = rect( x + 1 * w, y + 1 * h, x + 2 * w, y + 2 * h );
+    Variometer.Bounds        = rect( x + 2 * w, y + 1 * h, x + 3 * w, y + 2 * h );
+
+  }
+
+  $rect <1000,50,1200,90>
+  inherited method Init()
+  {
+    Bounds.size =  point( $ScreenSize.x, $ScreenSize.y );
+    Rectangle.Bounds = Bounds.orect;
+  }
+
+  $rect <1200,90,1400,130>
+  inherited property Focus = null;
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,-10,1060,640>;
+    preset Color = #383838FF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::AirspeedIndicator AirspeedIndicator
+  {
+    preset Bounds = <50,40,370,360>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Altimeter Altimeter
+  {
+    preset Bounds = <50,40,370,360>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::HeadingIndicator HeadingIndicator
+  {
+    preset Bounds = <50,40,370,360>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::AttitudeIndicator AttitudeIndicator
+  {
+    preset Bounds = <320,0,640,320>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::TurnCoordinator TurnCoordinator
+  {
+    preset Bounds = <50,40,370,360>;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Variometer Variometer
+  {
+    preset Bounds = <430,100,750,420>;
+  }
+
+  // This is a timer object to trigger the next phase of the simple flight simulator.
+  $rect <1000,210,1200,250>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationTimerSlot;
+    preset Period = 100;
+    preset Enabled = true;
+  }
+
+  // The variable 'BankAngle' stores the current bank angle of the simulated flight.
+  $rect <1000,310,1200,350>
+  var float BankAngle = 0.0;
+
+  // The variable 'AttackAngle' stores the current attack angle of the simulated \
+  // flight.
+  $rect <1000,350,1200,390>
+  var float AttackAngle = 0.0;
+
+  // The variable 'Speed' stores the current speed of the simulated flight.
+  $rect <1200,310,1400,350>
+  var float Speed = 90.0;
+
+  // The variable 'Altitude' stores the current altitude of the simulated flight.
+  $rect <1200,350,1400,390>
+  var float Altitude = 1515.0;
+
+  // The variable 'Heading' stores the current heading of the simulated flight.
+  $rect <1200,390,1400,430>
+  var float Heading = 0.0;
+
+  $rect <1000,510,1200,550>
+  object Core::Timer AutoPilotTimer
+  {
+    preset OnTrigger = AutoPilotSlot;
+    preset Period = 250;
+    preset Begin = 6000;
+    preset Enabled = true;
+  }
+
+  $rect <1200,510,1400,550>
+  slot AutoPilotSlot
+  {
+    /* just make some animations... */
+    AutoPilotBank = AutoPilotBank + 2.5;
+    BankAngle = math_sin( AutoPilotBank ) * 45.0;
+
+    AutoPilotAttack = AutoPilotAttack + 1.5;
+    AttackAngle = math_sin( AutoPilotAttack ) * 45.0;
+
+    /* limit calculated values */
+    if ( BankAngle < -45.0 )
+      BankAngle = -45.0;
+    if ( BankAngle > 45.0 )
+      BankAngle = 45.0;
+    if ( AttackAngle < -45.0 )
+      AttackAngle = -45.0;
+    if ( AttackAngle > 45.0 )
+      AttackAngle = 45.0;
+
+  }
+
+  $rect <1000,550,1200,590>
+  var float AutoPilotBank = 0;
+
+  $rect <1200,550,1400,590>
+  var float AutoPilotAttack = 0;
+
+  $rect <1000,260,1200,300>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = KeyHandlerSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = KeyHandlerSlot;
+  }
+
+  // Slot method to process key events for the flight simulation.
+  $rect <1200,260,1400,300>
+  slot KeyHandlerSlot
+  {
+    /* evaluate the current key code */
+    switch( KeyHandler.Code )
+    {
+      case Core::KeyCode.Left  : BankAngle = BankAngle - 5.0;
+      case Core::KeyCode.Right : BankAngle = BankAngle + 5.0;
+      case Core::KeyCode.Up    : AttackAngle = AttackAngle - 5.0;
+      case Core::KeyCode.Down  : AttackAngle = AttackAngle + 5.0;
+
+      default: ;
+    }
+
+    /* limit calculated values */
+    if ( BankAngle < -45.0 )
+      BankAngle = -45.0;
+    if ( BankAngle > 45.0 )
+      BankAngle = 45.0;
+    if ( AttackAngle < -45.0 )
+      AttackAngle = -45.0;
+    if ( AttackAngle > 45.0 )
+      AttackAngle = 45.0;
+
+    /* restart autopilot... */
+    AutoPilotTimer.Enabled = false;
+    AutoPilotTimer.Enabled = true;
+
+  }
+
+  // Auto Pilot
+  note group Note
+  {
+    attr Bounds = <980,460,1420,610>;
+  }
+
+  // Flight simulation
+  note group Note1
+  {
+    attr Bounds = <980,160,1420,450>;
+  }
+
+  // Initialization and Layout
+  note group Note2
+  {
+    attr Bounds = <980,0,1420,150>;
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Init
+  $member Bounds
+  $member AnimationTimerSlot
+  $member UpdateLayout
+  $member Focus
+  $member Rectangle
+  $member AirspeedIndicator
+  $member Altimeter
+  $member HeadingIndicator
+  $member AttitudeIndicator
+  $member TurnCoordinator
+  $member Variometer
+  $member AnimationTimer
+  $member BankAngle
+  $member AttackAngle
+  $member Speed
+  $member Altitude
+  $member Heading
+  $member AutoPilotTimer
+  $member AutoPilotSlot
+  $member AutoPilotBank
+  $member AutoPilotAttack
+  $member KeyHandler
+  $member KeyHandlerSlot
+  $member Note
+  $member Note1
+  $member Note2
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder AnimationTimerSlot 124
+}
+
+// Altimeter class. The altimeter shows the aircraft's height (usually in feet) above \
+// some reference level (usually sea-level) by measuring the local air pressure. \
+// Normally, it is adjustable for local barometric pressure (referred to sea level) \
+// which must be set correctly to obtain accurate altitude readings. In this demo \
+// application the altimeter just display the given altitude value.
+$rect <450,170,650,210>
+$output false
+class Altimeter : Core::Group
+{
+  $rect <740,50,940,90>
+  inherited property Bounds = <0,0,256,256>;
+
+  $rect <740,90,940,130>
+  inherited method UpdateLayout()
+  {
+    /* adjust bitmap to full component size */
+    Background.Bounds.size = aSize;
+
+    /* calculate the size and position of the needle for 100 feet */
+    var point needleSize = Needle100.Bitmap.FrameSize;
+    var point needleCenter = point( needleSize.x / 2, needleSize.y * 23 / 28 );
+    var point imageCenter = point( Bounds.size.x / 2, Bounds.size.y / 2 );
+
+    Needle100.SourceAnchor = needleCenter;
+
+    Needle100.Point1 = point( imageCenter.x - needleCenter.x, imageCenter.y - needleCenter.y );
+    Needle100.Point2 = point( imageCenter.x + needleCenter.x, imageCenter.y - needleCenter.y );
+    Needle100.Point3 = point( imageCenter.x + needleCenter.x, imageCenter.y + ( needleSize.y - needleCenter.y ));
+    Needle100.Point4 = point( imageCenter.x - needleCenter.x, imageCenter.y + ( needleSize.y - needleCenter.y ));
+
+    /* calculate the size and position of the needle for 1000 feet */
+    needleSize = Needle1000.Bitmap.FrameSize;
+    needleCenter = point( needleSize.x / 2, needleSize.y * 17 / 22 );
+    imageCenter = point( Bounds.size.x / 2, Bounds.size.y / 2 );
+
+    Needle1000.SourceAnchor = needleCenter;
+
+    Needle1000.Point1 = point( imageCenter.x - needleCenter.x, imageCenter.y - needleCenter.y );
+    Needle1000.Point2 = point( imageCenter.x + needleCenter.x, imageCenter.y - needleCenter.y );
+    Needle1000.Point3 = point( imageCenter.x + needleCenter.x, imageCenter.y + ( needleSize.y - needleCenter.y ));
+    Needle1000.Point4 = point( imageCenter.x - needleCenter.x, imageCenter.y + ( needleSize.y - needleCenter.y ));
+
+
+  }
+
+  $rect <740,10,940,50>
+  inherited method Init()
+  {
+    /* the size of the complete instrument depends on the size of the background image */
+    Bounds.size = Background.Bitmap.FrameSize;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,256,256>;
+    preset AutoSize = false;
+    preset Bitmap = Res::Altimeter_Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Needle1000
+  {
+    preset Point4 = <120,148>;
+    preset Point3 = <136,148>;
+    preset Point2 = <136,60>;
+    preset Point1 = <120,60>;
+    preset SourceAnchor = <8,68>;
+    preset Bitmap = Res::Altimeter_Needle1000;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Needle100
+  {
+    preset Point4 = <120,148>;
+    preset Point3 = <136,148>;
+    preset Point2 = <136,36>;
+    preset Point1 = <120,36>;
+    preset SourceAnchor = <8,92>;
+    preset Bitmap = Res::Altimeter_Needle100;
+  }
+
+  // This 'int32' change effect is used to move the needles of the instrument smoothly \
+  // to the given set-value.
+  $rect <340,280,540,320>
+  object Effects::Int32Effect TrackDisplayValue
+  {
+    preset OnAnimate = animateNeedle;
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 2000;
+    preset Enabled = true;
+    preset Value2 = 0;
+    preset Value1 = 1000;
+  }
+
+  // The property 'Altitude' is the interface to the altimeter. The value represents \
+  // the set-value of the instrument.
+  $rect <340,10,540,50>
+  property int32 Altitude = 0;
+
+  // The onset method for the property 'Altitude' starts to move the needles to the \
+  // given value.
+  $rect <540,10,740,50>
+  onset Altitude
+  {
+    /* limit given value to allowed ranges */
+    if ( value < 0 )
+      value = 0;
+    if ( value > 10000 )
+      value = 10000;
+
+    pure Altitude = value;
+
+    /* start effect timer to move needle to new set value */
+    if ( value != TrackDisplayValue.Value )
+    {
+      TrackDisplayValue.Value1  = TrackDisplayValue.Value;
+      TrackDisplayValue.Value2  = value;
+      TrackDisplayValue.Enabled = false;
+      TrackDisplayValue.Enabled = true;
+    }
+
+
+  }
+
+  // This is a key press handler to get cursor up/down/left/right events.
+  $rect <30,400,230,440>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = TestSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = TestSlot;
+  }
+
+  // Slot method to handle key events - only for test during development.
+  $rect <30,440,230,480>
+  slot TestSlot
+  {
+    /* key handler slot method is just used for testing the instrument during development... */
+
+    $if $prototyper
+
+    if ( KeyHandler.Code == Core::KeyCode.Up )
+      Altitude = Altitude + 30;
+    if ( KeyHandler.Code == Core::KeyCode.Down )
+      Altitude = Altitude - 30;
+
+    trace "Altitude:", Altitude, "feet";
+
+    $endif
+
+  }
+
+  // Key handler for test
+  note group Note
+  {
+    attr Bounds = <10,350,250,500>;
+  }
+
+  // Altimeter class. The altimeter shows the aircraft's height (usually in feet) \
+  // above some reference level (usually sea-level) by measuring the local air pressure. \
+  // Normally, it is adjustable for local barometric pressure (referred to sea level) \
+  // which must be set correctly to obtain accurate altitude readings.
+  // 
+  // In this demo application the altimeter just display the given altitude value.
+  // The local barometric pressure (so called QNH) is not adjustable.
+  // 
+  // To test this altimeter stand-alone, just press 'F5' to launch the class into \
+  // the Prototyper and change the current altitude by using the 'Up' / 'Down' keys.
+  note legend Note1
+  {
+    attr Bounds = <260,350,940,530>;
+  }
+
+  // Slot method to rotate needle according value of float effect.
+  $rect <540,280,740,320>
+  slot animateNeedle
+  {
+    /* calculate the rotation angle to display the 100 feet needle according the currently value */
+    var float angle = float(TrackDisplayValue.Value % 1000) * 360.0 / 1000.0;
+
+    /* make the 3d transformation */
+    Needle100.RotateAndScale( point( Bounds.w / 2, Bounds.h / 2 ), -angle, 1.0, 1.0 );
+
+    /* calculate the rotation angle to display the 1000 feet needle according the currently value */
+    angle = float(TrackDisplayValue.Value) * 360.0 / 10000.0;
+
+    /* make the 3d transformation */
+    Needle1000.RotateAndScale( point( Bounds.w / 2, Bounds.h / 2 ), -angle, 1.0, 1.0 );
+
+  }
+}
+
+// Heading indicator (gyro) class. The heading indicator (also known as the directional \
+// gyro) displays the aircraft's heading with respect to geographical north. Principle \
+// of operation is a spinning gyroscope, and is therefore subject to drift errors \
+// (called precession) which must be periodically corrected by calibrating the instrument \
+// to the magnetic compass. In many advanced aircraft (including almost all jet aircraft), \
+// the heading indicator is replaced by a Horizontal Situation Indicator (HSI) which \
+// provides the same heading information, but also assists with navigation. In this \
+// demo application the heading indicator just displays the given heading.
+$rect <240,230,440,270>
+$output false
+class HeadingIndicator : Core::Group
+{
+  $rect <740,50,940,90>
+  inherited property Bounds = <0,0,256,256>;
+
+  $rect <740,90,940,130>
+  inherited method UpdateLayout()
+  {
+    /* adjust bitmap to full component size */
+    Background.Bounds.size = aSize;
+    Foreground.Bounds.size = aSize;
+
+    /* calculate the size and position of the face */
+    var point faceSize = Face.Bitmap.FrameSize;
+
+    Face.Point1 = point(( Bounds.size.x - faceSize.x ) / 2, ( Bounds.size.y - faceSize.y ) / 2 );
+    Face.Point2 = point( Bounds.size.x - ( Bounds.size.x - faceSize.x ) / 2, ( Bounds.size.y - faceSize.y ) / 2  );
+    Face.Point3 = point( Bounds.size.x - ( Bounds.size.x - faceSize.x ) / 2, Bounds.size.y - ( Bounds.size.y - faceSize.y ) / 2 );
+    Face.Point4 = point(( Bounds.size.x - faceSize.x ) / 2, Bounds.size.y - ( Bounds.size.y - faceSize.y ) / 2  );
+
+
+    Face.SourceAnchor = point( faceSize.x / 2, faceSize.y / 2 );
+
+  }
+
+  $rect <740,10,940,50>
+  inherited method Init()
+  {
+    /* the size of the complete instrument depends on the size of the background image */
+    Bounds.size = Background.Bitmap.FrameSize;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,256,256>;
+    preset AutoSize = false;
+    preset Bitmap = Res::Gyro_Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Face
+  {
+    preset Point4 = <25,230>;
+    preset Point3 = <230,230>;
+    preset Point2 = <230,25>;
+    preset Point1 = <25,25>;
+    preset SourceAnchor = <102,102>;
+    preset Bitmap = Res::Gyro_Face;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Foreground
+  {
+    preset Bounds = <0,0,256,256>;
+    preset AutoSize = false;
+    preset Bitmap = Res::Gyro_Foreground;
+  }
+
+  // This 'int32' change effect is used to move the needles of the instrument smoothly \
+  // to the given set-value.
+  $rect <340,280,540,320>
+  object Effects::Int32Effect TrackDisplayValue
+  {
+    preset OnAnimate = animateNeedle;
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 2000;
+    preset Enabled = true;
+    preset Value2 = 0;
+    preset Value1 = 18000;
+  }
+
+  // The property 'Heading' is the interface to the heading indicator. The value \
+  // represents the set-value of the instrument in [1/100°].
+  $rect <340,10,540,50>
+  property int32 Heading = 0;
+
+  $rect <540,10,740,50>
+  onset Heading
+  {
+    value = value % 36000;
+    if ( value < 0 )
+      value = value + 36000;
+
+    /* start update only if there is a noticeable difference */
+    if (( pure Heading - value < 100 ) && ( value - pure Heading < 100 ))
+      return;
+
+    /* store given value */
+    pure Heading = value;
+
+    /* start update of the instrument */
+    postsignal ValueChanged;
+
+
+
+  }
+
+  // This is a slot method to start the recalculation of the set-value and to restart \
+  // the animation of the instrument.
+  $rect <540,50,740,90>
+  slot ValueChanged
+  {
+    var int32 start = TrackDisplayValue.Value;
+    var int32 end = Heading;
+
+    /* rotate into the right direction */
+    if ( end - start < - 18000 )
+      start = start - 36000;
+    if ( start - end < -18000 )
+      start = start + 36000;
+
+    /* start the effect... */
+    TrackDisplayValue.Value1  = start;
+    TrackDisplayValue.Value2  = end;
+    TrackDisplayValue.Enabled = false;
+    TrackDisplayValue.Enabled = true;
+
+  }
+
+  // This is a key press handler to get cursor up/down/left/right events.
+  $rect <30,400,230,440>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = TestSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = TestSlot;
+  }
+
+  // Slot method to handle key events - only for test during development.
+  $rect <30,440,230,480>
+  slot TestSlot
+  {
+    /* key handler slot method is just used for testing the instrument during development... */
+
+    $if $prototyper
+
+    if ( KeyHandler.Code == Core::KeyCode.Left )
+      Heading = Heading - 1000;
+    if ( KeyHandler.Code == Core::KeyCode.Right )
+      Heading = Heading + 1000;
+
+    trace "Heading:", (int32)Heading / 100;
+
+    $endif
+
+  }
+
+  // Key handler for test
+  note group Note
+  {
+    attr Bounds = <10,350,250,500>;
+  }
+
+  // Heading indicator (gyro) class. The heading indicator (also known as the directional \
+  // gyro) displays the aircraft's heading with respect to geographical north. Principle \
+  // of operation is a spinning gyroscope, and is therefore subject to drift errors \
+  // (called precession) which must be periodically corrected by calibrating the \
+  // instrument to the magnetic compass. In many advanced aircraft (including almost \
+  // all jet aircraft), the heading indicator is replaced by a Horizontal Situation \
+  // Indicator (HSI) which provides the same heading information, but also assists \
+  // with navigation.
+  // 
+  // In this demo application the heading indicator just displays the given heading.
+  // 
+  // To test this heading indicator stand-alone, just press 'F5' to launch the class \
+  // into the Prototyper and change the current heading by using the 'Left' / 'Right' \
+  // keys.
+  note legend Note1
+  {
+    attr Bounds = <260,350,940,570>;
+  }
+
+  // Slot method to rotate needle according value of float effect.
+  $rect <540,280,740,320>
+  slot animateNeedle
+  {
+    /* calculate the rotation angle to display the needle according the currently value */
+    var float angle = float(TrackDisplayValue.Value) / 100.0;
+
+    /* make the 3d transformation */
+    Face.RotateAndScale( point( Bounds.w / 2, Bounds.h / 2), angle, 1.0, 1.0 );
+
+  }
+}
+
+// Attitude indicator class. The attitude indicator (also known as an artificial \
+// horizon) shows the aircraft's attitude relative to the horizon. From this the \
+// pilot can tell whether the wings are level and if the aircraft nose is pointing \
+// above or below the horizon. This is a primary instrument for instrument flight \
+// and is also useful in conditions of poor visibility. Pilots are trained to use \
+// other instruments in combination should this instrument or its power fail.
+$rect <240,170,440,210>
+$output false
+class AttitudeIndicator : Core::Group
+{
+  $rect <740,50,940,90>
+  inherited property Bounds = <0,0,256,256>;
+
+  $rect <740,90,940,130>
+  inherited method UpdateLayout()
+  {
+    /* adjust bitmap to full component size */
+    Background.Bounds.size = aSize;
+    Foreground.Bounds.size = aSize;
+
+    /* calculate the size and position of the inner and outer face */
+    var point faceSize = InnerFace.Bitmap.FrameSize;
+
+    InnerFace.Point1 = point(( Bounds.size.x - faceSize.x ) / 2, ( Bounds.size.y - faceSize.y ) / 2 );
+    InnerFace.Point2 = point( Bounds.size.x - ( Bounds.size.x - faceSize.x ) / 2, ( Bounds.size.y - faceSize.y ) / 2  );
+    InnerFace.Point3 = point( Bounds.size.x - ( Bounds.size.x - faceSize.x ) / 2, Bounds.size.y - ( Bounds.size.y - faceSize.y ) / 2 );
+    InnerFace.Point4 = point(( Bounds.size.x - faceSize.x ) / 2, Bounds.size.y - ( Bounds.size.y - faceSize.y ) / 2  );
+
+    InnerFace.SourceAnchor = point( faceSize.x / 2, faceSize.y / 2 );
+
+    faceSize = OuterFace.Bitmap.FrameSize;
+
+    OuterFace.Point1 = point(( Bounds.size.x - faceSize.x ) / 2, ( Bounds.size.y - faceSize.y ) / 2 );
+    OuterFace.Point2 = point( Bounds.size.x - ( Bounds.size.x - faceSize.x ) / 2, ( Bounds.size.y - faceSize.y ) / 2  );
+    OuterFace.Point3 = point( Bounds.size.x - ( Bounds.size.x - faceSize.x ) / 2, Bounds.size.y - ( Bounds.size.y - faceSize.y ) / 2 );
+    OuterFace.Point4 = point(( Bounds.size.x - faceSize.x ) / 2, Bounds.size.y - ( Bounds.size.y - faceSize.y ) / 2  );
+
+    OuterFace.SourceAnchor = point( faceSize.x / 2, faceSize.y / 2 );
+
+  }
+
+  $rect <740,10,940,50>
+  inherited method Init()
+  {
+    /* the size of the complete instrument depends on the size of the background image */
+    Bounds.size = Background.Bitmap.FrameSize;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,256,256>;
+    preset AutoSize = false;
+    preset Bitmap = Res::Attitude_Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage InnerFace
+  {
+    preset Point4 = <23,205>;
+    preset Point3 = <235,205>;
+    preset Point2 = <235,51>;
+    preset Point1 = <23,51>;
+    preset SourceAnchor = <104,77>;
+    preset Bitmap = Res::Attitude_InnerFace;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage OuterFace
+  {
+    preset Point4 = <25,231>;
+    preset Point3 = <231,231>;
+    preset Point2 = <231,25>;
+    preset Point1 = <25,25>;
+    preset SourceAnchor = <103,103>;
+    preset Bitmap = Res::Attitude_OuterFace;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Foreground
+  {
+    preset Bounds = <0,0,256,256>;
+    preset AutoSize = false;
+    preset Bitmap = Res::Attitude_Foreground;
+  }
+
+  // This 'float' change effect is used to move the faces of the instrument smoothly \
+  // to the given set-value.
+  $rect <340,200,540,240>
+  object Effects::FloatEffect TrackDisplayValueBank
+  {
+    preset OnAnimate = AdjustFaces;
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1000;
+    preset Enabled = true;
+    preset Value2 = 0;
+    preset Value1 = 30.0;
+  }
+
+  // This is a slot method to start the recalculation of the set-value and to restart \
+  // the animation of the instrument.
+  $rect <340,120,540,160>
+  slot ValueChanged
+  {
+    /* start effect timer to move inner and outer faces to new bank angle value */
+    var float endRoll = (float)BankAngle / 100.0;
+    if ( endRoll < -60.0 )
+    {
+      endRoll = -60.0;
+    }
+    if ( endRoll > 60.0 )
+    {
+      endRoll = 60.0;
+    }
+    TrackDisplayValueBank.Value1  = TrackDisplayValueBank.Value;
+    TrackDisplayValueBank.Value2  = endRoll;
+    TrackDisplayValueBank.Enabled = false;
+    TrackDisplayValueBank.Enabled = true;
+
+    /* start effect timer to move inner face to new attack angle value */
+    var float endPitch = (float)AttackAngle / 100.0;
+    if ( endPitch < -45.0 )
+    {
+      endPitch = -45.0;
+    }
+    if ( endPitch > 45.0 )
+    {
+      endPitch = 45.0;
+    }
+    TrackDisplayValueAttack.Value1  = TrackDisplayValueAttack.Value;
+    TrackDisplayValueAttack.Value2  = endPitch;
+    TrackDisplayValueAttack.Enabled = false;
+    TrackDisplayValueAttack.Enabled = true;
+
+
+  }
+
+  // The property 'BankAngle' is one of the two interface properties of the attitude \
+  // indicator. The value represents the bank angle set-value of the instrument in \
+  // [1/100°].
+  $rect <340,10,540,50>
+  property int32 BankAngle = 0;
+
+  $rect <540,10,740,50>
+  onset BankAngle
+  {
+    /* limit given value to allowed ranges from -45.00°...+45.00° */
+    if ( value < -4500 )
+      value = -4500;
+    if ( value > 4500 )
+      value = 4500;
+
+    /* start update only if there is a noticeable difference */
+    if (( pure BankAngle - value < 50 ) && ( value - pure BankAngle < 50 ))
+      return;
+
+    /* store given value */
+    pure BankAngle = value;
+
+    /* start update of the instrument */
+    postsignal ValueChanged;
+
+
+
+  }
+
+  // The onset method for the property 'BankAngle' starts to move the instruments \
+  // faces according to the given value in [1/100°].
+  $rect <340,50,540,90>
+  property int32 AttackAngle = 0;
+
+  $rect <540,50,740,90>
+  onset AttackAngle
+  {
+    /* limit given value to allowed ranges from -30.00°...+30.00° */
+    if ( value < -3000 )
+      value = -3000;
+    if ( value > 3000 )
+      value = 3000;
+
+    /* start update only if there is a noticeable difference */
+    if (( pure AttackAngle - value < 50 ) && ( value - pure AttackAngle < 50 ))
+      return;
+
+    /* store given value */
+    pure AttackAngle = value;
+
+    /* start update of the instrument */
+    postsignal ValueChanged;
+
+  }
+
+  // This is a slot method to make the 3d transformation of the inner and outer faces \
+  // in order to update the display.
+  $rect <540,120,740,160>
+  slot AdjustFaces
+  {
+    var float shift = TrackDisplayValueAttack.Value * (float)(InnerFace.Bitmap.FrameSize.y) * 1.0 / 160.0;
+    var float rotate = -TrackDisplayValueBank.Value;
+    var Graphics::WarpMatrix m = new Graphics::WarpMatrix;
+    var point center = point( Bounds.w / 2 , Bounds.h / 2 );
+
+    /* make the 3d transformation */
+    m.Rotate( 0.0, 0.0, rotate );
+    OuterFace.Warp3D( center, m );
+
+    m.LoadIdentity();
+    m.Rotate( 0.0, 0.0, rotate );
+    m.Translate( 0.0, shift, 0.0 );
+    InnerFace.Warp3D( center, m );
+
+
+  }
+
+  // This 'float' change effect is used to move the faces of the instrument smoothly \
+  // to the given set-value.
+  $rect <342,280,542,320>
+  object Effects::FloatEffect TrackDisplayValueAttack
+  {
+    preset OnAnimate = AdjustFaces;
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1000;
+    preset Enabled = true;
+    preset Value2 = 0;
+    preset Value1 = 30.0;
+  }
+
+  // This is a key press handler to get cursor up/down/left/right events.
+  $rect <30,400,230,440>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = TestSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = TestSlot;
+  }
+
+  // Slot method to handle key events - only for test during development.
+  $rect <30,440,230,480>
+  slot TestSlot
+  {
+    /* key handler slot method is just used for testing the instrument during development... */
+
+    $if $prototyper
+
+    if ( KeyHandler.Code == Core::KeyCode.Left )
+      BankAngle = BankAngle - 300;
+    if ( KeyHandler.Code == Core::KeyCode.Right )
+      BankAngle = BankAngle + 300;
+    if ( KeyHandler.Code == Core::KeyCode.Up )
+      AttackAngle = AttackAngle + 100;
+    if ( KeyHandler.Code == Core::KeyCode.Down )
+      AttackAngle = AttackAngle - 100;
+
+    trace "BankAngle:", (int32)BankAngle, "AttackAngle:", (int32)AttackAngle;
+
+    $endif
+
+  }
+
+  // Key handler for test
+  note group Note
+  {
+    attr Bounds = <10,350,250,500>;
+  }
+
+  // Attitude indicator class. The attitude indicator (also known as an artificial \
+  // horizon) shows the aircraft's attitude relative to the horizon. From this the \
+  // pilot can tell whether the wings are level and if the aircraft nose is pointing \
+  // above or below the horizon. This is a primary instrument for instrument flight \
+  // and is also useful in conditions of poor visibility. Pilots are trained to use \
+  // other instruments in combination should this instrument or its power fail.
+  // 
+  // Within this demo application, this is the most complex instrument.
+  // 
+  // To test this attitude indicator stand-alone, just press 'F5' to launch the class \
+  // into the Prototyper and change the current attack angle by using the 'Up' / \
+  // 'Down' keys or the current bank angle by using the 'Left' / 'Right' keys.
+  note legend Note1
+  {
+    attr Bounds = <260,350,940,570>;
+  }
+}
+
+// Turn coordinator class. The turn indicator displays direction of turn and rate \
+// of turn. Internally mounted inclinometer displays 'quality' of turn, i.e. whether \
+// the turn is correctly coordinated, as opposed to an uncoordinated turn, wherein \
+// the aircraft would be in either a slip or a skid. The original turn and bank indicator \
+// was replaced in the late 1960s and early 1970s by the newer turn coordinator, \
+// which is responsive to roll as well as rate of turn, the turn and bank is typically \
+// only seen in aircraft manufactured prior to that time, or in gliders manufactured \
+// in Europe. In this demo application the turn coordinator just displays the given \
+// bank angle.
+$rect <30,230,230,270>
+$output false
+class TurnCoordinator : Core::Group
+{
+  $rect <740,50,940,90>
+  inherited property Bounds = <0,0,256,256>;
+
+  $rect <740,90,940,130>
+  inherited method UpdateLayout()
+  {
+    /* adjust bitmap to full component size */
+    Background.Bounds.size = aSize;
+
+    /* calculate the size and position of the needle */
+    var point needleSize = Needle.Bitmap.FrameSize;
+    var point needleCenter = point( needleSize.x / 2, needleSize.y * 25 / 35 );
+    var point imageCenter = point( Bounds.size.x / 2, Bounds.size.y / 2 );
+
+    Needle.Point1 = point( imageCenter.x - needleCenter.x, imageCenter.y - needleCenter.y );
+    Needle.Point2 = point( imageCenter.x + needleCenter.x, imageCenter.y - needleCenter.y );
+    Needle.Point3 = point( imageCenter.x + needleCenter.x, imageCenter.y + ( needleSize.y - needleCenter.y ));
+    Needle.Point4 = point( imageCenter.x - needleCenter.x, imageCenter.y + ( needleSize.y - needleCenter.y ));
+
+    Needle.SourceAnchor = needleCenter;
+
+
+  }
+
+  $rect <740,10,940,50>
+  inherited method Init()
+  {
+    /* the size of the complete instrument depends on the size of the background image */
+    Bounds.size = Background.Bitmap.FrameSize;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,256,256>;
+    preset AutoSize = false;
+    preset Bitmap = Res::Turn_Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Needle
+  {
+    preset Point4 = <23,205>;
+    preset Point3 = <235,205>;
+    preset Point2 = <235,51>;
+    preset Point1 = <23,51>;
+    preset SourceAnchor = <104,77>;
+    preset Bitmap = Res::Turn_Needle;
+  }
+
+  // This 'float' change effect is used to move the faces of the instrument smoothly \
+  // to the given set-value.
+  $rect <340,280,540,320>
+  object Effects::FloatEffect TrackDisplayValue
+  {
+    preset OnAnimate = animateNeedle;
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1000;
+    preset Enabled = true;
+    preset Value2 = 0;
+    preset Value1 = 30.0;
+  }
+
+  // Roll value in [1/100°].
+  $rect <340,10,540,50>
+  property int32 BankAngle = 0;
+
+  $rect <540,10,740,50>
+  onset BankAngle
+  {
+    /* limit given value to allowed ranges from -45.00°...+45.00° */
+    if ( value < -4500 )
+      value = -4500;
+    if ( value > 4500 )
+      value = 4500;
+
+    /* start update only if there is a noticeable difference */
+    if (( pure BankAngle - value < 50 ) && ( value - pure BankAngle < 50 ))
+      return;
+
+    /* store given value */
+    pure BankAngle = value;
+
+    /* start effect timer to move needle to new bank angle value */
+    TrackDisplayValue.Value1  = TrackDisplayValue.Value;
+    TrackDisplayValue.Value2  = (float)value / 100.0;
+    TrackDisplayValue.Enabled = false;
+    TrackDisplayValue.Enabled = true;
+
+  }
+
+  // This is a key press handler to get cursor up/down/left/right events.
+  $rect <30,400,230,440>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = TestSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = TestSlot;
+  }
+
+  // Slot method to handle key events - only for test during development.
+  $rect <30,440,230,480>
+  slot TestSlot
+  {
+    /* key handler slot method is just used for testing the instrument during development... */
+
+    $if $prototyper
+
+    if ( KeyHandler.Code == Core::KeyCode.Left )
+      BankAngle = BankAngle - 300;
+    if ( KeyHandler.Code == Core::KeyCode.Right )
+      BankAngle = BankAngle + 300;
+
+    trace "BankAngle:", (int32)BankAngle;
+
+    $endif
+
+  }
+
+  // Key handler for test
+  note group Note
+  {
+    attr Bounds = <10,350,250,500>;
+  }
+
+  // Turn coordinator class. The turn indicator displays direction of turn and rate \
+  // of turn. Internally mounted inclinometer displays 'quality' of turn, i.e. whether \
+  // the turn is correctly coordinated, as opposed to an uncoordinated turn, wherein \
+  // the aircraft would be in either a slip or a skid. The original turn and bank \
+  // indicator was replaced in the late 1960s and early 1970s by the newer turn coordinator, \
+  // which is responsive to roll as well as rate of turn, the turn and bank is typically \
+  // only seen in aircraft manufactured prior to that time, or in gliders manufactured \
+  // in Europe.
+  // 
+  // In this demo application the turn coordinator just displays the given bank angle.
+  // 
+  // To test this turn coordinator stand-alone, just press 'F5' to launch the class \
+  // into the Prototyper and change the current bank angle by using the 'Left' / \
+  // 'Right' keys.
+  note legend Note1
+  {
+    attr Bounds = <260,350,940,570>;
+  }
+
+  // Slot method to rotate needle according value of float effect.
+  $rect <540,280,740,320>
+  slot animateNeedle
+  {
+    /* make the 3d transformation */
+    Needle.RotateAndScale( point( Bounds.w / 2, Bounds.h / 2 ), -TrackDisplayValue.Value, 1.0, 1.0 );
+
+  }
+}
+
+// Variometer class. The variometer is also called vertical speed indicator (VSI). \
+// Senses changing air pressure, and displays that information to the pilot as a \
+// rate of climb or descent in feet per minute, meters per second or knots. In this \
+// demo application, the instrument receives the only current altitude and calculates \
+// the resulting vertical speed internally.
+$rect <450,230,650,270>
+$output false
+class Variometer : Core::Group
+{
+  $rect <740,50,940,90>
+  inherited property Bounds = <0,0,256,256>;
+
+  $rect <740,90,940,130>
+  inherited method UpdateLayout()
+  {
+    /* adjust bitmap to full component size */
+    Background.Bounds.size = aSize;
+
+    /* calculate the size and position of the needle */
+    var point needleSize = Needle.Bitmap.FrameSize;
+    var point needleCenter = point( needleSize.x * 23 / 28, needleSize.y / 2 );
+    var point imageCenter = point( Bounds.size.x / 2, Bounds.size.y / 2 );
+
+    Needle.Point1 = point( imageCenter.x - needleCenter.x, imageCenter.y - needleCenter.y );
+    Needle.Point2 = point( imageCenter.x + ( needleSize.x - needleCenter.x ), imageCenter.y - needleCenter.y );
+    Needle.Point3 = point( imageCenter.x + ( needleSize.x - needleCenter.x ), imageCenter.y + needleCenter.y );
+    Needle.Point4 = point( imageCenter.x - needleCenter.x, imageCenter.y + needleCenter.y);
+
+    Needle.SourceAnchor = needleCenter;
+
+
+  }
+
+  $rect <740,10,940,50>
+  inherited method Init()
+  {
+    /* the size of the complete instrument depends on the size of the background image */
+    Bounds.size = Background.Bitmap.FrameSize;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,256,256>;
+    preset AutoSize = false;
+    preset Bitmap = Res::Vario_Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage Needle
+  {
+    preset Point4 = <120,148>;
+    preset Point3 = <136,148>;
+    preset Point2 = <136,36>;
+    preset Point1 = <120,36>;
+    preset SourceAnchor = <8,92>;
+    preset Bitmap = Res::Vario_Needle;
+  }
+
+  // This 'int32' change effect is used to move the needles of the instrument smoothly \
+  // to the given set-value.
+  $rect <340,240,540,280>
+  object Effects::Int32Effect TrackDisplayValue
+  {
+    preset OnAnimate = animateNeedle;
+    preset Timing = Effects::Timing.Linear;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 4000;
+    preset Enabled = true;
+    preset Value2 = 0;
+    preset Value1 = 1000;
+  }
+
+  // The property 'Altitude' is the interface to the variometer. The value represents \
+  // the set-value of the instrument.
+  $rect <340,10,540,50>
+  property int32 Altitude = 0;
+
+  // The onset method for the property 'Altitude' starts to move the needles to the \
+  // given value.
+  $rect <540,10,740,50>
+  onset Altitude
+  {
+    /* limit given value to allowed ranges */
+    if ( value < 0 )
+      value = 0;
+    if ( value > 10000 )
+      value = 10000;
+
+    pure Altitude = value;
+
+  }
+
+  // Internal variable to store the last altitude.
+  $rect <740,280,940,320>
+  var int32 lastAltitude = 0;
+
+  // This slot method is responsible to calculate the difference between last timer \
+  // expiration.
+  $rect <540,280,740,320>
+  slot CalculateSpeed
+  {
+    /* calculate difference between last timer expiration */
+    var int32 delta = Altitude - lastAltitude;
+    lastAltitude = Altitude;
+
+    /* limit value */
+    if ( delta > 20 )
+      delta = 20;
+    if ( delta < -20 )
+      delta = - 20;
+
+    /* this variometer displays the difference between 600ms */
+    speed = delta;
+
+    /* start effect timer to move needle to new set value (in ft/min) */
+    if ( TrackDisplayValue.Value != speed * 100 )
+    {
+      TrackDisplayValue.Value1  = TrackDisplayValue.Value;
+      TrackDisplayValue.Value2  = speed * 100;
+      TrackDisplayValue.Enabled = false;
+      TrackDisplayValue.Enabled = true;
+    }
+
+
+
+  }
+
+  // This is a timer object to trigger the calculation of the vertical speed.
+  $rect <340,280,540,320>
+  object Core::Timer CalculateTimer
+  {
+    preset OnTrigger = CalculateSpeed;
+    preset Period = 600;
+    preset Enabled = true;
+  }
+
+  // This is a key press handler to get cursor up/down/left/right events.
+  $rect <30,400,230,440>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = TestSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = TestSlot;
+  }
+
+  // Slot method to handle key events - only for test during development.
+  $rect <30,440,230,480>
+  slot TestSlot
+  {
+    /* key handler slot method is just used for testing the instrument during development... */
+
+    $if $prototyper
+
+    if ( KeyHandler.Code == Core::KeyCode.Up )
+      Altitude = Altitude + 1;
+    if ( KeyHandler.Code == Core::KeyCode.Down )
+      Altitude = Altitude - 1;
+
+    trace "Altitude:", Altitude, "feet";
+
+    $endif
+
+  }
+
+  // Key handler for test
+  note group Note
+  {
+    attr Bounds = <10,350,250,500>;
+  }
+
+  // Variometer class. The variometer is also called vertical speed indicator (VSI). \
+  // Senses changing air pressure, and displays that information to the pilot as \
+  // a rate of climb or descent in feet per minute, meters per second or knots.
+  // 
+  // In this demo application, the instrument receives the only current altitude \
+  // and calculates the resulting vertical speed internally.
+  // 
+  // To test this variometer stand-alone, just press 'F5' to launch the class into \
+  // the Prototyper and change the current altitude by using the 'Up' / 'Down' keys.
+  note legend Note1
+  {
+    attr Bounds = <260,350,940,530>;
+  }
+
+  // Slot method to rotate needle according value of float effect.
+  $rect <540,240,740,280>
+  slot animateNeedle
+  {
+    /* calculate the rotation angle to display the needle according the currently value */
+    var float angle = (float)TrackDisplayValue.Value / 100.0 * 8.0;
+
+    /* make the 3d transformation */
+    Needle.RotateAndScale( point( Bounds.w / 2, Bounds.h / 2 ), -angle, 1.0, 1.0 );
+
+  }
+
+  // The variable 'speed' represents the set-value of the vertical speed indicator. \
+  // It is calculated out of the altitude.
+  $rect <740,240,940,280>
+  var int32 speed = 0;
+}
+
+// Application class
+note group Note
+{
+  attr Bounds = <10,0,250,110>;
+}
+
+// Aviation Instruments
+note group Note1
+{
+  attr Bounds = <10,120,670,290>;
+}

@@ -1,0 +1,641 @@
+﻿$version 15.00
+
+// GUI Components
+note group Note1
+{
+  attr Bounds = <10,10,450,140>;
+}
+
+// Assets
+note group Note2
+{
+  attr Bounds = <460,10,690,460>;
+}
+
+// Configuration objects
+note group Note3
+{
+  attr Bounds = <10,150,320,330>;
+}
+
+// The interface to integrate the GUI with the target device
+note group Note4
+{
+  attr Bounds = <10,470,690,600>;
+}
+
+// This is an instance of the interface to the underlying device. Through this instance \
+// the GUI can communicate with the device.
+$rect <430,510,680,550>
+autoobject Application::DeviceClass Device;
+
+// This class implements a variant of the interface used during the prototyping only \
+// to simulate the device behavior.
+$rect <60,550,370,590>
+$variant $prototyper
+vclass DeviceClassVariantForPrototypingOnly : Application::DeviceClass
+{
+  $rect <290,90,490,130>
+  inherited method GetBrewingProgress()
+  {
+    // Just get the integer value representing the brewing progress.
+    return brewingProgress;
+  }
+
+  $rect <20,90,220,130>
+  inherited method StartBrewing()
+  {
+    // For prototyping purpose we activate a timer which simulates the brewing progress.
+    // The timer resolution depends on the selected coffee strength.
+    Timer.Period  = ( aCoffeeStrength * 50 + 2500 ) / 100;
+    Timer.Enabled = true;
+
+    // The Brewing starts now. notify the GUI about this event.
+    TriggerBrewingStarted();
+  }
+
+  $rect <260,300,490,340>
+  var int32 brewingProgress = 0;
+
+  // This slot method is triggered from the Timer object.
+  $rect <260,260,490,300>
+  slot onTimer
+  {
+    // Simulate the progress of the brewing process.
+    brewingProgress = brewingProgress + 1;
+
+    // Notify the GUI about the updated progress of the brewing process.
+    TriggerBrewingInProgress();
+
+    // The brewing process ends. Stop the timer and notify the GUI about the
+    // end of the process.
+    if ( brewingProgress == 100 )
+    {
+      Timer.Enabled   = false;
+      brewingProgress = 0;
+      TriggerBrewingFinished();
+    }
+  }
+
+  // The timer is used to simulate the brewing process. Every time the timer expires, \
+  // the progress of the brewing process is updated.
+  $rect <20,260,250,300>
+  object Core::Timer Timer
+  {
+    preset OnTrigger = onTimer;
+    preset Period = 50;
+    preset Begin = 250;
+  }
+
+  // Timer used to simulate the progress of the brewing process.
+  note group Note1
+  {
+    attr Bounds = <10,190,500,350>;
+  }
+
+  // Implementation of the interface to use a timer as replacement for the real brewing \
+  // process.
+  note group Note2
+  {
+    attr Bounds = <10,10,500,180>;
+  }
+}
+
+// This class implements an interface to the underlying device.
+$rect <20,510,330,550>
+$output false
+class DeviceClass : Templates::DeviceClass
+{
+  // Interface to control the brewing process.
+  // These methods are intended to control the device.
+  note group Note1
+  {
+    attr Bounds = <10,10,500,180>;
+  }
+
+  // Interface to receive notifications from the device.
+  // These methods are intended to be called from the device.
+  note group Note2
+  {
+    attr Bounds = <10,190,500,390>;
+  }
+
+  $rect <260,340,490,380>
+  object Core::SystemEvent BrewingInProgressEvent;
+
+  $rect <260,300,490,340>
+  object Core::SystemEvent BrewingFinishedEvent;
+
+  $rect <260,260,490,300>
+  object Core::SystemEvent BrewingStartedEvent;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about the progress of the brewing process.
+  $rect <20,340,250,380>
+  $output true
+  method void TriggerBrewingInProgress()
+  {
+    // Just trigger the system event. All associated system event handler will then be notified automatically.
+    BrewingInProgressEvent.Trigger( null, false );
+  }
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about the end of the brewing process.
+  $rect <20,300,250,340>
+  $output true
+  method void TriggerBrewingFinished()
+  {
+    // Just trigger the system event. All associated system event handler will then be notified automatically.
+    BrewingFinishedEvent.Trigger( null, false );
+  }
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about the start of the brewing process.
+  $rect <20,260,250,300>
+  $output true
+  method void TriggerBrewingStarted()
+  {
+    // Just trigger the system event. All associated system event handler will then be notified automatically.
+    BrewingStartedEvent.Trigger( null, false );
+  }
+
+  // This method implements a device command to query the progress of the brewing \
+  // process.
+  $rect <290,90,490,130>
+  $output true
+  method int32 GetBrewingProgress()
+  {
+    var int32 progress = 0;
+
+    native ( progress )
+    {
+      /* Implement here your C code to query how the brewing process
+         progresses in your device. If necessary predeclare the C 
+         functions intended to be used here. For example: */
+      extern int YourDevice_QueryBrewingProgress( void );
+
+      progress = YourDevice_QueryBrewingProgress();
+    }
+
+    return progress;
+  }
+
+  // This method implements a device command to start the brewing process.
+  $rect <20,90,220,130>
+  method void StartBrewing( arg int32 aCoffeeStrength )
+  {
+    native ( aCoffeeStrength )
+    {
+      /* Implement here your C code to start the brewing process in
+         the device. If necessary predeclare the C functions intended
+         to be used here. For example: */
+      extern void YourDevice_StartBrewing( int aStrength );
+
+      YourDevice_StartBrewing( aCoffeeStrength );
+    }
+  }
+}
+
+// This object contains configuration information for a transition between two dialogs \
+// (screens).
+$rect <20,280,310,320>
+$output false
+autoobject Effects::FadeInOutTransition FadeInOutCentered
+{
+  preset Duration = 200;
+}
+
+// This object contains configuration information for a push button widget.
+$rect <20,240,310,280>
+$output false
+autoobject WidgetSet::PushButtonConfig PushButtonConfig
+{
+  preset FaceLayout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop];
+  preset FaceFrameActive = 1;
+  preset FaceFrameFocused = 0;
+  preset FaceFrameDefault = 0;
+  preset FaceBitmapActive = Application::ButtonFace;
+  preset FaceBitmapFocused = Application::ButtonFace;
+  preset FaceBitmapDefault = Application::ButtonFace;
+}
+
+// This object contains configuration information for a slider widget.
+$rect <20,200,310,240>
+$output false
+autoobject WidgetSet::HorizontalSliderConfig HorizontalSliderConfig
+{
+  preset ThumbUpdateAtTouch = true;
+  preset ThumbMarginRight = 6;
+  preset ThumbMarginLeft = 6;
+  preset ThumbFrameActive = 0;
+  preset ThumbFrameFocused = 0;
+  preset ThumbFrameDisabled = 0;
+  preset ThumbFrameDefault = 0;
+  preset ThumbBitmapActive = Application::SliderThumb;
+  preset ThumbBitmapFocused = Application::SliderThumb;
+  preset ThumbBitmapDefault = Application::SliderThumb;
+  preset TrackRightTintActive = #FFFFFFC8;
+  preset TrackRightTintDefault = #FFFFFFC8;
+  preset TrackRightFrameActive = 0;
+  preset TrackRightFrameFocused = 0;
+  preset TrackRightFrameDisabled = 0;
+  preset TrackRightFrameDefault = 0;
+  preset TrackRightBitmapActive = Application::SliderBack;
+  preset TrackRightBitmapFocused = Application::SliderBack;
+  preset TrackRightBitmapDefault = Application::SliderBack;
+  preset TrackLeftTintActive = #FFFFFFC8;
+  preset TrackLeftTintFocused = #FFFFFFC8;
+  preset TrackLeftTintDefault = #FFFFFFC8;
+  preset TrackLeftFrameActive = 0;
+  preset TrackLeftFrameFocused = 0;
+  preset TrackLeftFrameDisabled = 0;
+  preset TrackLeftFrameDefault = 0;
+  preset TrackLeftBitmapActive = Application::SliderFront;
+  preset TrackLeftBitmapFocused = Application::SliderFront;
+  preset TrackLeftBitmapDefault = Application::SliderFront;
+}
+
+// This is a font resource used in the application.
+$rect <470,410,680,450>
+$output false
+resource Resources::Font SmallFont
+{
+  attr fontname FontName = Asap Condensed Medium;
+  attr fontheight Height = 29;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0x7F;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// This is a font resource used in the application.
+$rect <470,370,680,410>
+$output false
+resource Resources::Font BigFont
+{
+  attr fontname FontName = Asap Medium;
+  attr fontheight Height = 50;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0x7F;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// This is a bitmap resource used in the application.
+$rect <470,330,680,370>
+$output false
+resource Resources::Bitmap PlayIcon
+{
+  attr bitmapfile FileName = .\Res\PlayIcon.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a bitmap resource used in the application.
+$rect <470,290,680,330>
+$output false
+resource Resources::Bitmap ButtonFace
+{
+  attr bitmapfile FileName = .\Res\ButtonFace.png;
+  attr framesize FrameSize = <60,60>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a bitmap resource used in the application.
+$rect <470,250,680,290>
+$output false
+resource Resources::Bitmap Cup
+{
+  attr bitmapfile FileName = .\Res\Cup.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This class implements a GUI component.
+$rect <240,90,440,130>
+$output false
+class BrewingDialog : Core::Group
+{
+  $rect <500,10,700,50>
+  inherited property Bounds = <0,0,480,272>;
+
+  // Handler for events received from the device 
+  note group Note1
+  {
+    attr Bounds = <10,300,490,400>;
+  }
+
+  // Object containing vector graphic (path) data
+  note group Note2
+  {
+    attr Bounds = <10,420,490,520>;
+  }
+
+  // This slot method is executed when the associated property observer 'BrewingProgressObserver' \
+  // is notified.
+  $rect <250,350,480,390>
+  slot onBrewingProgress
+  {
+    // From the device interface query the actual brewing progress. It is expressed
+    // as integer value in range 0 .. 100.
+    var int32 progress = Application::Device.GetBrewingProgress();
+
+    // From the progress value format a text and update the angle of an arc path.
+    ProgressText.String = string( progress ) + " %%";
+    ArcPath.EndAngle    = 3.6 * float( progress ) - 90.0;
+  }
+
+  $rect <20,470,250,510>
+  object Graphics::ArcPath ArcPath
+  {
+    preset EndAngle = -90;
+    preset StartAngle = -90.0;
+    preset Radius = 67.0;
+    preset Style = Graphics::ArcStyle.Arc;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Background
+  {
+    preset Bounds = <0,0,480,272>;
+    preset Color = #00000099;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image CupImage
+  {
+    preset Bounds = <131,36,385,236>;
+    preset Bitmap = Application::Cup;
+  }
+
+  $rect <20,20,160,60>
+  object Views::StrokePath StrokePath
+  {
+    preset Bounds = <131,36,331,236>;
+    preset Offset = <100,100>;
+    preset EndCap = Graphics::PathCap.Round;
+    preset StartCap = Graphics::PathCap.Round;
+    preset Width = 14.0;
+    preset Path = ArcPath;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text ProgressText
+  {
+    preset Bounds = <155,99,309,171>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "0 %%";
+    preset Font = Application::BigFont;
+    preset Color = #FFFFFF7D;
+  }
+
+  $rect <20,350,250,390>
+  object Core::SystemEventHandler SystemEventHandler
+  {
+    preset OnEvent = onBrewingProgress;
+    preset Event = Application::Device.BrewingInProgressEvent;
+  }
+}
+
+// This is a bitmap resource used in the application.
+$rect <470,210,680,250>
+$output false
+resource Resources::Bitmap SliderFront
+{
+  attr bitmapfile FileName = .\Res\SliderFront.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a bitmap resource used in the application.
+$rect <470,170,680,210>
+$output false
+resource Resources::Bitmap SliderThumb
+{
+  attr bitmapfile FileName = .\Res\SliderThumb.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a bitmap resource used in the application.
+$rect <470,130,680,170>
+$output false
+resource Resources::Bitmap SliderBack
+{
+  attr bitmapfile FileName = .\Res\SliderBack.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a bitmap resource used in the application.
+$rect <470,90,680,130>
+$output false
+resource Resources::Bitmap BackgroundCup
+{
+  attr bitmapfile FileName = .\Res\BackgroundCup.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a bitmap resource used in the application.
+$rect <470,50,680,90>
+$output false
+resource Resources::Bitmap BackgroundBeans
+{
+  attr bitmapfile FileName = .\Res\BackgroundBeans.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This class implements a GUI component.
+$rect <240,50,440,90>
+$output false
+class SelectionDialog : Core::Group
+{
+  $rect <500,10,700,50>
+  inherited property Bounds = <0,0,480,272>;
+
+  // Handler for the above 'play' push button
+  note group Note1
+  {
+    attr Bounds = <10,300,380,400>;
+  }
+
+  $rect <20,350,240,390>
+  slot onPushButton
+  {
+    if ( IsCurrentDialog())
+      Application::Device.StartBrewing( HorizontalSlider.CurrentValue );
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image BackgroundImage
+  {
+    preset Bounds = <0,0,480,272>;
+    preset Bitmap = Application::BackgroundCup;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Caption
+  {
+    preset Bounds = <0,0,120,50>;
+    preset String = "Text";
+    preset Font = Application::SmallFont;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Weak
+  {
+    preset Bounds = <0,120,90,147>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "WEAK";
+    preset Font = Application::SmallFont;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Strong
+  {
+    preset Bounds = <390,120,479,147>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "STRONG";
+    preset Font = Application::SmallFont;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Line Line
+  {
+    preset Point2 = <340,73>;
+    preset Point1 = <140,73>;
+    preset Width = 2;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton PushButton
+  {
+    preset Bounds = <205,186,275,256>;
+    preset OnActivate = onPushButton;
+    preset Icon = Application::PlayIcon;
+    preset Label = "Caption";
+    preset Appearance = Application::PushButtonConfig;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorizontalSlider
+  {
+    preset Bounds = <95,105,385,165>;
+    preset Appearance = Application::HorizontalSliderConfig;
+  }
+}
+
+// This class implements the root component of the entire GUI application.
+$rect <20,50,220,90>
+$output false
+class Application : Core::Root
+{
+  $rect <500,10,700,50>
+  inherited property Bounds = <0,0,480,272>;
+
+  $rect <20,350,250,390>
+  inherited method Init()
+  {
+    // Just in the moment when the application is initialized present the 'selection screen'
+    PresentDialog( SelectionDialog, null, null, null, null, null, null, null, null, false );
+  }
+
+  // Initialization of the component
+  note group Note1
+  {
+    attr Bounds = <10,300,290,400>;
+  }
+
+  // Handler for events received from the device 
+  note group Note2
+  {
+    attr Bounds = <10,420,490,550>;
+  }
+
+  // This slot method is executed when the associated event handler 'BrewingFinishedEvent' \
+  // is triggered.
+  $rect <250,500,480,540>
+  slot onBrewingFinished
+  {
+    // Just in the moment when the divice reports the end of the brewing process, dismiss the 'brewing screen'
+    DismissDialog( BrewingDialog, null, null, null, null, null, false );
+  }
+
+  // This slot method is executed when the associated event handler 'BrewingStartedEvent' \
+  // is triggered.
+  $rect <20,500,250,540>
+  slot onBrewingStarted
+  {
+    // Just in the moment when the divice reports the start of the brewing process, present the 'brewing screen'
+    PresentDialog( BrewingDialog, Application::FadeInOutCentered, Application::FadeInOutCentered, null, null, null, null, null, null, false );
+  }
+
+  $rect <250,460,480,500>
+  object Core::SystemEventHandler BrewingFinishedEvent
+  {
+    preset OnEvent = onBrewingFinished;
+    preset Event = Application::Device.BrewingFinishedEvent;
+  }
+
+  $rect <20,460,250,500>
+  object Core::SystemEventHandler BrewingStartedEvent
+  {
+    preset OnEvent = onBrewingStarted;
+    preset Event = Application::Device.BrewingStartedEvent;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Background
+  {
+    preset Bounds = <0,0,480,280>;
+    preset Color = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::BrewingDialog BrewingDialog
+  {
+    preset Bounds = <0,0,480,272>;
+    preset Visible = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::SelectionDialog SelectionDialog
+  {
+    preset Bounds = <0,0,480,272>;
+    preset Visible = false;
+  }
+}

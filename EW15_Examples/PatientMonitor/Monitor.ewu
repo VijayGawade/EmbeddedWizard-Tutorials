@@ -1,0 +1,6198 @@
+﻿$version 15.00
+
+// Device class
+note group Note3
+{
+  attr Bounds = <20,950,700,1050>;
+}
+
+$rect <40,990,240,1030>
+$output false
+class DeviceClass : Templates::DeviceClass
+{
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,80,240,120>
+  $output true
+  method void UpdateStorageECG_I( arg int32 aNewValue )
+  {
+    /* it is assumed to have a 10-bit ADC */
+    if ( aNewValue > 1023 )
+      aNewValue = 1023;
+    if ( aNewValue < 0 )
+      aNewValue = 0;
+
+    /* convert the value into a float value between -1.0 and +1.0 */
+    StorageECG_I.AddData((float)( aNewValue - 512 ) / 512.0 );
+
+
+  }
+
+  // Measurement values from the medical device
+  // (ADC values)
+  note group Note1
+  {
+    attr Bounds = <20,10,460,570>;
+  }
+
+  $rect <490,70,690,110>
+  object Core::Timer ADCSimulationTimer
+  {
+    preset OnTrigger = ADCSimulation;
+    preset Period = 15;
+    preset Enabled = false;
+  }
+
+  $rect <490,110,690,150>
+  slot ADCSimulation
+  {
+    sender; /* the method is called from the sender object */
+
+    var uint32 t = ADCSimulationTimer.GetCurrentTime();
+
+    var uint32 noOfSamples = ( t - lastTime ) * pure SamplesPerSec / 1000;  
+    if ( noOfSamples <= 0 )
+      return;
+
+    var float deltaPos = (float)(pure HeartRate) / (pure SamplesPerSec * 60.0 );
+
+    while ( noOfSamples-- )
+    {
+      var int32 arrSize = ecg_I.size;
+      var float nextPos = lastPosEcg + deltaPos; 
+      nextPos = nextPos - (float)((int32)nextPos);
+      var int32 inx1 = (int32)( nextPos * arrSize );
+      var int32 inx2 = ( inx1 + 1 ) % arrSize;
+      var float ratio = 1.0 - ((nextPos * arrSize ) - (float)inx1);
+
+      var float result = ratio * ecg_I[ inx1 ] + ( 1.0 - ratio ) * ecg_I[ inx2 ];
+      UpdateStorageECG_I((int32)(( result + 1.0 ) * 512 ));
+      result = ratio * ecg_II[ inx1 ] + ( 1.0 - ratio ) * ecg_II[ inx2 ];
+      UpdateStorageECG_II((int32)(( result + 1.0 ) * 512 ));
+      result = ratio * ecg_III[ inx1 ] + ( 1.0 - ratio ) * ecg_III[ inx2 ];
+      UpdateStorageECG_III((int32)(( result + 1.0 ) * 512 ));
+      result = ratio * abp[ inx1 ] + ( 1.0 - ratio ) * abp[ inx2 ];
+      UpdateStorageABP((int32)(( result + 1.0 ) * 512 ));
+
+      lastPosEcg = nextPos;
+    }
+
+    lastTime = t;
+
+
+  }
+
+  $rect <240,80,440,120>
+  object Monitor::DataStorage StorageECG_I
+  {
+    preset SamplesPerSecond = 100;
+  }
+
+  // The method Init() is invoked automatically after the component has been created. \
+  // This method can be overridden and filled with logic containing additional initialization \
+  // statements.
+  $rect <910,190,1110,230>
+  inherited method Init()
+  {
+    ADCSimulationTimer.Enabled = true;
+    lastTime = ADCSimulationTimer.GetCurrentTime();
+    ValueSimulationTimer.Enabled = true;
+
+  }
+
+  // User settings for the medical device
+  note group Note2
+  {
+    attr Bounds = <20,580,460,940>;
+  }
+
+  $rect <490,190,690,230>
+  var uint32 lastTime = 0;
+
+  $rect <490,150,690,190>
+  var float lastPosEcg = 0.0;
+
+  $rect <40,680,240,720>
+  property int32 SamplesPerSec = 80;
+
+  $rect <240,680,440,720>
+  onset SamplesPerSec
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure SamplesPerSec == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure SamplesPerSec = value;
+
+    /* inform all data storages about the new sample rate */
+    StorageECG_I.SamplesPerSecond = value;
+    StorageECG_II.SamplesPerSecond = value;
+    StorageECG_III.SamplesPerSecond = value;
+    StorageABP.SamplesPerSecond = value;
+
+    // For target code generation you will use your specific device API 
+    // to change the affected value.
+    $if !$prototyper
+      native ( value )
+      {
+        /*
+           TO DO:
+
+           You can call a function of your own device API or you simply
+           modify a variable existing in your middleware to reflect the
+           new value:
+
+           YourDevice_SetSomeValue( value );
+
+           or
+
+           YourDevice_SomeVariable = value;
+        */
+      }
+    $endif
+
+    // Notify all associated property observers.
+    notifyobservers ^SamplesPerSec;
+  }
+
+  // Simulated ECG data for channel I
+  $rect <700,70,900,110>
+  array float ecg_I[ 40 ] =
+  (
+    Default[0] = 0.0;
+    Default[1] = 0.0;
+    Default[2] = 0.0;
+    Default[3] = 0.0;
+    Default[4] = 0.01;
+    Default[5] = 0.08;
+    Default[6] = 0.1;
+    Default[7] = 0.08;
+    Default[8] = 0.01;
+    Default[9] = 0.0;
+    Default[10] = 0.0;
+    Default[11] = 0.0;
+    Default[12] = 0.0;
+    Default[13] = -0.1;
+    Default[14] = 0.6;
+    Default[15] = 0.3;
+    Default[16] = 0.0;
+    Default[17] = 0.0;
+    Default[18] = 0.0;
+    Default[19] = 0.0;
+    Default[20] = 0.0;
+    Default[21] = 0.0;
+    Default[22] = 0.0;
+    Default[23] = 0.0;
+    Default[24] = 0.07;
+    Default[25] = 0.11;
+    Default[26] = 0.13;
+    Default[27] = 0.12;
+    Default[28] = 0.09;
+    Default[29] = 0.03;
+    Default[30] = 0.01;
+    Default[31] = 0.0;
+    Default[32] = 0.0;
+    Default[33] = 0.0;
+    Default[34] = 0.0;
+    Default[35] = 0.0;
+    Default[36] = 0.0;
+    Default[37] = 0.0;
+    Default[38] = 0.0;
+    Default[39] = 0.0;
+  );
+
+  // Simulated ECG data for channel I
+  $rect <700,110,900,150>
+  array float ecg_II[ 40 ] =
+  (
+    Default[0] = 0.0;
+    Default[1] = 0.0;
+    Default[2] = 0.0;
+    Default[3] = 0.0;
+    Default[4] = 0.0;
+    Default[5] = 0.04;
+    Default[6] = 0.07;
+    Default[7] = 0.07;
+    Default[8] = 0.04;
+    Default[9] = 0.01;
+    Default[10] = 0.0;
+    Default[11] = 0.0;
+    Default[12] = 0.0;
+    Default[13] = 0.0;
+    Default[14] = 1.0;
+    Default[15] = -0.1;
+    Default[16] = -0.03;
+    Default[17] = -0.01;
+    Default[18] = 0.0;
+    Default[19] = 0.0;
+    Default[20] = 0.0;
+    Default[21] = 0.0;
+    Default[22] = 0.0;
+    Default[23] = 0.02;
+    Default[24] = 0.1;
+    Default[25] = 0.18;
+    Default[26] = 0.22;
+    Default[27] = 0.22;
+    Default[28] = 0.18;
+    Default[29] = 0.1;
+    Default[30] = 0.02;
+    Default[31] = 0.0;
+    Default[32] = 0.0;
+    Default[33] = 0.0;
+    Default[34] = 0.0;
+    Default[35] = 0.0;
+    Default[36] = 0.0;
+    Default[37] = 0.0;
+    Default[38] = 0.0;
+    Default[39] = 0.0;
+  );
+
+  // Simulated ECG data for channel I
+  $rect <700,150,900,190>
+  array float ecg_III[ 40 ] =
+  (
+    Default[0] = 0.0;
+    Default[1] = 0.0;
+    Default[2] = 0.0;
+    Default[3] = 0.0;
+    Default[4] = 0.01;
+    Default[5] = 0.03;
+    Default[6] = 0.04;
+    Default[7] = 0.03;
+    Default[8] = 0.01;
+    Default[9] = 0.0;
+    Default[10] = 0.0;
+    Default[11] = 0.0;
+    Default[12] = 0.0;
+    Default[13] = 0.35;
+    Default[14] = 0.7;
+    Default[15] = -0.25;
+    Default[16] = 0.0;
+    Default[17] = 0.0;
+    Default[18] = 0.0;
+    Default[19] = 0.0;
+    Default[20] = 0.0;
+    Default[21] = 0.0;
+    Default[22] = 0.0;
+    Default[23] = 0.01;
+    Default[24] = 0.05;
+    Default[25] = 0.09;
+    Default[26] = 0.1;
+    Default[27] = 0.09;
+    Default[28] = 0.05;
+    Default[29] = 0.01;
+    Default[30] = 0.0;
+    Default[31] = 0.0;
+    Default[32] = 0.0;
+    Default[33] = 0.0;
+    Default[34] = 0.0;
+    Default[35] = 0.0;
+    Default[36] = 0.0;
+    Default[37] = 0.0;
+    Default[38] = 0.0;
+    Default[39] = 0.0;
+  );
+
+  $rect <240,120,440,160>
+  object Monitor::DataStorage StorageECG_II
+  {
+    preset SamplesPerSecond = 100;
+  }
+
+  $rect <240,160,440,200>
+  object Monitor::DataStorage StorageECG_III
+  {
+    preset SamplesPerSecond = 100;
+  }
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,120,240,160>
+  $output true
+  method void UpdateStorageECG_II( arg int32 aNewValue )
+  {
+    /* it is assumed to have a 10-bit ADC */
+    if ( aNewValue > 1023 )
+      aNewValue = 1023;
+    if ( aNewValue < 0 )
+      aNewValue = 0;
+
+    /* convert the value into a float value between -1.0 and +1.0 */
+    StorageECG_II.AddData((float)( aNewValue - 512 ) / 512.0 );
+
+
+  }
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,160,240,200>
+  $output true
+  method void UpdateStorageECG_III( arg int32 aNewValue )
+  {
+    /* it is assumed to have a 10-bit ADC */
+    if ( aNewValue > 1023 )
+      aNewValue = 1023;
+    if ( aNewValue < 0 )
+      aNewValue = 0;
+
+    /* convert the value into a float value between -1.0 and +1.0 */
+    StorageECG_III.AddData((float)( aNewValue - 512 ) / 512.0 );
+
+
+  }
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,200,240,240>
+  $output true
+  method void UpdateStorageABP( arg int32 aNewValue )
+  {
+    /* it is assumed to have a 10-bit ADC */
+    if ( aNewValue > 1023 )
+      aNewValue = 1023;
+    if ( aNewValue < 0 )
+      aNewValue = 0;
+
+    /* convert the value into a float value between -1.0 and +1.0 */
+    StorageABP.AddData((float)( aNewValue - 512 ) / 512.0 );
+
+
+  }
+
+  $rect <240,200,440,240>
+  object Monitor::DataStorage StorageABP
+  {
+    preset SamplesPerSecond = 100;
+  }
+
+  // Simulated ECG data for channel I
+  $rect <700,190,900,230>
+  array float abp[ 40 ] =
+  (
+    Default[0] = 0.0;
+    Default[1] = -0.01;
+    Default[2] = -0.04;
+    Default[3] = -0.08;
+    Default[4] = -0.12;
+    Default[5] = -0.17;
+    Default[6] = -0.22;
+    Default[7] = -0.27;
+    Default[8] = -0.32;
+    Default[9] = -0.35;
+    Default[10] = -0.38;
+    Default[11] = -0.41;
+    Default[12] = -0.43;
+    Default[13] = -0.46;
+    Default[14] = -0.47;
+    Default[15] = -0.47;
+    Default[16] = -0.46;
+    Default[17] = -0.43;
+    Default[18] = -0.37;
+    Default[19] = -0.27;
+    Default[20] = -0.15;
+    Default[21] = 0.05;
+    Default[22] = 0.25;
+    Default[23] = 0.45;
+    Default[24] = 0.60;
+    Default[25] = 0.73;
+    Default[26] = 0.78;
+    Default[27] = 0.76;
+    Default[28] = 0.70;
+    Default[29] = 0.57;
+    Default[30] = 0.42;
+    Default[31] = 0.25;
+    Default[32] = 0.1;
+    Default[33] = 0.0;
+    Default[34] = -0.08;
+    Default[35] = -0.11;
+    Default[36] = -0.09;
+    Default[37] = -0.07;
+    Default[38] = -0.03;
+    Default[39] = -0.01;
+  );
+
+  $rect <240,260,440,300>
+  property int32 HeartRate = 104;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,260,240,300>
+  $output true
+  method void UpdateHeartRate( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure HeartRate )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure HeartRate = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^HeartRate;
+    }
+  }
+
+  // Simulation
+  note group Note3
+  {
+    attr Bounds = <470,10,1130,250>;
+  }
+
+  $rect <240,310,440,350>
+  property int32 ABPSys = 119;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,310,240,350>
+  $output true
+  method void UpdateABPSys( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure ABPSys )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure ABPSys = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^ABPSys;
+    }
+  }
+
+  $rect <240,360,440,400>
+  property int32 ABPDia = 69;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,360,240,400>
+  $output true
+  method void UpdateABPDia( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure ABPDia )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure ABPDia = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^ABPDia;
+    }
+  }
+
+  $rect <240,410,440,450>
+  property int32 SpO2 = 95;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,410,240,450>
+  $output true
+  method void UpdateSpO2( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure SpO2 )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure SpO2 = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^SpO2;
+    }
+  }
+
+  $rect <240,460,440,500>
+  property int32 EtCO2 = 35;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,460,240,500>
+  $output true
+  method void UpdateEtCO2( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure EtCO2 )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure EtCO2 = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^EtCO2;
+    }
+  }
+
+  $rect <240,510,440,550>
+  property int32 Temperature = 368;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <40,510,240,550>
+  $output true
+  method void UpdateTemperature( arg int32 aNewValue )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aNewValue != pure Temperature )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure Temperature = aNewValue;
+
+      // Notify all associated property observers.
+      notifyobservers ^Temperature;
+    }
+  }
+
+  $rect <490,630,690,670>
+  property int32 HeartRateMin = 50;
+
+  $rect <690,630,890,670>
+  onset HeartRateMin
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure HeartRateMin == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure HeartRateMin = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^HeartRateMin;
+  }
+
+  $rect <490,680,690,720>
+  property int32 HeartRateMax = 120;
+
+  $rect <690,680,890,720>
+  onset HeartRateMax
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure HeartRateMax == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure HeartRateMax = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^HeartRateMax;
+  }
+
+  $rect <490,730,690,770>
+  property int32 ABPSysMin = 95;
+
+  $rect <690,730,890,770>
+  onset ABPSysMin
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure ABPSysMin == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure ABPSysMin = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^ABPSysMin;
+  }
+
+  $rect <490,780,690,820>
+  property int32 ABPSysMax = 145;
+
+  $rect <690,780,890,820>
+  onset ABPSysMax
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure ABPSysMax == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure ABPSysMax = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^ABPSysMax;
+  }
+
+  $rect <490,830,690,870>
+  property int32 ABPDiaMin = 50;
+
+  $rect <690,830,890,870>
+  onset ABPDiaMin
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure ABPDiaMin == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure ABPDiaMin = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^ABPDiaMin;
+  }
+
+  $rect <490,880,690,920>
+  property int32 ABPDiaMax = 70;
+
+  $rect <690,880,890,920>
+  onset ABPDiaMax
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure ABPDiaMax == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure ABPDiaMax = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^ABPDiaMax;
+  }
+
+  $rect <910,630,1110,670>
+  property int32 SpO2Min = 85;
+
+  $rect <1110,630,1310,670>
+  onset SpO2Min
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure SpO2Min == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure SpO2Min = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^SpO2Min;
+  }
+
+  $rect <910,680,1110,720>
+  property int32 SpO2Max = 99;
+
+  $rect <1110,680,1310,720>
+  onset SpO2Max
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure SpO2Max == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure SpO2Max = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^SpO2Max;
+  }
+
+  $rect <910,730,1110,770>
+  property int32 EtCO2Min = 30;
+
+  $rect <1110,730,1310,770>
+  onset EtCO2Min
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure EtCO2Min == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure EtCO2Min = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^EtCO2Min;
+  }
+
+  $rect <910,780,1110,820>
+  property int32 EtCO2Max = 45;
+
+  $rect <1110,780,1310,820>
+  onset EtCO2Max
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure EtCO2Max == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure EtCO2Max = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^EtCO2Max;
+  }
+
+  $rect <910,830,1110,870>
+  property int32 TemperatureMin = 360;
+
+  $rect <1110,830,1310,870>
+  onset TemperatureMin
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure TemperatureMin == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure TemperatureMin = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^TemperatureMin;
+  }
+
+  $rect <910,880,1110,920>
+  property int32 TemperatureMax = 375;
+
+  $rect <1110,880,1310,920>
+  onset TemperatureMax
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure TemperatureMax == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure TemperatureMax = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^TemperatureMax;
+  }
+
+  // The property 'Speed' stores the graph speed of the ECG and ABP oscilloscopes \
+  // in pixel per second.
+  $rect <40,630,240,670>
+  property int32 Speed = 150;
+
+  $rect <240,630,440,670>
+  onset Speed
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure Speed == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure Speed = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^Speed;
+  }
+
+  // The property 'ECGGain' stores the graph amplitude of the ECG oscilloscopes in \
+  // percent.
+  $rect <40,730,240,770>
+  property int32 ECGGain = 150;
+
+  $rect <240,730,440,770>
+  onset ECGGain
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure ECGGain == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure ECGGain = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^ECGGain;
+  }
+
+  // The property 'ABPGain' stores the graph amplitude of the ABP oscilloscope in \
+  // percent.
+  $rect <40,780,240,820>
+  property int32 ABPGain = 150;
+
+  $rect <240,780,440,820>
+  onset ABPGain
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure ABPGain == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure ABPGain = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^ABPGain;
+  }
+
+  $rect <910,70,1110,110>
+  object Core::Timer ValueSimulationTimer
+  {
+    preset OnTrigger = ValueSimulation;
+    preset Period = 1200;
+  }
+
+  $rect <910,110,1110,150>
+  slot ValueSimulation
+  {
+    var int32 val;
+    var int32 dMin = -2;
+    var int32 dMax = 3;
+
+    val = pure HeartRate + math_rand( dMin, dMax );
+    if ( val < pure HeartRateMin ) val = HeartRateMin;
+    if ( val > pure HeartRateMax ) val = HeartRateMax;
+    UpdateHeartRate( val );
+
+    val = pure ABPSys + math_rand( dMin, dMax );
+    if ( val < pure ABPSysMin ) val = ABPSysMin;
+    if ( val > pure ABPSysMax ) val = ABPSysMax;
+    UpdateABPSys( val );
+
+    val = pure ABPDia + math_rand( dMin, dMax );
+    if ( val < pure ABPDiaMin ) val = ABPDiaMin;
+    if ( val > pure ABPDiaMax ) val = ABPDiaMax;
+    UpdateABPDia( val );
+
+    val = pure SpO2 + math_rand( dMin, dMax );
+    if ( val < pure SpO2Min ) val = SpO2Min;
+    if ( val > pure SpO2Max ) val = SpO2Max;
+    UpdateSpO2( val );
+
+    val = pure EtCO2 + math_rand( dMin, dMax );
+    if ( val < pure EtCO2Min ) val = EtCO2Min;
+    if ( val > pure EtCO2Max ) val = EtCO2Max;
+    UpdateEtCO2( val );
+
+    val = pure Temperature + math_rand( dMin, dMax );
+    if ( val < pure TemperatureMin ) val = TemperatureMin;
+    if ( val > pure TemperatureMax ) val = TemperatureMax;
+    UpdateTemperature( val );
+
+
+
+
+  }
+
+  // Min/Max values for alarms
+  note group Note4
+  {
+    attr Bounds = <470,580,1340,940>;
+  }
+
+  // The property 'ECGIntensity' stores the graph intensity of the ECG oscilloscopes \
+  // in percent.
+  $rect <40,830,240,870>
+  property int32 ECGIntensity = 100;
+
+  $rect <240,830,440,870>
+  onset ECGIntensity
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure ECGIntensity == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure ECGIntensity = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^ECGIntensity;
+  }
+
+  // The property 'ABPIntensity' stores the graph intensity of the ABP oscilloscope \
+  // in percent.
+  $rect <40,880,240,920>
+  property int32 ABPIntensity = 100;
+
+  $rect <240,880,440,920>
+  onset ABPIntensity
+  {
+    // The property doesn't change -> nothing to do.
+    if ( pure ABPIntensity == value )
+      return;
+
+    // Remember the new value in the internal memory of the property.
+    pure ABPIntensity = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^ABPIntensity;
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Init
+  $member UpdateStorageECG_I
+  $member Note1
+  $member ADCSimulationTimer
+  $member ADCSimulation
+  $member StorageECG_I
+  $member Note2
+  $member lastTime
+  $member lastPosEcg
+  $member SamplesPerSec
+  $member OnSetSamplesPerSec
+  $member ecg_I
+  $member ecg_II
+  $member ecg_III
+  $member StorageECG_II
+  $member StorageECG_III
+  $member UpdateStorageECG_II
+  $member UpdateStorageECG_III
+  $member UpdateStorageABP
+  $member StorageABP
+  $member abp
+  $member HeartRate
+  $member UpdateHeartRate
+  $member Note3
+  $member ABPSys
+  $member UpdateABPSys
+  $member ABPDia
+  $member UpdateABPDia
+  $member SpO2
+  $member UpdateSpO2
+  $member EtCO2
+  $member UpdateEtCO2
+  $member Temperature
+  $member UpdateTemperature
+  $member HeartRateMin
+  $member OnSetHeartRateMin
+  $member HeartRateMax
+  $member OnSetHeartRateMax
+  $member ABPSysMin
+  $member OnSetABPSysMin
+  $member ABPSysMax
+  $member OnSetABPSysMax
+  $member ABPDiaMin
+  $member OnSetABPDiaMin
+  $member ABPDiaMax
+  $member OnSetABPDiaMax
+  $member SpO2Min
+  $member OnSetSpO2Min
+  $member SpO2Max
+  $member OnSetSpO2Max
+  $member EtCO2Min
+  $member OnSetEtCO2Min
+  $member EtCO2Max
+  $member OnSetEtCO2Max
+  $member TemperatureMin
+  $member OnSetTemperatureMin
+  $member TemperatureMax
+  $member OnSetTemperatureMax
+  $member Speed
+  $member OnSetSpeed
+  $member ECGGain
+  $member OnSetECGGain
+  $member ABPGain
+  $member OnSetABPGain
+  $member ValueSimulationTimer
+  $member ValueSimulation
+  $member Note4
+  $member ECGIntensity
+  $member OnSetECGIntensity
+  $member ABPIntensity
+  $member OnSetABPIntensity
+}
+
+$rect <250,990,450,1030>
+autoobject Monitor::DeviceClass Device;
+
+$rect <460,990,660,1030>
+$output false
+class DataStorage
+{
+  $rect <20,10,220,50>
+  array float Data[ 1000 ];
+
+  $rect <20,70,220,110>
+  property int32 NoOfData = 0;
+
+  $rect <220,70,420,110>
+  onset NoOfData
+  {
+    throw "The property NoOfData is read only!";
+  }
+
+  // The property 'SamplesPerSecond' stores the speed of the data source.
+  $rect <220,10,420,50>
+  property int32 SamplesPerSecond = 80;
+
+  $rect <20,120,220,160>
+  property int32 CurrentIndex = -1;
+
+  $rect <220,120,420,160>
+  onset CurrentIndex
+  {
+    throw "The property Current is read only!";
+  }
+
+  $rect <20,180,220,220>
+  method void AddData( arg float aData )
+  {
+    /* adjust current index */
+    pure CurrentIndex = pure CurrentIndex + 1;
+    if ( pure CurrentIndex >= Data.size )
+      pure CurrentIndex = 0;
+
+    /* store the given value in the array */
+    Data[ pure CurrentIndex ] = aData;
+
+    /* adjust data counter */
+    if ( pure NoOfData < Data.size )
+      pure NoOfData = pure NoOfData + 1;
+
+    /* notify all associated property observers */
+    notifyobservers ^CurrentIndex;
+
+  }
+
+  $rect <20,230,220,270>
+  method float GetData( arg int32 aIndex )
+  {
+    var int32 i = aIndex;
+
+    if ( i < 0 )
+      i = i + Data.size;
+
+    if (( i < 0 ) || ( i >= NoOfData ))
+      return 0.0;
+    else
+      return Data[ i ];
+
+  }
+}
+
+// The oscilloscope class. An oscilloscope (abbreviated sometimes as scope or O-scope) \
+// is a type of electronic test instrument that allows signal voltages to be viewed, \
+// usually as a two-dimensional graph of one or more electrical potential differences \
+// (vertical axis) plotted as a function of time or of some other voltage (horizontal \
+// axis). Although an oscilloscope displays voltage on its vertical axis, any other \
+// quantity that can be converted to a voltage can be displayed as well. In most \
+// instances, oscilloscopes show events that repeat with either no change, or change \
+// slowly. The oscilloscope is one of the most versatile and widely-used electronic \
+// instruments. Within this demo application the oscilloscope displays the given \
+// set of data by using a simulated electronic beam.
+$rect <50,150,250,190>
+$output false
+class Oscilloscope : Core::Group
+{
+  $rect <10,480,210,520>
+  inherited property Bounds = <0,0,600,100>;
+
+  $rect <210,480,410,520>
+  inherited method UpdateLayout()
+  {
+    super( aSize );
+
+    /* create canvas */
+    if ( Canvas == null )
+      Canvas = new Graphics::Canvas;
+
+    /* set size to bounds area */
+    Canvas.FrameSize = aSize;
+
+    /* and clear the complete bitmap with transparent color */
+    var rect r = rect( 0, 0, aSize.x, aSize.y );
+    Canvas.FillRectangle( r, r, #00000000, #00000000, #00000000, #00000000, false );
+
+    /* assign the canvas to the image object */
+    Image.Bitmap = Canvas;
+    Image.Bounds.size = aSize;
+
+    /* arrange all scale lines */
+    var int32 x = aSize.x / 40;
+    var int32 y = aSize.y - 1;
+
+    /* all scale lines */
+    ScaleL.Bounds = rect( 0, 0, 2, y );
+    ScaleT.Bounds = rect( 0, 0, x, 2 );
+    ScaleB.Bounds = rect( 0, y-2, x, y );
+
+  }
+
+  // The property 'Speed' stores the speed of the graph update in pixel per second.
+  $rect <430,310,630,350>
+  property int32 Speed = 232;
+
+  // The onset method for the property 'Speed' changes the speed of the beam in the \
+  // range from 1 to 1000.
+  $rect <430,350,630,390>
+  onset Speed
+  {
+    /* limit the pixel per second speed to a range from 10 to 500 */
+    if ( value < 10 )
+      value = 10;
+
+    if ( value > 500 )
+      value = 500;
+
+    /* assign the value */
+    pure Speed = value;
+
+
+
+  }
+
+  // The property 'WiperWidth' stores the width of the screen wiper in the range \
+  // from 0 to 100 pixel. The screen wiper clears the area right of the current beam \
+  // position with the background color.
+  $rect <220,130,420,170>
+  property int32 WiperWidth = 100;
+
+  // The onset method for the property 'ScreenWiper' changes the width of the screen \
+  // wiper in the range from 0 (off) to 100 percent.
+  $rect <220,170,420,210>
+  onset WiperWidth
+  {
+    /* limit size of screen wiper to a range from 0 to 200 */
+    if ( value < 0 )
+      value = 0;
+
+    if ( value > 200 )
+      value = 200;
+
+    /* assign the value */
+    pure WiperWidth = value;
+  }
+
+  // The property 'Color' stores the color value of the oscilloscope graph and scale.
+  $rect <10,310,210,350>
+  property color Color = #808080FF;
+
+  // The onset method for the property 'BeamColor' changes the color of the simulated \
+  // beam.
+  $rect <10,350,210,390>
+  onset Color
+  {
+    /* if color does not change, nothing to do... */
+    if ( Color == value )
+      return;
+
+    /* assign the color */
+    pure Color = value;
+
+    ScaleT.Color = value;
+    ScaleB.Color = value;
+    ScaleL.Color = value;
+
+    Text.Color = value;
+
+  }
+
+  // The property 'Gain' stores the scaling factor in vertical direction in the range \
+  // from 0 to 200 (percent).
+  $rect <430,220,630,260>
+  property int32 Gain = 100;
+
+  // The onset method for the property 'Gain' changes the vertical scaling factor \
+  // in the range from 0 to 1000 percent.
+  $rect <430,260,630,300>
+  onset Gain
+  {
+    /* limit size of gain to a range from 0 to 200 (percent) */
+    if ( value < 0 )
+      value = 0;
+
+    if ( value > 200 )
+      value = 200;
+
+    /* assign the value */
+    pure Gain = value;
+  }
+
+  // The 'Image' view contains the prepared data bitmap of the oscilloscope.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <0,0,48,48>;
+  }
+
+  // The variable 'Canvas' stores the internal bitmap used to prepare all drawing \
+  // operations.
+  $rect <10,520,210,560>
+  var Graphics::Canvas Canvas = null;
+
+  // The property 'DataProvider' stores the source for getting the data to display.
+  $rect <640,310,840,350>
+  property Monitor::DataStorage DataProvider = null;
+
+  // The onset method for the property 'DataProvider' updates the data provider with \
+  // the current settings.
+  $rect <640,350,840,390>
+  onset DataProvider
+  {
+    pure DataProvider = value;
+
+    if ( DataProvider == null )
+    {
+      UpdateGraph.Outlet = null;
+    }
+    else
+    {
+      UpdateGraph.Outlet = ^value.CurrentIndex;
+      lastIndex = 0;
+    }
+
+
+
+  }
+
+  $rect <10,630,210,670>
+  var float lastX = 0.0;
+
+  $rect <10,670,210,710>
+  var float lastY = 0.0;
+
+  $rect <10,580,210,620>
+  object Graphics::Path Path;
+
+  // The property 'LineWidth' stores the width of the graphs line.
+  $rect <220,310,420,350>
+  property float LineWidth = 2.0;
+
+  // The onset method for the property 'ScreenWiper' changes the width of the screen \
+  // wiper in the range from 0 (off) to 100 percent.
+  $rect <220,350,420,390>
+  onset LineWidth
+  {
+    /* limit line width to a range from 0.1 to 5.0 pixel*/
+    if ( value < 0.1 )
+      value = 0.1;
+
+    if ( value > 5.0 )
+      value = 5.0;
+
+    /* assign the value */
+    pure LineWidth = value;
+  }
+
+  $rect <10,410,210,450>
+  object Core::PropertyObserver UpdateGraph
+  {
+    preset OnEvent = onUpdate;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <211,410,411,450>
+  slot onUpdate
+  {
+    var int32 noOfSamples;
+    var int32 x1 = (int32)lastX;
+    var int32 x2;
+    var rect r;
+    var rect invalidateRect;
+    var int32 wiperW;
+    var int32 lineW;
+    var int32 i;
+    var float gain = (float)(pure Gain * ( Bounds.h / 2 ) / 100 );
+
+    /* just to be sure... */
+    if ( Canvas == null )
+      return;
+    if ( DataProvider == null )
+      return;
+
+    var float advancePerSample = (float)(pure Speed) / (float)DataProvider.SamplesPerSecond;
+
+    /* get the number of samples provided by the simulated hardware */
+    if ( lastIndex < DataProvider.CurrentIndex )
+      noOfSamples = DataProvider.CurrentIndex - lastIndex;
+    else
+      noOfSamples = DataProvider.NoOfData + DataProvider.CurrentIndex - lastIndex;
+
+    /* nothing to draw... */
+    if ( noOfSamples <= 0 )
+      return;
+
+    /* clear the path */
+    Path.InitSubPath( 0, noOfSamples * 4 + 4 );
+
+    /* start the path at last position */
+    Path.Begin( 0, lastX, lastY );
+
+    /* prepare the path data */
+    for ( i = 0; i < noOfSamples; i++ )
+    {
+      if ( ++lastIndex >= DataProvider.NoOfData )
+        lastIndex = 0;
+      lastX += advancePerSample;
+      lastY = DataProvider.GetData( lastIndex ) * gain;
+      Path.AddLine( 0, lastX, lastY );
+    }
+
+    /* calculate size of screen wiper */
+    wiperW = ( pure WiperWidth > x2 - x1) ? pure WiperWidth : (x2 - x1);
+    lineW = (int32) pure LineWidth;
+    x2 = (int32)lastX + lineW + wiperW;
+
+    /* clear area right of the beam position */
+    r = rect( x1 + lineW, 0, x2, Bounds.h );
+    Canvas.FillRectangle( r, r, #00000000, #00000000, #00000000, #00000000, false );
+
+    /* calculate the necessary update area */
+    invalidateRect = rect( x1 - lineW, 0, x2, Bounds.h );
+
+    /* check for wrap around */
+    if ( x2 > Bounds.w )
+    {
+      /* clear area at the left side */
+      r = rect( 0, 0,  x2 - Bounds.w, Bounds.h );
+      Canvas.FillRectangle( r, r, #00000000, #00000000, #00000000, #00000000, false );
+      
+      /* due to wrap around complete area needs to be updated at the end */
+      InvalidateArea( invalidateRect );
+      invalidateRect = r;
+    }
+
+    /* set the calculated area as invalid area of the image object to force the redrawing */
+    InvalidateArea( invalidateRect );
+
+    /* draw the path */
+    Canvas.StrokePath( Bounds.orect, Path, Bounds.orect, true, point( 0, -Bounds.h + pure BaseLine ), pure LineWidth, Graphics::PathCap.Triangle, Graphics::PathCap.Triangle, Graphics::PathJoin.Miter, 1.0, pure Color, pure Color, pure Color, pure Color, true, true );
+
+    /* check for wrap arround */
+    if ( (int32)lastX > Bounds.w )
+      lastX = 0;
+
+
+
+
+  }
+
+  $rect <10,710,210,750>
+  var int32 lastIndex = -1;
+
+  // The property 'BaseLine' stores the position of the baseline in vertical direction.
+  $rect <430,130,630,170>
+  property int32 BaseLine = 100;
+
+  // The onset method for the property 'Gain' changes the vertical scaling factor \
+  // in the range from 0 to 1000 percent.
+  $rect <430,170,630,210>
+  onset BaseLine
+  {
+    /* assign the value */
+    pure BaseLine = value;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle ScaleL
+  {
+    preset Bounds = <0,0,2,100>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle ScaleT
+  {
+    preset Bounds = <0,0,100,2>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle ScaleB
+  {
+    preset Bounds = <0,98,100,100>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <9,12,96,42>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertTop];
+    preset String = "Text";
+    preset Font = Monitor::FontTextS;
+  }
+
+  // The property 'Caption' stores the title of the graph.
+  $rect <10,130,210,170>
+  property string Caption;
+
+  $rect <10,170,210,210>
+  onset Caption
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Caption == value )
+      return;
+
+    // Remember the property's new value.
+    pure Caption = value;
+
+    Text.String = value;
+
+  }
+}
+
+$rect <50,480,250,520>
+$output false
+class Panel : Core::Group
+{
+  $rect <10,230,210,270>
+  inherited property Bounds = <0,0,300,200>;
+
+  $rect <220,230,420,270>
+  property color Color = #000000FF;
+
+  $rect <220,270,420,310>
+  onset Color
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Color == value )
+      return;
+
+    // Remember the property's new value.
+    pure Color = value;
+
+    //Shadow.Color = value;
+    Rectangle.Color = value;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <10,10,290,190>;
+    preset Radius = 16;
+    preset Color = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Shadow Shadow
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <12,12,292,192>;
+    preset Radius = 16;
+    preset Color = #00000080;
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Bounds
+  $member Color
+  $member OnSetColor
+  $member Shadow
+  $member Rectangle
+}
+
+// This component implements a generic alert.
+$rect <50,580,250,620>
+$output false
+class Dialog : Templates::Panel
+{
+  $rect <480,550,680,590>
+  inherited property Bounds = <0,0,800,360>;
+
+  $rect <480,430,680,470>
+  inherited method UpdateLayout()
+  {
+    // Always invoke the inherited method.
+    super( aSize );
+
+    // This method is called always when something has changed in the
+    // layout of the alert. For example, it is called when the alert changes
+    // its size.
+
+    // In our template we want the alert to adjust its size automatically
+    // to the displayed message. Doing this however directly in context of
+    // the UpdateLayout() method would cause the UpdateLayout() method to
+    // be executed recursively.
+
+    // Therefore, we delay the adjust operation by using the 'postsignal'.
+    // The adjust operation takes place in the slot method 'autoResize'.
+
+
+  }
+
+  $rect <250,430,450,470>
+  inherited method UpdateViewState()
+  {
+    // Always invoke the inherited method.
+    super( aState );
+
+    // Determine the new state of the alert.
+    //
+    // isEnabled --> the alert can react to user inputs.
+    // isModal   --> the alert is actually modal (it grabs all user inputs).
+    // isFocused --> the alert can receive keyboard events.
+    //
+    var bool isEnabled = aState.contains( Core::ViewState[ Enabled ]);
+    var bool isModal   = aState.contains( Core::ViewState[ Modal   ]);
+    var bool isFocused = aState.contains( Core::ViewState[ Focused ]);
+
+    HeaderText.String = Caption;
+    HeaderText.Color = CaptionColor;
+    HeaderLine.Color = CaptionColor;
+
+
+    /*
+
+      TO DO:
+
+      Depending on your alert design, you have surely added some new views
+      to your alert. In the below code you should update the properties of
+      these views. For example, when your alert has two images to appear
+      exclusively for a focused or not focused alert, following can be done:
+
+        imageFocused.Visible    =  isFocused;
+        imageNotFocused.Visible = !isFocused;
+
+      Depending on the state of the alert, you can alternate any property 
+      of your views. You can change their visibility, colors, opacity,
+      bitmaps shown in image views, fonts used to render text, the position
+      and the size the view, ...
+       
+
+      HINT:
+
+      Instead of instantly alternate the views properties you can here also
+      start effects to do this with an animation. Important: To decide when
+      to start an effect you should compare the current state of the alert
+      (e.g. 'isFocused') with its preceding state (e.g. variable 'focused').
+
+      Assuming you have already added to your alert component a new effect
+      member, named it 'focusedEffect' and configured it to animate e.g. the
+      opacity of an image within the alert. Then following is sufficient to
+      trigger the animation:
+
+        if ( isFocused && !focused )
+        {
+          focusedEffect.Reversed = false;
+          focusedEffect.Enabled  = true;
+        }
+        else if ( !isPressed && pressed )
+        {
+          focusedEffect.Reversed = true;
+          focusedEffect.Enabled  = true;
+        }
+
+    */
+
+    if ( !isEnabled )
+    {
+    }
+
+    else if ( isFocused )
+    {
+    }
+
+    // Enabled but actually not focused for user interaction.
+    else
+    {
+    }
+
+    // Remember the current state. Next time when the UpdateViewState() is called
+    // you can compare the 'old' state with the 'new' state and perform more
+    // sophisticated update, e.g. you can start an animation effect for the
+    // focused <<-->> not focused transition.
+    enabled = isEnabled;
+    focused = isFocused;
+    modal   = isModal;
+  }
+
+  // Keyboard events
+  note group Note4
+  {
+    attr Bounds = <10,390,230,520>;
+  }
+
+  // Layout management
+  note group Note3
+  {
+    attr Bounds = <470,390,690,520>;
+  }
+
+  // State management
+  note group Note2
+  {
+    attr Bounds = <240,390,460,600>;
+  }
+
+  // This variable stores the current state of the alert. Please see the comments \
+  // inside UpdateViewState().
+  $rect <250,550,450,590>
+  var bool focused;
+
+  // This variable stores the current state of the alert. Please see the comments \
+  // inside UpdateViewState().
+  $rect <250,510,450,550>
+  var bool modal;
+
+  // This variable stores the current state of the alert. Please see the comments \
+  // inside UpdateViewState().
+  $rect <250,470,450,510>
+  var bool enabled;
+
+  // This key handler reacts to key press events. When the user presses the key specified \
+  // in the property 'Filter' of the key handler, the handler is activated and the \
+  // method '@onPressKey' is called.
+  $rect <20,430,220,470>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onPressKey;
+    preset Filter = Core::KeyCode.Escape;
+  }
+
+  // This internal slot method is called when the '@KeyHandler' is activated (when \
+  // the user has pressed the key specified in the property 'Filter' of the key handler).
+  $rect <20,470,220,510>
+  slot onPressKey
+  {
+    // Ignore repetitions of key events (e.g. when the user holds the key pressed)
+    if ( KeyHandler.Repetition )
+      return;
+
+    /* close the dialog if escape is pressed */
+    postsignal OnClose;
+  }
+
+  $rect <20,20,160,60>
+  object Views::FilterScreen FilterScreen
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,800,360>;
+    preset BlurRadius = $BlurRadius;
+    preset MarginBottom = 10;
+    preset MarginTop = 10;
+    preset MarginRight = 10;
+    preset MarginLeft = 10;
+  }
+
+  $rect <820,100,1020,140>
+  property color CaptionColor = Monitor::TextDay;
+
+  $rect <820,140,1020,180>
+  onset CaptionColor
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure CaptionColor == value )
+      return;
+
+    // Remember the property's new value.
+    pure CaptionColor = value;
+
+    HeaderText.Color = value;
+    HeaderLine.Color = value;
+
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <10,10,790,350>;
+    preset Radius = 16;
+    preset Color = #808080B0;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::IconButton IconButton
+  {
+    preset Layout = Core::Layout[AlignToRight, AlignToTop];
+    preset Bounds = <720,8,793,81>;
+    preset Icon = Monitor::Minus;
+  }
+
+  $rect <1070,10,1270,50>
+  property color ButtonColor = #FFFFFFFF;
+
+  $rect <1070,50,1270,90>
+  onset ButtonColor
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure ButtonColor == value )
+      return;
+
+    // Remember the property's new value.
+    pure ButtonColor = value;
+
+    // forward the value to the button
+    IconButton.Color = value;
+
+  }
+
+  // The property 'OnActivate' can refer to a slot method, which will receive a signal \
+  // as soon as the user has activated the button. Thereupon the method's logic will \
+  // be executed.
+  $rect <1070,100,1270,140>
+  property slot OnClose = null;
+
+  $rect <1070,140,1270,180>
+  onset OnClose
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure OnClose == value )
+      return;
+
+    // Remember the property's new value.
+    pure OnClose = value;
+
+    // forward the value to the button
+    IconButton.OnActivate = value;
+
+  }
+
+  $rect <820,50,1020,90>
+  onset Caption
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure Caption == value )
+      return;
+
+    // Store the new unit ...
+    pure Caption = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  $rect <820,10,1020,50>
+  property string Caption = "Header";
+
+  $rect <20,20,160,60>
+  object Views::Text HeaderText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <32,12,720,42>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <820,200,1020,240>
+  property color PanelColor = #808080B0;
+
+  $rect <820,240,1020,280>
+  onset PanelColor
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure PanelColor == value )
+      return;
+
+    // Remember the property's new value.
+    pure PanelColor = value;
+
+    Rectangle.Color = value;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle HeaderLine
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <32,42,720,44>;
+  }
+
+  $rect <1070,200,1270,240>
+  property color ItemColor = Monitor::TextDay;
+
+  $rect <1070,240,1270,280>
+  onset ItemColor
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure ItemColor == value )
+      return;
+
+    // Remember the property's new value.
+    pure ItemColor = value;
+
+    InvalidateViewState();
+
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler SimpleTouchHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Point4 = <0,0>;
+    preset Point3 = <800,0>;
+    preset Point2 = <800,360>;
+    preset Point1 = <0,360>;
+    preset OnDrag = onMove;
+  }
+
+  $rect <820,320,1020,360>
+  slot onMove
+  {
+    var rect area = GetRoot().Bounds;
+
+    /* calculate delta of movement */
+    var point origin = Bounds.origin + SimpleTouchHandler.Offset;
+
+    /* limit the entire dialog to the limits of the application */
+    if ( origin.x < 0 )
+      origin.x = 0;
+    if ( origin.y < 0 )
+      origin.y = 0;
+
+    if ( origin.x > area.w - Bounds.w )
+      origin.x = area.w - Bounds.w;
+    if ( origin.y > area.h - Bounds.h )
+      origin.y = area.h - Bounds.h;
+
+    /* assign the new position */
+    Bounds.origin = origin;
+
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Bounds
+  $member UpdateLayout
+  $member UpdateViewState
+  $member Note4
+  $member Note3
+  $member Note2
+  $member focused
+  $member modal
+  $member enabled
+  $member KeyHandler
+  $member onPressKey
+  $member SimpleTouchHandler
+  $member FilterScreen
+  $member Rectangle
+  $member CaptionColor
+  $member OnSetCaptionColor
+  $member IconButton
+  $member ButtonColor
+  $member OnSetButtonColor
+  $member OnClose
+  $member OnSetOnClose
+  $member OnSetCaption
+  $member Caption
+  $member HeaderText
+  $member HeaderLine
+  $member PanelColor
+  $member OnSetPanelColor
+  $member ItemColor
+  $member OnSetItemColor
+  $member onMove
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder ObtainFocus 1
+  $reorder HasViewState 1
+  $reorder LocalPosition 1
+  $reorder GlobalPosition 1
+  $reorder DispatchEvent 1
+  $reorder BroadcastEventAtPosition 1
+  $reorder BroadcastEvent 1
+  $reorder UpdateLayout 1
+  $reorder UpdateViewState 1
+  $reorder InvalidateLayout 1
+  $reorder InvalidateViewState 1
+  $reorder InvalidateArea 1
+  $reorder GetIndexOfView 1
+  $reorder GetViewAtIndex 1
+  $reorder CountViews 1
+  $reorder FindViewInDirection 1
+  $reorder FindViewWithinArea 1
+  $reorder FindViewAtPosition 1
+  $reorder FindPrevView 1
+  $reorder FindNextView 1
+  $reorder FindSiblingView 1
+  $reorder GetContentArea 1
+  $reorder FadeGroup 1
+  $reorder RestackBehind 1
+  $reorder RestackBack 1
+  $reorder RestackTop 1
+  $reorder Restack 1
+  $reorder RemoveAll 1
+  $reorder Remove 1
+  $reorder AddBehind 1
+  $reorder Add 1
+  $reorder Focus 1
+  $reorder Buffered 1
+  $reorder Enabled 1
+  $reorder Opacity 1
+  $reorder Embedded 1
+  $reorder AlphaBlended 1
+  $reorder Visible 1
+  $reorder Note4 1
+  $reorder Note3 1
+  $reorder Note2 1
+  $reorder focused 1
+  $reorder modal 1
+  $reorder enabled 1
+  $reorder KeyHandler 1
+  $reorder onPressKey 1
+  $reorder SimpleTouchHandler 1
+  $reorder FilterScreen 1
+  $reorder Rectangle 1
+  $reorder CaptionColor 1
+  $reorder OnSetCaptionColor 1
+}
+
+$rect <260,580,540,620>
+$output false
+autoobject Effects::ScaleTransition DialogShowHideTransition
+{
+  preset Duration = 200;
+  preset Scaling = 0.8;
+}
+
+$rect <50,40,250,80>
+$output false
+class Monitor : Core::Group
+{
+  $rect <20,750,220,790>
+  inherited property Bounds = <0,0,1280,720>;
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Background
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,1280,720>;
+    preset Color = Monitor::BackgroundDay;
+  }
+
+  $rect <1300,40,1500,80>
+  object Core::PropertyObserver BgColorObserver
+  {
+    preset OnEvent = onBgColorChanged;
+    preset Outlet = ^Monitor::Colors.Background;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,40,1700,80>
+  slot onBgColorChanged
+  {
+    Background.Color = colors.Background;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Panel Panel
+  {
+    preset Bounds = <20,40,950,494>;
+    preset Color = Monitor::PanelDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Oscilloscope OscilloscopeECG_I
+  {
+    preset Bounds = <57,89,727,189>;
+    preset Speed = 150;
+    preset WiperWidth = 40;
+    preset Color = Monitor::GreenDay;
+    preset Gain = 150;
+    preset DataProvider = Monitor::Device.StorageECG_I;
+    preset BaseLine = 80;
+    preset Caption = "I";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Oscilloscope OscilloscopeECG_II
+  {
+    preset Bounds = <57,204,727,304>;
+    preset Speed = 150;
+    preset WiperWidth = 40;
+    preset Color = Monitor::GreenDay;
+    preset Gain = 150;
+    preset DataProvider = Monitor::Device.StorageECG_II;
+    preset BaseLine = 80;
+    preset Caption = "II";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Oscilloscope OscilloscopeECG_III
+  {
+    preset Bounds = <57,319,727,419>;
+    preset Speed = 150;
+    preset WiperWidth = 40;
+    preset Color = Monitor::GreenDay;
+    preset Gain = 150;
+    preset DataProvider = Monitor::Device.StorageECG_III;
+    preset BaseLine = 80;
+    preset Caption = "III";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Panel Panel1
+  {
+    preset Bounds = <20,494,950,699>;
+    preset Color = Monitor::PanelDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Oscilloscope OscilloscopeABP
+  {
+    preset Bounds = <57,528,727,628>;
+    preset Speed = 150;
+    preset WiperWidth = 40;
+    preset Color = Monitor::RedDay;
+    preset Gain = 120;
+    preset DataProvider = Monitor::Device.StorageABP;
+    preset BaseLine = 60;
+    preset Caption = "ART";
+  }
+
+  $rect <1300,90,1500,130>
+  object Core::PropertyObserver PanelColorObserver
+  {
+    preset OnEvent = onPanelColorChanged;
+    preset Outlet = ^Monitor::Colors.Panel;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,90,1700,130>
+  slot onPanelColorChanged
+  {
+    Panel.Color = colors.Panel;
+    Panel1.Color = colors.Panel;
+    Panel2.Color = colors.Panel;
+    Panel3.Color = colors.Panel;
+
+  }
+
+  $rect <1300,0,1500,40>
+  var Monitor::ColorSet colors = Monitor::Colors;
+
+  $rect <1300,140,1500,180>
+  object Core::PropertyObserver RedColorObserver
+  {
+    preset OnEvent = onRedColorChanged;
+    preset Outlet = ^Monitor::Colors.Red;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,140,1700,180>
+  slot onRedColorChanged
+  {
+    OscilloscopeABP.Color = colors.Red;
+    ABPDisplay.Color = colors.Red;
+    AlarmButton.Color = colors.Red;
+  }
+
+  $rect <1300,190,1500,230>
+  object Core::PropertyObserver GreenColorObserver
+  {
+    preset OnEvent = onGreenColorChanged;
+    preset Outlet = ^Monitor::Colors.Green;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,190,1700,230>
+  slot onGreenColorChanged
+  {
+    OscilloscopeECG_I.Color = colors.Green;
+    OscilloscopeECG_II.Color = colors.Green;
+    OscilloscopeECG_III.Color = colors.Green;
+    HeartRateDisplay.Color = colors.Green;
+  }
+
+  $rect <1300,240,1500,280>
+  object Core::PropertyObserver BlueColorObserver
+  {
+    preset OnEvent = onBlueColorChanged;
+    preset Outlet = ^Monitor::Colors.Blue;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,240,1700,280>
+  slot onBlueColorChanged
+  {
+    SpO2Display.Color = colors.Blue;
+  }
+
+  $rect <1300,290,1500,330>
+  object Core::PropertyObserver YellowColorObserver
+  {
+    preset OnEvent = onYellowColorChanged;
+    preset Outlet = ^Monitor::Colors.Yellow;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,290,1700,330>
+  slot onYellowColorChanged
+  {
+    EtCO2Display.Color = colors.Yellow;
+
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Panel Panel2
+  {
+    preset Bounds = <950,40,1170,194>;
+    preset Color = Monitor::PanelDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Panel Panel3
+  {
+    preset Bounds = <950,194,1170,699>;
+    preset Color = Monitor::PanelDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Scale ScaleECG
+  {
+    preset Bounds = <57,432,727,472>;
+    preset Speed = 150;
+    preset Color = Monitor::TextDay;
+    preset LineWidth = 2.0;
+  }
+
+  $rect <1300,340,1500,380>
+  object Core::PropertyObserver TextColorObserver
+  {
+    preset OnEvent = onTextColorChanged;
+    preset Outlet = ^Monitor::Colors.Text;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,340,1700,380>
+  slot onTextColorChanged
+  {
+    CaptionText.Color = colors.Text;
+    ScaleECG.Color = colors.Text;
+    ScaleABP.Color = colors.Text;
+    PatientItem.Color = colors.Text;
+    PatientItem.ButtonColor = colors.Text;
+    HeartRateDisplay.ButtonColor = colors.Text;
+    SpO2Display.ButtonColor = colors.Text;
+    EtCO2Display.ButtonColor = colors.Text;
+    TemperatureDisplay.Color = colors.Text;
+    TemperatureDisplay.ButtonColor = colors.Text;
+    ABPDisplay.ButtonColor = colors.Text;
+
+    DayNightButton.Color = colors.Text;
+    PrintButton.Color = colors.Text;
+    ArmButton.Color = colors.Text;
+    HeartButton.Color = colors.Text;
+    FingerButton.Color = colors.Text;
+    LungButton.Color = colors.Text;
+    FreezeButton.Color = colors.Text;
+
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::Scale ScaleABP
+  {
+    preset Bounds = <57,639,727,679>;
+    preset Speed = 150;
+    preset Color = Monitor::TextDay;
+    preset LineWidth = 2.0;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueItem HeartRateDisplay
+  {
+    preset Bounds = <755,218,925,358>;
+    preset CurrentOutlet = ^Monitor::Device.HeartRate;
+    preset Color = Monitor::GreenDay;
+    preset MinOutlet = ^Monitor::Device.HeartRateMin;
+    preset MaxOutlet = ^Monitor::Device.HeartRateMax;
+    preset Caption = "HR [bpm]";
+    preset ButtonColor = Monitor::TextDay;
+    preset OnActivate = onOpenECGMinMax;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueItem SpO2Display
+  {
+    preset Bounds = <980,218,1150,358>;
+    preset CurrentOutlet = ^Monitor::Device.SpO2;
+    preset Color = Monitor::BlueDay;
+    preset MinOutlet = ^Monitor::Device.SpO2Min;
+    preset MaxOutlet = ^Monitor::Device.SpO2Max;
+    preset Caption = "SpO2 [%%]";
+    preset ButtonColor = Monitor::TextDay;
+    preset OnActivate = onOpenSpO2MinMax;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueItem EtCO2Display
+  {
+    preset Bounds = <980,374,1150,514>;
+    preset CurrentOutlet = ^Monitor::Device.EtCO2;
+    preset Color = Monitor::YellowDay;
+    preset MinOutlet = ^Monitor::Device.EtCO2Min;
+    preset MaxOutlet = ^Monitor::Device.EtCO2Max;
+    preset Caption = "EtCO2 [mmHg]";
+    preset ButtonColor = Monitor::TextDay;
+    preset OnActivate = onOpenEtCO2MinMax;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueItem TemperatureDisplay
+  {
+    preset Bounds = <980,530,1150,670>;
+    preset CurrentOutlet = ^Monitor::Device.Temperature;
+    preset Color = Monitor::TextDay;
+    preset MinOutlet = ^Monitor::Device.TemperatureMin;
+    preset MaxOutlet = ^Monitor::Device.TemperatureMax;
+    preset Caption = "Temp [°C]";
+    preset ButtonColor = Monitor::TextDay;
+    preset OnActivate = onOpenTempMinMax;
+    preset DecimalPlace = true;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::DualValueItem ABPDisplay
+  {
+    preset Bounds = <755,520,935,680>;
+    preset CurrentOutletHi = ^Monitor::Device.ABPSys;
+    preset Color = Monitor::RedDay;
+    preset MinOutletHi = ^Monitor::Device.ABPSysMin;
+    preset MaxOutletHi = ^Monitor::Device.ABPSysMax;
+    preset Caption = "ABP [mmHg]";
+    preset ButtonColor = Monitor::TextDay;
+    preset OnActivate = onOpenABPMinMax;
+    preset CurrentOutletLo = ^Monitor::Device.ABPDia;
+    preset MinOutletLo = ^Monitor::Device.ABPDiaMin;
+    preset MaxOutletLo = ^Monitor::Device.ABPDiaMax;
+    preset CaptionHi = "SYS";
+    preset CaptionLo = "DIA";
+  }
+
+  $rect <1300,390,1500,430>
+  slot onDayNight
+  {
+    /* change the current color mode => all color effects will start */
+    colors.NightMode = !colors.NightMode;
+
+    if ( colors.NightMode )
+      DayNightButton.IconIndex = 1;
+    else
+      DayNightButton.IconIndex = 0;
+
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ActioinButton DayNightButton
+  {
+    preset Bounds = <1196,59,1256,119>;
+    preset OnActivate = onDayNight;
+    preset IconIndex = 1;
+    preset Color = Monitor::TextDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ActioinButton PrintButton
+  {
+    preset Bounds = <1196,138,1256,198>;
+    preset OnActivate = onOpenInfo;
+    preset IconIndex = 2;
+    preset Color = Monitor::TextDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ActioinButton ArmButton
+  {
+    preset Bounds = <1196,217,1256,277>;
+    preset OnActivate = onOpenInfo;
+    preset IconIndex = 3;
+    preset Color = Monitor::TextDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ActioinButton HeartButton
+  {
+    preset Bounds = <1196,296,1256,356>;
+    preset OnActivate = onOpenInfo;
+    preset IconIndex = 4;
+    preset Color = Monitor::TextDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ActioinButton FingerButton
+  {
+    preset Bounds = <1196,376,1256,436>;
+    preset OnActivate = onOpenInfo;
+    preset IconIndex = 5;
+    preset Color = Monitor::TextDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ActioinButton LungButton
+  {
+    preset Bounds = <1196,455,1256,515>;
+    preset OnActivate = onOpenInfo;
+    preset IconIndex = 6;
+    preset Color = Monitor::TextDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ActioinButton FreezeButton
+  {
+    preset Bounds = <1196,534,1256,594>;
+    preset OnActivate = onOpenInfo;
+    preset IconIndex = 7;
+    preset Color = Monitor::TextDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ActioinButton AlarmButton
+  {
+    preset Bounds = <1196,614,1256,674>;
+    preset OnActivate = onOpenInfo;
+    preset IconIndex = 8;
+    preset Color = Monitor::RedDay;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text CaptionText
+  {
+    preset Bounds = <29,0,680,50>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = Monitor::Title;
+    preset Font = Monitor::FontTextM;
+    preset Color = Monitor::TextDay;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::PatientItem PatientItem
+  {
+    preset Bounds = <980,65,1150,175>;
+    preset Color = Monitor::TextDay;
+    preset ButtonColor = Monitor::TextDay;
+    preset OnActivate = onOpenInfo;
+  }
+
+  $rect <490,750,690,790>
+  slot onOpenECGMinMax
+  {
+    /* create a new dialog */
+    openDialog( new Monitor::ECGMinMaxDialog, colors.NightMode ? Monitor::GreenNight : Monitor::GreenDay );
+
+  }
+
+  $rect <250,960,450,1000>
+  slot closeDialog
+  {
+    if ( dialog != null )
+    {
+      /* remove the dialog and quit the modal mode */
+      DismissDialog( dialog, null, null, null, null, null, false );
+
+      dialog = null;
+    }
+
+    if ( curtain )
+    {
+      /* remove the background curtain */
+      DismissDialog( curtain, null, null, null, null, null, true );
+
+      curtain = null;
+    }
+
+
+  }
+
+  $rect <40,910,240,950>
+  var Monitor::Dialog dialog = null;
+
+  $rect <1300,470,1500,510>
+  object Core::PropertyObserver SpeedObserver
+  {
+    preset OnEvent = onSpeedChanged;
+    preset Outlet = ^Monitor::Device.Speed;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,470,1700,510>
+  slot onSpeedChanged
+  {
+    // forward the speed to the oscilloscopes and the scales
+    OscilloscopeECG_I.Speed = Monitor::Device.Speed;
+    OscilloscopeECG_II.Speed = Monitor::Device.Speed;
+    OscilloscopeECG_III.Speed = Monitor::Device.Speed;
+    OscilloscopeABP.Speed = Monitor::Device.Speed;
+    ScaleECG.Speed = Monitor::Device.Speed;
+    ScaleABP.Speed = Monitor::Device.Speed;
+
+
+  }
+
+  $rect <1300,520,1500,560>
+  object Core::PropertyObserver ECGGainObserver
+  {
+    preset OnEvent = onECGGainChanged;
+    preset Outlet = ^Monitor::Device.ECGGain;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,520,1700,560>
+  slot onECGGainChanged
+  {
+    // forward the gain to the oscilloscopes
+    OscilloscopeECG_I.Gain = Monitor::Device.ECGGain;
+    OscilloscopeECG_II.Gain = Monitor::Device.ECGGain;
+    OscilloscopeECG_III.Gain = Monitor::Device.ECGGain;
+
+  }
+
+  $rect <1300,570,1500,610>
+  object Core::PropertyObserver ABPGainObserver
+  {
+    preset OnEvent = onABPGainChanged;
+    preset Outlet = ^Monitor::Device.ABPGain;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,570,1700,610>
+  slot onABPGainChanged
+  {
+    // forward the gain to the oscilloscope
+    OscilloscopeABP.Gain = Monitor::Device.ABPGain;
+
+  }
+
+  $rect <720,760,920,800>
+  object Core::Timer CaptionTimer
+  {
+    preset OnTrigger = updateCaption;
+    preset Enabled = true;
+  }
+
+  $rect <920,760,1120,800>
+  slot updateCaption
+  {
+    var int32 fps = 0;
+
+    if ( GetRoot() != null )
+      fps = GetRoot().GetFPS();
+
+    CaptionText.String = Monitor::Title + " - " + string( fps ) + " FPS";
+
+  }
+
+  $rect <490,800,690,840>
+  slot onOpenABPMinMax
+  {
+    /* create a new dialog */
+    openDialog( new Monitor::ABPMinMaxDialog, colors.NightMode ? Monitor::RedNight : Monitor::RedDay);
+
+
+  }
+
+  $rect <40,960,240,1000>
+  var Monitor::Curtain curtain = null;
+
+  $rect <250,910,450,950>
+  method void openDialog( arg Monitor::Dialog aDlg, arg color aItemColor )
+  {
+    /* check for a valid dialog */
+    if ( aDlg == null )
+      return;
+
+    /* check for old dialogs */
+    if (( dialog != null ) || ( curtain != null ))
+      signal closeDialog;
+
+    /* keep the instance for later removement */
+    dialog = aDlg;
+
+    if ( colors.UseDarkCurtain == true )
+    {
+      /* create a filter for the entire screen background */
+      curtain = new Monitor::Curtain;
+      curtain.Bounds = Bounds.orect;
+      curtain.Color = ( colors.NightMode ) ?  Monitor::CurtainNight : Monitor::CurtainDay;
+      PresentDialog( curtain, null, null, null, null, null, null, null, null, false );
+    }
+
+    /* set colors according currently active mode */
+    if ( colors.NightMode )
+    {
+      dialog.PanelColor = Monitor::DialogNight;
+      dialog.CaptionColor = Monitor::TextNight;
+      dialog.ButtonColor = Monitor::TextNight;
+    }
+    else
+    {
+      dialog.PanelColor = Monitor::DialogDay;
+      dialog.CaptionColor = Monitor::TextDay;
+      dialog.ButtonColor = Monitor::TextDay;
+    }
+    dialog.ItemColor = aItemColor;
+
+    /* register the close slot method */
+    dialog.OnClose = closeDialog;
+
+    /* present the dialog */
+    PresentDialog( dialog, Monitor::DialogShowHideTransition, null, null, null, null, null, null, null, false );
+
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler ECGTouchHandler
+  {
+    preset Point4 = <57,89>;
+    preset Point3 = <727,89>;
+    preset Point2 = <727,472>;
+    preset Point1 = <57,472>;
+    preset OnPress = onOpenECGSettings;
+  }
+
+  $rect <281,750,481,790>
+  slot onOpenECGSettings
+  {
+    /* create a new dialog */
+    openDialog( new Monitor::ECGSettingsDialog, colors.NightMode ? Monitor::GreenNight : Monitor::GreenDay);
+
+  }
+
+  $rect <281,800,481,840>
+  slot onOpenABPSettings
+  {
+    /* create a new dialog */
+    openDialog( new Monitor::ABPSettingsDialog, colors.NightMode ? Monitor::RedNight : Monitor::RedDay);
+
+
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler ABPTouchHandler
+  {
+    preset Point4 = <57,528>;
+    preset Point3 = <727,528>;
+    preset Point2 = <727,680>;
+    preset Point1 = <57,680>;
+    preset OnPress = onOpenABPSettings;
+  }
+
+  // Dialog Management
+  note group Note
+  {
+    attr Bounds = <10,860,480,1020>;
+  }
+
+  $rect <490,850,690,890>
+  slot onOpenSpO2MinMax
+  {
+    /* create a new dialog */
+    openDialog( new Monitor::SpO2MinMaxDialog, colors.NightMode ? Monitor::BlueNight : Monitor::BlueDay );
+
+  }
+
+  $rect <492,900,692,940>
+  slot onOpenEtCO2MinMax
+  {
+    /* create a new dialog */
+    openDialog( new Monitor::EtCO2MinMaxDialog, colors.NightMode ? Monitor::YellowNight : Monitor::YellowDay );
+
+  }
+
+  $rect <490,950,690,990>
+  slot onOpenTempMinMax
+  {
+    /* create a new dialog */
+    openDialog( new Monitor::TempMinMaxDialog, colors.NightMode ? Monitor::TextNight : Monitor::TextDay );
+
+  }
+
+  $rect <1300,620,1500,660>
+  object Core::PropertyObserver ECGIntensityObserver
+  {
+    preset OnEvent = onECGIntensityChanged;
+    preset Outlet = ^Monitor::Device.ECGIntensity;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,620,1700,660>
+  slot onECGIntensityChanged
+  {
+    var float lineWidth = 0.02 * (float)Monitor::Device.ECGIntensity;
+
+    // forward the line width to the oscilloscopes
+    OscilloscopeECG_I.LineWidth = lineWidth;
+    OscilloscopeECG_II.LineWidth = lineWidth;
+    OscilloscopeECG_III.LineWidth = lineWidth;
+
+  }
+
+  $rect <1300,670,1500,710>
+  object Core::PropertyObserver ABPIntensityObserver
+  {
+    preset OnEvent = onABPIntensityChanged;
+    preset Outlet = ^Monitor::Device.ABPIntensity;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <1500,670,1700,710>
+  slot onABPIntensityChanged
+  {
+    var float lineWidth = 0.02 * (float)Monitor::Device.ABPIntensity;
+
+    // forward the line width to the oscilloscope
+    OscilloscopeABP.LineWidth = lineWidth;
+
+  }
+
+  // Slot method to trigger the next phase of the auto demo.
+  $rect <1330,870,1530,910>
+  slot AutoDemoSlot
+  {
+    sender; /* the method is called from the sender object */
+
+    switch ( AutoState )
+    {
+      case  0: 
+      {
+        postsignal closeDialog;
+        Monitor::Device.SamplesPerSec = 80;
+        Monitor::Device.ECGIntensity = 100;
+        Monitor::Device.ECGGain = 150;
+        Monitor::Device.ABPIntensity = 100;
+        Monitor::Device.ABPGain = 150;
+        DemoEffect.Enabled = false;
+      }
+      case  1: postsignal onDayNight;
+      case  5: postsignal onOpenECGSettings;
+      case  6:
+      {
+        DemoEffect.CycleDuration = 4000;
+        DemoEffect.Value1 = 100;
+        DemoEffect.Value2 = 400;
+        DemoEffect.Outlet = ^Monitor::Device.Speed;
+        DemoEffect.Enabled = true;
+      }
+      case 11: postsignal closeDialog;  
+      case 13: postsignal onOpenEtCO2MinMax;
+      case 15: postsignal closeDialog;  
+      case 17: postsignal onOpenABPSettings;
+      case 18:
+      {
+        DemoEffect.CycleDuration = 4000;
+        DemoEffect.Value1 = 400;
+        DemoEffect.Value2 = 100;
+        DemoEffect.Outlet = ^Monitor::Device.Speed;
+        DemoEffect.Enabled = true;
+      }
+      case 23: postsignal closeDialog;  
+      case 24: postsignal onOpenSpO2MinMax;
+      case 26: postsignal closeDialog;  
+      case 27: postsignal onOpenInfo;
+      default:
+        ;
+    }
+
+    AutoState = AutoState + 1;
+    if ( AutoState > 30 )
+      AutoState = 0;
+
+  }
+
+  // Variable to store the current phase of the auto demo.
+  $rect <1330,950,1530,990>
+  var int32 AutoState = 0;
+
+  // Timer object to drive the auto demo mode.
+  $rect <1330,910,1530,950>
+  object Core::Timer AutoDemoTimer
+  {
+    preset OnTrigger = AutoDemoSlot;
+    preset Period = 1500;
+    preset Begin = 0;
+  }
+
+  // Auto demo timer and methods
+  note group Note2
+  {
+    attr Bounds = <1310,820,1750,1020>;
+  }
+
+  $rect <1530,870,1720,910>
+  object Effects::Int32Effect DemoEffect
+  {
+    preset NoOfCycles = 1;
+  }
+
+  $rect <490,1000,690,1040>
+  slot onOpenInfo
+  {
+    /* create a new dialog */
+    openDialog( new Monitor::InfoDialog, colors.NightMode ? Monitor::TextNight : Monitor::TextDay );
+
+  }
+
+  // Please note: The color management within this example is very sophisticated.
+  // Every color type (background, panels, lines, text etc.) is animated with its \
+  // own effect and with its own timing.
+  // 
+  // In case you want to implement a simple day/night color theming, the usage of \
+  // color constants and variants might be much easier.
+  note legend Note1
+  {
+    attr Bounds = <1710,10,1890,380>;
+  }
+}
+
+$rect <1190,50,1390,90>
+$output false
+const color BackgroundDay = #E6E6E6FF;
+
+$rect <1400,50,1600,90>
+$output false
+const color BackgroundNight = #22252BFF;
+
+$rect <1190,480,1390,520>
+$output false
+class ColorSet
+{
+  $rect <72,29,272,69>
+  property color Background = Monitor::BackgroundDay;
+
+  $rect <72,69,272,109>
+  onset Background
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Background == value )
+      return;
+
+    // Remember the property's new value.
+    pure Background = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^Background;
+  }
+
+  $rect <290,30,500,70>
+  object Effects::ColorEffect BackgroundEffect
+  {
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 600;
+    preset Outlet = ^Background;
+  }
+
+  $rect <70,120,270,160>
+  property color Panel = Monitor::PanelDay;
+
+  $rect <70,160,270,200>
+  onset Panel
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Panel == value )
+      return;
+
+    // Remember the property's new value.
+    pure Panel = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^Panel;
+  }
+
+  $rect <288,121,498,161>
+  object Effects::ColorEffect PanelEffect
+  {
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 300;
+    preset Outlet = ^Panel;
+  }
+
+  $rect <72,210,272,250>
+  property color Red = Monitor::RedDay;
+
+  $rect <72,250,272,290>
+  onset Red
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Red == value )
+      return;
+
+    // Remember the property's new value.
+    pure Red = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^Red;
+  }
+
+  $rect <290,211,500,251>
+  object Effects::ColorEffect RedEffect
+  {
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1800;
+    preset InitialDelay = 1000;
+    preset Outlet = ^Red;
+  }
+
+  $rect <70,300,270,340>
+  property color Green = Monitor::GreenDay;
+
+  $rect <70,340,270,380>
+  onset Green
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Green == value )
+      return;
+
+    // Remember the property's new value.
+    pure Green = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^Green;
+  }
+
+  $rect <288,301,498,341>
+  object Effects::ColorEffect GreenEffect
+  {
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1800;
+    preset InitialDelay = 1000;
+    preset Outlet = ^Green;
+  }
+
+  $rect <70,390,270,430>
+  property color Blue = Monitor::BlueDay;
+
+  $rect <70,430,270,470>
+  onset Blue
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Blue == value )
+      return;
+
+    // Remember the property's new value.
+    pure Blue = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^Blue;
+  }
+
+  $rect <288,391,498,431>
+  object Effects::ColorEffect BlueEffect
+  {
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1800;
+    preset InitialDelay = 1000;
+    preset Outlet = ^Blue;
+  }
+
+  $rect <70,480,270,520>
+  property color Yellow = Monitor::YellowDay;
+
+  $rect <70,520,270,560>
+  onset Yellow
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Yellow == value )
+      return;
+
+    // Remember the property's new value.
+    pure Yellow = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^Yellow;
+  }
+
+  $rect <288,481,498,521>
+  object Effects::ColorEffect YellowEffect
+  {
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1800;
+    preset InitialDelay = 1000;
+    preset Outlet = ^Yellow;
+  }
+
+  $rect <72,580,272,620>
+  property color Text = Monitor::TextDay;
+
+  $rect <72,620,272,660>
+  onset Text
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Text == value )
+      return;
+
+    // Remember the property's new value.
+    pure Text = value;
+
+    // Notify all associated property observers.
+    notifyobservers ^Text;
+  }
+
+  $rect <290,581,500,621>
+  object Effects::ColorEffect TextEffect
+  {
+    preset NoOfCycles = 1;
+    preset CycleDuration = 900;
+    preset Outlet = ^Text;
+  }
+
+  $rect <530,30,730,70>
+  property bool NightMode = false;
+
+  $rect <530,70,730,110>
+  onset NightMode
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure NightMode == value )
+      return;
+
+    // Remember the property's new value.
+    pure NightMode = value;
+
+    /* stop all ongoing color effects */
+    BackgroundEffect.Enabled = false;
+    PanelEffect.Enabled      = false;
+    RedEffect.Enabled        = false;
+    GreenEffect.Enabled      = false;
+    BlueEffect.Enabled       = false;
+    YellowEffect.Enabled     = false;
+    TextEffect.Enabled       = false;
+
+    /* take the current color values as start values for next color transitions */
+    BackgroundEffect.Value1 = Background;
+    PanelEffect.Value1      = Panel;
+    RedEffect.Value1        = Red;
+    GreenEffect.Value1      = Green;
+    BlueEffect.Value1       = Blue;
+    YellowEffect.Value1     = Yellow;
+    TextEffect.Value1       = Text;
+
+    if ( value == true )
+    {
+      /* switch to night mode */
+      BackgroundEffect.Value2 = Monitor::BackgroundNight;
+      PanelEffect.Value2      = Monitor::PanelNight;
+      RedEffect.Value2        = Monitor::RedNight;
+      GreenEffect.Value2      = Monitor::GreenNight;
+      BlueEffect.Value2       = Monitor::BlueNight;
+      YellowEffect.Value2     = Monitor::YellowNight;
+      TextEffect.Value2       = Monitor::TextNight;
+    }
+    else
+    {
+      /* switch to day mode */
+      BackgroundEffect.Value2 = Monitor::BackgroundDay;
+      PanelEffect.Value2      = Monitor::PanelDay;
+      RedEffect.Value2        = Monitor::RedDay;
+      GreenEffect.Value2      = Monitor::GreenDay;
+      BlueEffect.Value2       = Monitor::BlueDay;
+      YellowEffect.Value2     = Monitor::YellowDay;
+      TextEffect.Value2       = Monitor::TextDay;
+    }
+
+    /* start all color effects */
+    BackgroundEffect.Enabled = true;
+    PanelEffect.Enabled      = true;
+    RedEffect.Enabled        = true;
+    GreenEffect.Enabled      = true;
+    BlueEffect.Enabled       = true;
+    YellowEffect.Enabled     = true;
+    TextEffect.Enabled       = true;
+
+
+  }
+
+  // Flag to switch on/off the usage of a dark curtain behind dialogs to focus the \
+  // user attention to the dialog.
+  $rect <70,680,270,720>
+  property bool UseDarkCurtain = true;
+
+  $rect <70,720,270,760>
+  onset UseDarkCurtain
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure UseDarkCurtain == value )
+      return;
+
+    // Remember the property's new value.
+    pure UseDarkCurtain = value;
+
+    // TO DO:
+    // 
+    // Now you can handle the alternation of the property.
+  }
+
+  // Please note: The color management within this example is very sophisticated.
+  // Every color type (background, panels, lines, text etc.) is animated with its \
+  // own effect and with its own timing.
+  // 
+  // In case you want to implement a simple day/night color theming, the usage of \
+  // color constants and variants might be much easier.
+  note legend Note1
+  {
+    attr Bounds = <530,130,710,500>;
+  }
+}
+
+$rect <1400,480,1600,520>
+$output false
+autoobject Monitor::ColorSet Colors;
+
+$rect <1190,90,1390,130>
+$output false
+const color PanelDay = #FFFFFFFF;
+
+$rect <1400,90,1600,130>
+$output false
+const color PanelNight = #3A3E43FF;
+
+$rect <1190,130,1390,170>
+$output false
+const color GreenDay = #619B00FF;
+
+$rect <1190,172,1390,212>
+$output false
+const color RedDay = #BB0000FF;
+
+$rect <1190,210,1390,250>
+$output false
+const color BlueDay = #0071B3FF;
+
+$rect <1190,250,1390,290>
+$output false
+const color YellowDay = #FFB800FF;
+
+$rect <1400,130,1600,170>
+$output false
+const color GreenNight = #5CFF64FF;
+
+$rect <1400,170,1600,210>
+$output false
+const color RedNight = #FF0000FF;
+
+$rect <1400,210,1600,250>
+$output false
+const color BlueNight = #00E3FFFF;
+
+$rect <1400,250,1600,290>
+$output false
+const color YellowNight = #FFFF00FF;
+
+$rect <733,42,933,82>
+$output false
+resource Resources::Font FontDigitsXXL
+{
+  attr fontname FontName = Asap Condensed;
+  attr fontheight Height = 90;
+  attr fontheightmode HeightMode = Popular;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = '0'-'9','.';
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = true;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontrowdistance RowDistance;
+}
+
+$rect <730,80,930,120>
+$output false
+resource Resources::Font FontDigitsXL
+{
+  attr fontname FontName = Asap Condensed;
+  attr fontheight Height = 60;
+  attr fontheightmode HeightMode = Popular;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = '0'-'9','.';
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = true;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontrowdistance RowDistance;
+}
+
+$rect <730,120,930,160>
+$output false
+resource Resources::Font FontDigitsL
+{
+  attr fontname FontName = Asap Condensed;
+  attr fontheight Height = 48;
+  attr fontheightmode HeightMode = Popular;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = '0'-'9','.';
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = true;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontrowdistance RowDistance;
+}
+
+$rect <730,170,930,210>
+$output false
+resource Resources::Font FontTextM
+{
+  attr fontname FontName = Asap;
+  attr fontheight Height = 18;
+  attr fontheightmode HeightMode = Popular;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0x7F,'°';
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = true;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontrowdistance RowDistance;
+}
+
+$rect <730,210,930,250>
+$output false
+resource Resources::Font FontTextS
+{
+  attr fontname FontName = Asap;
+  attr fontheight Height = 14;
+  attr fontheightmode HeightMode = Popular;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0x7F,'°';
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = true;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontrowdistance RowDistance;
+}
+
+// The scale class is used to draw dynamically a scale with description that can \
+// be combined with an oscilloscope.
+$rect <260,150,460,190>
+$output false
+class Scale : Core::Group
+{
+  $rect <0,300,200,340>
+  inherited property Bounds = <0,0,600,60>;
+
+  $rect <200,300,400,340>
+  inherited method UpdateLayout()
+  {
+    super( aSize );
+
+    /* force an update of the scale */
+    postsignal recalcScale;
+
+  }
+
+  // The property 'Speed' stores the speed of the graph update in pixel per second.
+  $rect <420,130,620,170>
+  property int32 Speed = 450;
+
+  // The onset method for the property 'Speed' changes the speed of the beam in the \
+  // range from 1 to 1000.
+  $rect <420,170,620,210>
+  onset Speed
+  {
+    /* limit the pixel per second speed to a range from 10 to 500 */
+    if ( value < 10 )
+      value = 10;
+
+    if ( value > 500 )
+      value = 500;
+
+    /* assign the value */
+    pure Speed = value;
+
+    /* force an update of the scale */
+    postsignal recalcScale;
+
+  }
+
+  // The property 'Color' stores the color value of the oscilloscope graph and scale.
+  $rect <0,130,200,170>
+  property color Color = #808080FF;
+
+  // The onset method for the property 'BeamColor' changes the color of the simulated \
+  // beam.
+  $rect <0,170,200,210>
+  onset Color
+  {
+    /* if color does not change, nothing to do... */
+    if ( Color == value )
+      return;
+
+    /* assign the color */
+    pure Color = value;
+
+    StrokePath.Color = value;
+    Text.Color = value;
+
+  }
+
+  $rect <0,230,200,270>
+  object Graphics::Path Path;
+
+  // The property 'LineWidth' stores the width of the graphs line.
+  $rect <210,130,410,170>
+  property float LineWidth = 2.0;
+
+  // The onset method for the property 'ScreenWiper' changes the width of the screen \
+  // wiper in the range from 0 (off) to 100 percent.
+  $rect <210,170,410,210>
+  onset LineWidth
+  {
+    /* limit line width to a range from 0.1 to 5.0 pixel*/
+    if ( value < 0.1 )
+      value = 0.1;
+
+    if ( value > 5.0 )
+      value = 5.0;
+
+    /* assign the value */
+    pure LineWidth = value;
+
+    StrokePath.Width = value;
+  }
+
+  // This slot method is executed when the associated property observer 'PropertyObserver' \
+  // is notified.
+  $rect <201,230,401,270>
+  slot recalcScale
+  {
+    var float x0 = 1.0;
+    var float y0 = 1.0;
+    var float y1 = (float)( Bounds.h / 3 );
+    var float dx;
+    var int32 timePerDiv;
+
+    if ( pure Speed >= 400 )
+      timePerDiv = 50;
+    else if ( pure Speed >= 200 )
+      timePerDiv = 100;
+    else if ( pure Speed >= 100 )
+      timePerDiv = 200;
+    else if ( pure Speed >= 80 )
+      timePerDiv = 400;
+    else if ( pure Speed >= 40 )
+      timePerDiv = 500;
+    else if ( pure Speed >= 20 )
+      timePerDiv = 1000;
+    else
+      timePerDiv = 2000;
+
+    Text.String = string( timePerDiv ) + " ms/Div";
+
+    dx = (float)( timePerDiv * Speed ) / 1000.0;
+
+    /* clear the path */
+    Path.InitSubPath( 0, ( Bounds.w / 10 ) * 4 + 4 );
+
+    /* start the path at last position */
+    Path.Begin( 0, x0, y0 );
+
+    /* prepare the path data */
+    while ( (int32)x0 < Bounds.w )
+    {
+      Path.AddLine( 0, x0, y1 );
+      Path.AddLine( 0, x0, y0 );
+      x0 = x0 + dx;
+      Path.AddLine( 0, x0, y0 );
+    }
+
+
+
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, ResizeVert];
+    preset Bounds = <0,30,118,60>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextS;
+    preset Color = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::StrokePath StrokePath
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,600,30>;
+    preset Color = #000000FF;
+    preset Width = 2.0;
+    preset Path = Path;
+  }
+}
+
+$rect <1190,290,1390,330>
+$output false
+const color TextDay = #868686FF;
+
+$rect <1400,290,1600,330>
+$output false
+const color TextNight = #FFFFFFFF;
+
+$rect <940,80,1140,120>
+$output false
+resource Resources::Bitmap IconButtonShadow
+{
+  attr bitmapfile FileName = .\Res\IconButtonShadow.png;
+  attr bitmapdithering Dithering = Auto;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapmode Mode = Default;
+}
+
+// This class implements a 'push button' widget. When the user presses the button, \
+// a signal is sent to the slot method stored in its @OnActivate property.
+$rect <50,270,250,310>
+$output false
+class IconButton : Templates::PushButton
+{
+  $rect <480,310,680,350>
+  inherited property Bounds = <0,0,60,60>;
+
+  $rect <710,190,910,230>
+  inherited method UpdateViewState()
+  {
+    // Always invoke the inherited method.
+    super( aState );
+
+    // Determine the new state of the push button.
+    //
+    // isEnabled  --> the button can react to user inputs.
+    // isSelected --> the button can receive keyboard events.
+    // isPressed  --> the button should appear pressed.
+    //
+    var bool isEnabled  = aState.contains( Core::ViewState[ Enabled  ]);
+    var bool isSelected = aState.contains( Core::ViewState[ Selected ]);
+    var bool isPressed  = ( TouchHandler.Down && TouchHandler.Inside ) || 
+                            FlashTimer.Enabled;
+
+    if ( isPressed )
+    {
+      IconImage.Bounds.origin = <2,2>;
+    }
+    else
+    {
+      IconImage.Bounds.origin = <0,0>;
+    }
+
+    // Remember the current state. Next time when the UpdateViewState() is called
+    // you can compare the 'old' state with the 'new' state and perform more
+    // sophisticated update, e.g. you can start an animation effect for the
+    // pressed <<-->> not pressed transition.
+    enabled  = isEnabled;
+    selected = isSelected;
+    pressed  = isPressed;
+  }
+
+  // State management
+  note group Note4
+  {
+    attr Bounds = <700,150,920,360>;
+  }
+
+  // Feedback flash effect
+  note group Note3
+  {
+    attr Bounds = <470,150,690,280>;
+  }
+
+  // Keyboard events
+  note group Note2
+  {
+    attr Bounds = <240,150,460,280>;
+  }
+
+  // Touch screen events
+  note group Note1
+  {
+    attr Bounds = <10,150,230,320>;
+  }
+
+  // This variable stores the current state of the button.
+  $rect <710,310,910,350>
+  var bool pressed;
+
+  // This variable stores the current state of the button.
+  $rect <710,270,910,310>
+  var bool selected;
+
+  // This variable stores the current state of the button.
+  $rect <710,230,910,270>
+  var bool enabled;
+
+  // This timer object is used to flash the button when the user has tapped it very \
+  // quickly or the button has been activated with the keyboard. This is just a visual \
+  // feedback effect.
+  $rect <480,190,680,230>
+  object Core::Timer FlashTimer
+  {
+    preset OnTrigger = onFlashTimer;
+    preset Period = 0;
+    preset Begin = 50;
+  }
+
+  // This key handler reacts to key press events. When the user presses the key specified \
+  // in the property 'Filter' of the key handler, the handler is activated and the \
+  // method '@onPressKey' is called.
+  $rect <250,190,450,230>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onPressKey;
+    preset Filter = Core::KeyCode.Enter;
+  }
+
+  // This internal slot method is called when the '@FlashTimer' is expired. It ends \
+  // the short flash feedback effect.
+  $rect <480,230,680,270>
+  slot onFlashTimer
+  {
+    // The feedback flash timer is finished. Request the button to update its
+    // appearance. The update will occur in the UpdateViewState() method.
+    InvalidateViewState();
+
+    // With the end of the feedback flash effect the button is activated.
+    postsignal OnActivate;
+  }
+
+  // This internal slot method is called when the '@KeyHandler' is activated (when \
+  // the user has pressed the key specified in the property 'Filter' of the key handler).
+  $rect <250,230,450,270>
+  slot onPressKey
+  {
+    // Ignore keyboard events when the user is interacting with the button via the
+    // touch screen.
+    if ( TouchHandler.Down )
+      return;
+
+    // Ignore repetitions of key events (e.g. when the user holds the key pressed)
+    if ( KeyHandler.Repetition )
+      return;
+
+    // Pressing the key flashes the button for a short period. This is a kind of 
+    // feedback effect. Request the button to update its appearance accordingly.
+    // The update will occur in the UpdateViewState() method.
+    InvalidateViewState();
+
+    // The button is still performing the feedback flash effect from the preceding
+    // tap/key event. This can occur when the user taps the button or presses the
+    // key in a very rapid succession. Thus complete this preceding tap (simulate
+    // the timer expiration) before starting a new button interaction.
+    if ( FlashTimer.Enabled )
+    {
+      postsignal OnActivate;
+      FlashTimer.Enabled = false;
+    }
+
+    // Start the feedback flash effect.
+    FlashTimer.Enabled = true;
+  }
+
+  // This internal slot method is called when the user drags the finger while pressing \
+  // the button. This only updates the button to appear pressed or released.
+  $rect <20,270,220,310>
+  slot onEnterLeaveTouch
+  {
+    // Every time the user touches the button or drags the finger inside/outside
+    // the button's area request the button update its appearance. The update will
+    // occur in the UpdateViewState() method.
+    InvalidateViewState();
+  }
+
+  // This internal slot method is called when the user releases the touch screen \
+  // after touching the button's area. This activates the button.
+  $rect <20,230,220,270>
+  slot onReleaseTouch
+  {
+    // Did the user moved the finger outside the button's area? In such case
+    // the button is not activated.
+    if ( !TouchHandler.Inside )
+      return;
+
+    // The user interaction has been passed over to the another touch handler
+    if ( TouchHandler.AutoDeflected )
+      return;
+
+    // The user has pressed and held the button for longer time. This was enough
+    // long to give a visual 'press' feedback to the user. The button can be
+    // activated immediately.
+    if ( TouchHandler.HoldPeriod >= FlashTimer.Begin )
+      postsignal OnActivate;
+
+    // The user has tapped the button very quickly. Defer the button activation
+    // to give the user first a short visual feedback that the button has been
+    // pressed.
+    else
+      FlashTimer.Enabled = true;
+  }
+
+  // This internal slot method is called when the user touches the button's area.
+  $rect <20,190,220,230>
+  slot onPressTouch
+  {
+    // The button is still performing the feedback flash effect from the preceding
+    // tap. This can occur when the user taps the button in a very rapid succession. 
+    // Thus complete this preceding tap (simulate the timer expiration) before 
+    // starting a new button interaction.
+    if ( FlashTimer.Enabled )
+    {
+      postsignal OnActivate;
+      FlashTimer.Enabled = false;
+    }
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler TouchHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Point4 = <0,60>;
+    preset Point3 = <60,60>;
+    preset Point2 = <60,0>;
+    preset Point1 = <0,0>;
+    preset OnLeave = onEnterLeaveTouch;
+    preset OnEnter = onEnterLeaveTouch;
+    preset OnRelease = onReleaseTouch;
+    preset OnPress = onPressTouch;
+    preset RetargetCondition = Core::RetargetReason[WipeDown, WipeLeft, WipeRight, WipeUp];
+    preset MaxStrikeCount = 100;
+  }
+
+  // The property 'OnActivate' can refer to a slot method, which will receive a signal \
+  // as soon as the user has activated the button. Thereupon the method's logic will \
+  // be executed.
+  $rect <250,10,450,50>
+  property slot OnActivate = null;
+
+  $rect <20,20,160,60>
+  object Views::Image ButtonImage
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,60,60>;
+    preset Color = #000000FF;
+    preset Bitmap = Monitor::IconButtonShadow;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image IconImage
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,60,60>;
+    preset Bitmap = Monitor::Plus;
+  }
+
+  $rect <470,10,670,50>
+  property Resources::Bitmap Icon = Monitor::Plus;
+
+  $rect <470,50,670,90>
+  onset Icon
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Icon == value )
+      return;
+
+    // Remember the property's new value.
+    pure Icon = value;
+
+    IconImage.Bitmap = value;
+
+
+  }
+
+  $rect <700,10,900,50>
+  property color Color = #FFFFFFFF;
+
+  $rect <700,50,900,90>
+  onset Color
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Color == value )
+      return;
+
+    // Remember the property's new value.
+    pure Color = value;
+
+    IconImage.Color = value;
+
+  }
+}
+
+$rect <940,120,1140,160>
+$output false
+resource Resources::Bitmap Minus
+{
+  attr bitmapfile FileName = .\Res\Minus.png;
+  attr bitmapdithering Dithering = Auto;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <940,160,1140,200>
+$output false
+resource Resources::Bitmap Plus
+{
+  attr bitmapfile FileName = .\Res\Plus.png;
+  attr bitmapdithering Dithering = Auto;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapmode Mode = Default;
+}
+
+// This class implements an 'instrument', used to display e.g. measured values. The \
+// widget is controlled by the properties @CurrentValue and @Unit.
+// Alternatively the property @Outlet can refer to any other 'int32' property the \
+// widget should remain synchronized with. When the referred property is modified \
+// by another one, the widget is automatically notified to remain in sync with the \
+// property.
+// This approach follows the Model-View-Controller (MVC) programming paradigm. Here \
+// the widget represents the 'View' and the property referred via 'Outlet' can be \
+// seen as a part of the 'Model'.
+$rect <50,330,250,370>
+$output false
+class ValueItem : Templates::ValueDisplay
+{
+  $rect <450,390,650,430>
+  inherited property Bounds = <0,0,180,140>;
+
+  $rect <230,390,430,430>
+  inherited method UpdateViewState()
+  {
+    // Always invoke the inherited method.
+    super( aState );
+
+    // format text
+    HeaderText.String = Caption;
+    if ( DecimalPlace == true )
+    {
+      Text.String = string( CurrentValue / 10 );
+      TextDigit.String = "." + string( CurrentValue % 10 );
+      FooterText.String = string( MinValue / 10 ) + "." + string( MinValue % 10 ) + " / " + string( MaxValue / 10 ) + "." + string( MaxValue % 10 );
+    }
+    else
+    {
+      Text.String = string( CurrentValue );
+      TextDigit.String = "";
+      FooterText.String = string( MinValue ) + " / " + string( MaxValue );
+    }
+
+  }
+
+  // State management
+  note group Note2
+  {
+    attr Bounds = <220,350,440,440>;
+  }
+
+  // Controller events
+  note group Note1
+  {
+    attr Bounds = <-10,350,210,440>;
+  }
+
+  // This slot method will receive a signal, if the value of the property assigned \
+  // to @Outlet has been changed by another widget or by the application logic. In \
+  // response to this notification, the value display component will update itself.
+  $rect <0,390,200,430>
+  slot onOutlet
+  {
+    // Read the current value of the associated property and update accordingly
+    // the state of the value display component.
+    if ( CurrentOutlet != null )
+      CurrentValue = CurrentOutlet^;
+
+    if ( MinOutlet != null )
+      MinValue = MinOutlet^;
+
+    if ( MaxOutlet != null )
+      MaxValue = MaxOutlet^;
+
+  }
+
+  $rect <450,50,650,90>
+  onset CurrentOutlet
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure CurrentOutlet == value )
+      return;
+
+    // Detach from the previous outlet
+    if ( pure CurrentOutlet != null )
+      detachobserver onOutlet, pure CurrentOutlet;
+
+    // Store the new outlet ...
+    pure CurrentOutlet = value;
+
+    // ... and attach to the new one
+    if ( value != null )
+      attachobserver onOutlet, value;
+
+    // Finally, retrieve the current state of the property associated via 'Outlet'.
+    if ( value != null )
+      postsignal onOutlet;
+  }
+
+  $rect <250,50,450,90>
+  onset CurrentValue
+  {
+    // Check if the given value differs from the current value.
+    if ( pure CurrentValue == value )
+      return;
+
+    // Store the new value ...
+    pure CurrentValue = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <0,24,167,109>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "";
+    preset Font = Monitor::FontDigitsXXL;
+  }
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <450,10,650,50>
+  property ^int32 CurrentOutlet = null;
+
+  // The property 'CurrentValue' stores the momentary value of the component.
+  $rect <250,10,450,50>
+  property int32 CurrentValue = 50;
+
+  // The property 'Color' stores the color of the component items.
+  $rect <860,10,1060,50>
+  property color Color = #FFFFFFFF;
+
+  $rect <860,50,1060,90>
+  onset Color
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Color == value )
+      return;
+
+    // Remember the property's new value.
+    pure Color = value;
+
+    // colorize all items
+    HeaderText.Color = value;
+    HeaderLine.Color = value;
+    Text.Color = value;
+    TextDigit.Color = value;
+    FooterText.Color = value;
+    FooterLine.Color = value;
+
+
+  }
+
+  $rect <450,140,650,180>
+  onset MinOutlet
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure MinOutlet == value )
+      return;
+
+    // Detach from the previous outlet
+    if ( pure MinOutlet != null )
+      detachobserver onOutlet, pure MinOutlet;
+
+    // Store the new outlet ...
+    pure MinOutlet = value;
+
+    // ... and attach to the new one
+    if ( value != null )
+      attachobserver onOutlet, value;
+
+    // Finally, retrieve the current state of the property associated via 'Outlet'.
+    if ( value != null )
+      postsignal onOutlet;
+  }
+
+  $rect <250,140,450,180>
+  onset MinValue
+  {
+    // Check if the given value differs from the current value.
+    if ( pure MinValue == value )
+      return;
+
+    // Store the new value ...
+    pure MinValue = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <450,100,650,140>
+  property ^int32 MinOutlet = null;
+
+  // The property 'MinValue' stores the momentary minimum value of the component.
+  $rect <250,100,450,140>
+  property int32 MinValue = 0;
+
+  $rect <450,230,650,270>
+  onset MaxOutlet
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure MaxOutlet == value )
+      return;
+
+    // Detach from the previous outlet
+    if ( pure MaxOutlet != null )
+      detachobserver onOutlet, pure MaxOutlet;
+
+    // Store the new outlet ...
+    pure MaxOutlet = value;
+
+    // ... and attach to the new one
+    if ( value != null )
+      attachobserver onOutlet, value;
+
+    // Finally, retrieve the current state of the property associated via 'Outlet'.
+    if ( value != null )
+      postsignal onOutlet;
+  }
+
+  $rect <250,230,450,270>
+  onset MaxValue
+  {
+    // Check if the given value differs from the current value.
+    if ( pure MaxValue == value )
+      return;
+
+    // Store the new value ...
+    pure MaxValue = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <450,190,650,230>
+  property ^int32 MaxOutlet = null;
+
+  // The property 'MaxValue' stores the momentary maximum value of the component.
+  $rect <250,190,450,230>
+  property int32 MaxValue = 100;
+
+  $rect <650,50,850,90>
+  onset Caption
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure Caption == value )
+      return;
+
+    // Store the new unit ...
+    pure Caption = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Unit' stores an optional string to append to the displayed value.
+  $rect <650,10,850,50>
+  property string Caption = "Header";
+
+  $rect <20,20,160,60>
+  object Views::Text HeaderText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <0,0,150,30>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::IconButton IconButton
+  {
+    preset Layout = Core::Layout[AlignToRight, AlignToTop];
+    preset Bounds = <120,1,180,61>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text FooterText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,110,180,140>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextM;
+  }
+
+  // 'The property 'ButtonColor' contains the color of the embedded button.
+  $rect <860,100,1060,140>
+  property color ButtonColor = #FFFFFFFF;
+
+  $rect <860,140,1060,180>
+  onset ButtonColor
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure ButtonColor == value )
+      return;
+
+    // Remember the property's new value.
+    pure ButtonColor = value;
+
+    // forward the value to the button
+    IconButton.Color = value;
+
+  }
+
+  // The property 'OnActivate' can refer to a slot method, which will receive a signal \
+  // as soon as the user has activated the button. Thereupon the method's logic will \
+  // be executed.
+  $rect <860,190,1060,230>
+  property slot OnActivate = null;
+
+  $rect <860,230,1060,270>
+  onset OnActivate
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure OnActivate == value )
+      return;
+
+    // Remember the property's new value.
+    pure OnActivate = value;
+
+    // forward the value to the button
+    IconButton.OnActivate = value;
+
+  }
+
+  $rect <650,230,850,270>
+  onset DecimalPlace
+  {
+    // Check if the given value differs from the current value
+    if ( pure DecimalPlace == value )
+      return;
+
+    // Store the new value ...
+    pure DecimalPlace = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'DecimalPlace' indicates whether the value should be shown with \
+  // one decimal place (xx.x) instead of a pure integer value (XXX).
+  $rect <650,190,850,230>
+  property bool DecimalPlace = false;
+
+  $rect <20,20,160,60>
+  object Views::Text TextDigit
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <83,48,167,108>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = ".8";
+    preset Font = Monitor::FontDigitsXL;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle HeaderLine
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,30,120,32>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle FooterLine
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,109,167,111>;
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Bounds
+  $member UpdateViewState
+  $member Note2
+  $member Note1
+  $member onOutlet
+  $member OnSetCurrentOutlet
+  $member OnSetCurrentValue
+  $member Text
+  $member CurrentOutlet
+  $member CurrentValue
+  $member Color
+  $member OnSetColor
+  $member OnSetMinOutlet
+  $member OnSetMinValue
+  $member MinOutlet
+  $member MinValue
+  $member OnSetMaxOutlet
+  $member OnSetMaxValue
+  $member MaxOutlet
+  $member MaxValue
+  $member OnSetCaption
+  $member Caption
+  $member HeaderText
+  $member IconButton
+  $member FooterText
+  $member HeaderLine
+  $member FooterLine
+  $member ButtonColor
+  $member OnSetButtonColor
+  $member OnActivate
+  $member OnSetOnActivate
+  $member OnSetDecimalPlace
+  $member DecimalPlace
+  $member TextDigit
+}
+
+// This class implements an 'instrument', used to display e.g. measured values. The \
+// widget is controlled by the properties @CurrentValue and @Unit.
+// Alternatively the property @Outlet can refer to any other 'int32' property the \
+// widget should remain synchronized with. When the referred property is modified \
+// by another one, the widget is automatically notified to remain in sync with the \
+// property.
+// This approach follows the Model-View-Controller (MVC) programming paradigm. Here \
+// the widget represents the 'View' and the property referred via 'Outlet' can be \
+// seen as a part of the 'Model'.
+$rect <260,330,460,370>
+$output false
+class DualValueItem : Templates::ValueDisplay
+{
+  $rect <450,390,650,430>
+  inherited property Bounds = <0,0,180,160>;
+
+  $rect <230,390,430,430>
+  inherited method UpdateViewState()
+  {
+    // Always invoke the inherited method.
+    super( aState );
+
+    // colorize all items
+    HeaderText.Color = Color;
+    HeaderLine.Color = Color;
+    TextHi.Color = Color;
+    FooterTextHi.Color = Color;
+    TextLo.Color = Color;
+    FooterTextLo.Color = Color;
+    FooterLine.Color = Color;
+
+    // format text
+    HeaderText.String = Caption;
+    TextHi.String = string( CurrentValueHi );
+    FooterTextHi.String = CaptionHi + ": " + string( MinValueHi ) + " / " + string( MaxValueHi );
+    TextLo.String = string( CurrentValueLo );
+    FooterTextLo.String = CaptionLo + ": " + string( MinValueLo ) + " / " + string( MaxValueLo );
+
+  }
+
+  // State management
+  note group Note2
+  {
+    attr Bounds = <220,350,440,440>;
+  }
+
+  // Controller events
+  note group Note1
+  {
+    attr Bounds = <-10,350,210,440>;
+  }
+
+  // This slot method will receive a signal, if the value of the property assigned \
+  // to @Outlet has been changed by another widget or by the application logic. In \
+  // response to this notification, the value display component will update itself.
+  $rect <0,390,200,430>
+  slot onOutlet
+  {
+    // Read the current value of the associated property and update accordingly
+    // the state of the value display component.
+    if ( CurrentOutletHi != null )
+      CurrentValueHi = CurrentOutletHi^;
+
+    if ( MinOutletHi != null )
+      MinValueHi = MinOutletHi^;
+
+    if ( MaxOutletHi != null )
+      MaxValueHi = MaxOutletHi^;
+
+    if ( CurrentOutletLo != null )
+      CurrentValueLo = CurrentOutletLo^;
+
+    if ( MinOutletLo != null )
+      MinValueLo = MinOutletLo^;
+
+    if ( MaxOutletLo != null )
+      MaxValueLo = MaxOutletLo^;
+
+  }
+
+  $rect <1070,140,1270,180>
+  onset Unit
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure Unit == value )
+      return;
+
+    // Store the new unit ...
+    pure Unit = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  $rect <450,50,650,90>
+  onset CurrentOutletHi
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure CurrentOutletHi == value )
+      return;
+
+    // Detach from the previous outlet
+    if ( pure CurrentOutletHi != null )
+      detachobserver onOutlet, pure CurrentOutletHi;
+
+    // Store the new outlet ...
+    pure CurrentOutletHi = value;
+
+    // ... and attach to the new one
+    if ( value != null )
+      attachobserver onOutlet, value;
+
+    // Finally, retrieve the current state of the property associated via 'Outlet'.
+    if ( value != null )
+      postsignal onOutlet;
+  }
+
+  $rect <250,50,450,90>
+  onset CurrentValueHi
+  {
+    // Check if the given value differs from the current value.
+    if ( pure CurrentValueHi == value )
+      return;
+
+    // Store the new value ...
+    pure CurrentValueHi = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text TextHi
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <0,31,167,73>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "";
+    preset Font = Monitor::FontDigitsL;
+  }
+
+  // The property 'Unit' stores an optional string to append to the displayed value.
+  $rect <1070,100,1270,140>
+  property string Unit = "";
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <450,10,650,50>
+  property ^int32 CurrentOutletHi = null;
+
+  // The property 'CurrentValue' stores the momentary value of the component.
+  $rect <250,10,450,50>
+  property int32 CurrentValueHi = 120;
+
+  $rect <1280,10,1480,50>
+  property color Color = #FFFFFFFF;
+
+  $rect <1280,50,1480,90>
+  onset Color
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Color == value )
+      return;
+
+    // Remember the property's new value.
+    pure Color = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  $rect <450,140,650,180>
+  onset MinOutletHi
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure MinOutletHi == value )
+      return;
+
+    // Detach from the previous outlet
+    if ( pure MinOutletHi != null )
+      detachobserver onOutlet, pure MinOutletHi;
+
+    // Store the new outlet ...
+    pure MinOutletHi = value;
+
+    // ... and attach to the new one
+    if ( value != null )
+      attachobserver onOutlet, value;
+
+    // Finally, retrieve the current state of the property associated via 'Outlet'.
+    if ( value != null )
+      postsignal onOutlet;
+  }
+
+  $rect <250,140,450,180>
+  onset MinValueHi
+  {
+    // Check if the given value differs from the current value.
+    if ( pure MinValueHi == value )
+      return;
+
+    // Store the new value ...
+    pure MinValueHi = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <450,100,650,140>
+  property ^int32 MinOutletHi = null;
+
+  // The property 'CurrentValue' stores the momentary value of the component.
+  $rect <250,100,450,140>
+  property int32 MinValueHi = 80;
+
+  $rect <450,230,650,270>
+  onset MaxOutletHi
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure MaxOutletHi == value )
+      return;
+
+    // Detach from the previous outlet
+    if ( pure MaxOutletHi != null )
+      detachobserver onOutlet, pure MaxOutletHi;
+
+    // Store the new outlet ...
+    pure MaxOutletHi = value;
+
+    // ... and attach to the new one
+    if ( value != null )
+      attachobserver onOutlet, value;
+
+    // Finally, retrieve the current state of the property associated via 'Outlet'.
+    if ( value != null )
+      postsignal onOutlet;
+  }
+
+  $rect <250,230,450,270>
+  onset MaxValueHi
+  {
+    // Check if the given value differs from the current value.
+    if ( pure MaxValueHi == value )
+      return;
+
+    // Store the new value ...
+    pure MaxValueHi = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <450,189,650,229>
+  property ^int32 MaxOutletHi = null;
+
+  // The property 'CurrentValue' stores the momentary value of the component.
+  $rect <250,190,450,230>
+  property int32 MaxValueHi = 160;
+
+  $rect <1070,50,1270,90>
+  onset Caption
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure Caption == value )
+      return;
+
+    // Store the new unit ...
+    pure Caption = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Unit' stores an optional string to append to the displayed value.
+  $rect <1070,10,1270,50>
+  property string Caption = "Header";
+
+  $rect <20,20,160,60>
+  object Views::Text HeaderText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <0,0,150,30>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::IconButton IconButton
+  {
+    preset Layout = Core::Layout[AlignToRight, AlignToTop];
+    preset Bounds = <120,1,180,61>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text FooterTextHi
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,120,180,140>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <1280,100,1480,140>
+  property color ButtonColor = #FFFFFFFF;
+
+  $rect <1280,140,1480,180>
+  onset ButtonColor
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure ButtonColor == value )
+      return;
+
+    // Remember the property's new value.
+    pure ButtonColor = value;
+
+    // forward the value to the button
+    IconButton.Color = value;
+
+  }
+
+  // The property 'OnActivate' can refer to a slot method, which will receive a signal \
+  // as soon as the user has activated the button. Thereupon the method's logic will \
+  // be executed.
+  $rect <1280,190,1480,230>
+  property slot OnActivate = null;
+
+  $rect <1280,230,1480,270>
+  onset OnActivate
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure OnActivate == value )
+      return;
+
+    // Remember the property's new value.
+    pure OnActivate = value;
+
+    // forward the value to the button
+    IconButton.OnActivate = value;
+
+  }
+
+  $rect <860,50,1060,90>
+  onset CurrentOutletLo
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure CurrentOutletLo == value )
+      return;
+
+    // Detach from the previous outlet
+    if ( pure CurrentOutletLo != null )
+      detachobserver onOutlet, pure CurrentOutletLo;
+
+    // Store the new outlet ...
+    pure CurrentOutletLo = value;
+
+    // ... and attach to the new one
+    if ( value != null )
+      attachobserver onOutlet, value;
+
+    // Finally, retrieve the current state of the property associated via 'Outlet'.
+    if ( value != null )
+      postsignal onOutlet;
+  }
+
+  $rect <660,50,860,90>
+  onset CurrentValueLo
+  {
+    // Check if the given value differs from the current value.
+    if ( pure CurrentValueLo == value )
+      return;
+
+    // Store the new value ...
+    pure CurrentValueLo = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <860,10,1060,50>
+  property ^int32 CurrentOutletLo = null;
+
+  // The property 'CurrentValue' stores the momentary value of the component.
+  $rect <660,10,860,50>
+  property int32 CurrentValueLo = 50;
+
+  $rect <860,140,1060,180>
+  onset MinOutletLo
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure MinOutletLo == value )
+      return;
+
+    // Detach from the previous outlet
+    if ( pure MinOutletLo != null )
+      detachobserver onOutlet, pure MinOutletLo;
+
+    // Store the new outlet ...
+    pure MinOutletLo = value;
+
+    // ... and attach to the new one
+    if ( value != null )
+      attachobserver onOutlet, value;
+
+    // Finally, retrieve the current state of the property associated via 'Outlet'.
+    if ( value != null )
+      postsignal onOutlet;
+  }
+
+  $rect <660,140,860,180>
+  onset MinValueLo
+  {
+    // Check if the given value differs from the current value.
+    if ( pure MinValueLo == value )
+      return;
+
+    // Store the new value ...
+    pure MinValueLo = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <860,100,1060,140>
+  property ^int32 MinOutletLo = null;
+
+  // The property 'CurrentValue' stores the momentary value of the component.
+  $rect <660,100,860,140>
+  property int32 MinValueLo = 0;
+
+  $rect <860,230,1060,270>
+  onset MaxOutletLo
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure MaxOutletLo == value )
+      return;
+
+    // Detach from the previous outlet
+    if ( pure MaxOutletLo != null )
+      detachobserver onOutlet, pure MaxOutletLo;
+
+    // Store the new outlet ...
+    pure MaxOutletLo = value;
+
+    // ... and attach to the new one
+    if ( value != null )
+      attachobserver onOutlet, value;
+
+    // Finally, retrieve the current state of the property associated via 'Outlet'.
+    if ( value != null )
+      postsignal onOutlet;
+  }
+
+  $rect <660,230,860,270>
+  onset MaxValueLo
+  {
+    // Check if the given value differs from the current value.
+    if ( pure MaxValueLo == value )
+      return;
+
+    // Store the new value ...
+    pure MaxValueLo = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <860,190,1060,230>
+  property ^int32 MaxOutletLo = null;
+
+  // The property 'CurrentValue' stores the momentary value of the component.
+  $rect <660,190,860,230>
+  property int32 MaxValueLo = 100;
+
+  $rect <20,20,160,60>
+  object Views::Text TextLo
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <0,72,167,114>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "";
+    preset Font = Monitor::FontDigitsL;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text FooterTextLo
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,140,180,160>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <250,320,450,360>
+  onset CaptionHi
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure CaptionHi == value )
+      return;
+
+    // Store the new unit ...
+    pure CaptionHi = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Unit' stores an optional string to append to the displayed value.
+  $rect <250,280,450,320>
+  property string CaptionHi = "Hi";
+
+  $rect <660,320,860,360>
+  onset CaptionLo
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure CaptionLo == value )
+      return;
+
+    // Store the new unit ...
+    pure CaptionLo = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Unit' stores an optional string to append to the displayed value.
+  $rect <660,280,860,320>
+  property string CaptionLo = "Lo";
+
+  $rect <20,20,160,60>
+  object Views::Rectangle HeaderLine
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,30,120,32>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle FooterLine
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,117,167,119>;
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Bounds
+  $member UpdateViewState
+  $member Note2
+  $member Note1
+  $member onOutlet
+  $member OnSetUnit
+  $member OnSetCurrentOutletHi
+  $member OnSetCurrentValueHi
+  $member TextHi
+  $member Unit
+  $member CurrentOutletHi
+  $member CurrentValueHi
+  $member Color
+  $member OnSetColor
+  $member OnSetMinOutletHi
+  $member OnSetMinValueHi
+  $member MinOutletHi
+  $member MinValueHi
+  $member OnSetMaxOutletHi
+  $member OnSetMaxValueHi
+  $member MaxOutletHi
+  $member MaxValueHi
+  $member OnSetCaption
+  $member Caption
+  $member HeaderText
+  $member IconButton
+  $member FooterTextHi
+  $member HeaderLine
+  $member FooterLine
+  $member ButtonColor
+  $member OnSetButtonColor
+  $member OnActivate
+  $member OnSetOnActivate
+  $member OnSetCurrentOutletLo
+  $member OnSetCurrentValueLo
+  $member CurrentOutletLo
+  $member CurrentValueLo
+  $member OnSetMinOutletLo
+  $member OnSetMinValueLo
+  $member MinOutletLo
+  $member MinValueLo
+  $member OnSetMaxOutletLo
+  $member OnSetMaxValueLo
+  $member MaxOutletLo
+  $member MaxValueLo
+  $member TextLo
+  $member FooterTextLo
+  $member OnSetCaptionHi
+  $member CaptionHi
+  $member OnSetCaptionLo
+  $member CaptionLo
+}
+
+$rect <940,43,1140,83>
+$output false
+resource Resources::Bitmap Icons
+{
+  attr bitmapfile FileName = .\Res\Icons.png;
+  attr bitmapdithering Dithering = Auto;
+  attr framesize FrameSize = <60,60>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapmode Mode = Default;
+}
+
+// This class implements a 'push button' widget. When the user presses the button, \
+// a signal is sent to the slot method stored in its @OnActivate property.
+$rect <260,270,460,310>
+$output false
+class ActioinButton : Templates::PushButton
+{
+  $rect <480,310,680,350>
+  inherited property Bounds = <0,0,60,60>;
+
+  $rect <710,190,910,230>
+  inherited method UpdateViewState()
+  {
+    // Always invoke the inherited method.
+    super( aState );
+
+    // Determine the new state of the push button.
+    //
+    // isEnabled  --> the button can react to user inputs.
+    // isSelected --> the button can receive keyboard events.
+    // isPressed  --> the button should appear pressed.
+    //
+    var bool isEnabled  = aState.contains( Core::ViewState[ Enabled  ]);
+    var bool isSelected = aState.contains( Core::ViewState[ Selected ]);
+    var bool isPressed  = ( TouchHandler.Down && TouchHandler.Inside ) || 
+                            FlashTimer.Enabled;
+
+    if ( isPressed )
+    {
+      IconImage.Bounds.origin = <2,2>;
+    }
+    else
+    {
+      IconImage.Bounds.origin = <0,0>;
+    }
+
+    // Remember the current state. Next time when the UpdateViewState() is called
+    // you can compare the 'old' state with the 'new' state and perform more
+    // sophisticated update, e.g. you can start an animation effect for the
+    // pressed <<-->> not pressed transition.
+    enabled  = isEnabled;
+    selected = isSelected;
+    pressed  = isPressed;
+  }
+
+  // State management
+  note group Note4
+  {
+    attr Bounds = <700,150,920,360>;
+  }
+
+  // Feedback flash effect
+  note group Note3
+  {
+    attr Bounds = <470,150,690,280>;
+  }
+
+  // Keyboard events
+  note group Note2
+  {
+    attr Bounds = <240,150,460,280>;
+  }
+
+  // Touch screen events
+  note group Note1
+  {
+    attr Bounds = <10,150,230,320>;
+  }
+
+  // This variable stores the current state of the button.
+  $rect <710,310,910,350>
+  var bool pressed;
+
+  // This variable stores the current state of the button.
+  $rect <710,270,910,310>
+  var bool selected;
+
+  // This variable stores the current state of the button.
+  $rect <710,230,910,270>
+  var bool enabled;
+
+  // This timer object is used to flash the button when the user has tapped it very \
+  // quickly or the button has been activated with the keyboard. This is just a visual \
+  // feedback effect.
+  $rect <480,190,680,230>
+  object Core::Timer FlashTimer
+  {
+    preset OnTrigger = onFlashTimer;
+    preset Period = 0;
+    preset Begin = 50;
+  }
+
+  // This key handler reacts to key press events. When the user presses the key specified \
+  // in the property 'Filter' of the key handler, the handler is activated and the \
+  // method '@onPressKey' is called.
+  $rect <250,190,450,230>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onPressKey;
+    preset Filter = Core::KeyCode.Enter;
+  }
+
+  // This internal slot method is called when the '@FlashTimer' is expired. It ends \
+  // the short flash feedback effect.
+  $rect <480,230,680,270>
+  slot onFlashTimer
+  {
+    // The feedback flash timer is finished. Request the button to update its
+    // appearance. The update will occur in the UpdateViewState() method.
+    InvalidateViewState();
+
+    // With the end of the feedback flash effect the button is activated.
+    postsignal OnActivate;
+  }
+
+  // This internal slot method is called when the '@KeyHandler' is activated (when \
+  // the user has pressed the key specified in the property 'Filter' of the key handler).
+  $rect <250,230,450,270>
+  slot onPressKey
+  {
+    // Ignore keyboard events when the user is interacting with the button via the
+    // touch screen.
+    if ( TouchHandler.Down )
+      return;
+
+    // Ignore repetitions of key events (e.g. when the user holds the key pressed)
+    if ( KeyHandler.Repetition )
+      return;
+
+    // Pressing the key flashes the button for a short period. This is a kind of 
+    // feedback effect. Request the button to update its appearance accordingly.
+    // The update will occur in the UpdateViewState() method.
+    InvalidateViewState();
+
+    // The button is still performing the feedback flash effect from the preceding
+    // tap/key event. This can occur when the user taps the button or presses the
+    // key in a very rapid succession. Thus complete this preceding tap (simulate
+    // the timer expiration) before starting a new button interaction.
+    if ( FlashTimer.Enabled )
+    {
+      postsignal OnActivate;
+      FlashTimer.Enabled = false;
+    }
+
+    // Start the feedback flash effect.
+    FlashTimer.Enabled = true;
+  }
+
+  // This internal slot method is called when the user drags the finger while pressing \
+  // the button. This only updates the button to appear pressed or released.
+  $rect <20,270,220,310>
+  slot onEnterLeaveTouch
+  {
+    // Every time the user touches the button or drags the finger inside/outside
+    // the button's area request the button update its appearance. The update will
+    // occur in the UpdateViewState() method.
+    InvalidateViewState();
+  }
+
+  // This internal slot method is called when the user releases the touch screen \
+  // after touching the button's area. This activates the button.
+  $rect <20,230,220,270>
+  slot onReleaseTouch
+  {
+    // Did the user moved the finger outside the button's area? In such case
+    // the button is not activated.
+    if ( !TouchHandler.Inside )
+      return;
+
+    // The user interaction has been passed over to the another touch handler
+    if ( TouchHandler.AutoDeflected )
+      return;
+
+    // The user has pressed and held the button for longer time. This was enough
+    // long to give a visual 'press' feedback to the user. The button can be
+    // activated immediately.
+    if ( TouchHandler.HoldPeriod >= FlashTimer.Begin )
+      postsignal OnActivate;
+
+    // The user has tapped the button very quickly. Defer the button activation
+    // to give the user first a short visual feedback that the button has been
+    // pressed.
+    else
+      FlashTimer.Enabled = true;
+  }
+
+  // This internal slot method is called when the user touches the button's area.
+  $rect <20,190,220,230>
+  slot onPressTouch
+  {
+    // The button is still performing the feedback flash effect from the preceding
+    // tap. This can occur when the user taps the button in a very rapid succession. 
+    // Thus complete this preceding tap (simulate the timer expiration) before 
+    // starting a new button interaction.
+    if ( FlashTimer.Enabled )
+    {
+      postsignal OnActivate;
+      FlashTimer.Enabled = false;
+    }
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler TouchHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Point4 = <0,60>;
+    preset Point3 = <60,60>;
+    preset Point2 = <60,0>;
+    preset Point1 = <0,0>;
+    preset OnLeave = onEnterLeaveTouch;
+    preset OnEnter = onEnterLeaveTouch;
+    preset OnRelease = onReleaseTouch;
+    preset OnPress = onPressTouch;
+    preset RetargetCondition = Core::RetargetReason[WipeDown, WipeLeft, WipeRight, WipeUp];
+    preset MaxStrikeCount = 100;
+  }
+
+  // The property 'OnActivate' can refer to a slot method, which will receive a signal \
+  // as soon as the user has activated the button. Thereupon the method's logic will \
+  // be executed.
+  $rect <250,10,450,50>
+  property slot OnActivate = null;
+
+  $rect <20,20,160,60>
+  object Views::Image IconImage
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,60,60>;
+    preset Bitmap = Monitor::Icons;
+  }
+
+  $rect <505,6,705,46>
+  property int32 IconIndex = 0;
+
+  $rect <505,46,705,86>
+  onset IconIndex
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure IconIndex == value )
+      return;
+
+    // Remember the property's new value.
+    pure IconIndex = value;
+
+    IconImage.FrameNumber = value;
+
+
+  }
+
+  $rect <720,10,920,50>
+  property color Color = #FFFFFFFF;
+
+  $rect <720,50,920,90>
+  onset Color
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Color == value )
+      return;
+
+    // Remember the property's new value.
+    pure Color = value;
+
+    IconImage.Color = value;
+
+  }
+}
+
+// This class implements an 'instrument', used to display e.g. measured values. The \
+// widget is controlled by the properties @CurrentValue and @Unit.
+// Alternatively the property @Outlet can refer to any other 'int32' property the \
+// widget should remain synchronized with. When the referred property is modified \
+// by another one, the widget is automatically notified to remain in sync with the \
+// property.
+// This approach follows the Model-View-Controller (MVC) programming paradigm. Here \
+// the widget represents the 'View' and the property referred via 'Outlet' can be \
+// seen as a part of the 'Model'.
+$rect <470,330,670,370>
+$output false
+class PatientItem : Core::Group
+{
+  $rect <450,390,650,430>
+  inherited property Bounds = <0,0,180,110>;
+
+  $rect <230,390,430,430>
+  inherited method UpdateViewState()
+  {
+    // Always invoke the inherited method.
+    super( aState );
+
+    // colorize all items
+    HeaderText.Color = Color;
+    HeaderLine.Color = Color;
+    NameText.Color = Color;
+    BirthText.Color = Color;
+    FooterLine.Color = Color;
+
+    // format text
+    HeaderText.String = Caption;
+    NameText.String = Name;
+    BirthText.String= "* " + Birthday;
+
+  }
+
+  // State management
+  note group Note2
+  {
+    attr Bounds = <220,350,440,440>;
+  }
+
+  $rect <420,10,620,50>
+  property color Color = #FFFFFFFF;
+
+  $rect <420,50,620,90>
+  onset Color
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Color == value )
+      return;
+
+    // Remember the property's new value.
+    pure Color = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  $rect <210,50,410,90>
+  onset Caption
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure Caption == value )
+      return;
+
+    // Store the new unit ...
+    pure Caption = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Unit' stores an optional string to append to the displayed value.
+  $rect <210,10,410,50>
+  property string Caption = "Patient";
+
+  $rect <20,20,160,60>
+  object Views::Text HeaderText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <0,0,150,30>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::IconButton IconButton
+  {
+    preset Layout = Core::Layout[AlignToRight, AlignToTop];
+    preset Bounds = <120,1,180,61>;
+  }
+
+  $rect <420,100,620,140>
+  property color ButtonColor = #FFFFFFFF;
+
+  $rect <420,140,620,180>
+  onset ButtonColor
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure ButtonColor == value )
+      return;
+
+    // Remember the property's new value.
+    pure ButtonColor = value;
+
+    // forward the value to the button
+    IconButton.Color = value;
+
+  }
+
+  // The property 'OnActivate' can refer to a slot method, which will receive a signal \
+  // as soon as the user has activated the button. Thereupon the method's logic will \
+  // be executed.
+  $rect <420,190,620,230>
+  property slot OnActivate = null;
+
+  $rect <420,230,620,270>
+  onset OnActivate
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure OnActivate == value )
+      return;
+
+    // Remember the property's new value.
+    pure OnActivate = value;
+
+    // forward the value to the button
+    IconButton.OnActivate = value;
+
+  }
+
+  $rect <211,140,411,180>
+  onset Name
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure Name == value )
+      return;
+
+    // Store the new unit ...
+    pure Name = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Unit' stores an optional string to append to the displayed value.
+  $rect <211,100,411,140>
+  property string Name = "Jane Johnson";
+
+  $rect <210,230,410,270>
+  onset Birthday
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure Birthday == value )
+      return;
+
+    // Store the new unit ...
+    pure Birthday = value;
+
+    // ... and finally, force an update.
+    InvalidateViewState();
+  }
+
+  // The property 'Unit' stores an optional string to append to the displayed value.
+  $rect <210,190,410,230>
+  property string Birthday = "1956-12-04";
+
+  $rect <20,20,160,60>
+  object Views::Text NameText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <0,38,150,68>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text BirthText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <1,63,151,93>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Text";
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle HeaderLine
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,30,120,32>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle FooterLine
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <0,99,167,101>;
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Bounds
+  $member UpdateViewState
+  $member Note2
+  $member HeaderLine
+  $member FooterLine
+  $member Color
+  $member OnSetColor
+  $member OnSetCaption
+  $member Caption
+  $member HeaderText
+  $member IconButton
+  $member ButtonColor
+  $member OnSetButtonColor
+  $member OnActivate
+  $member OnSetOnActivate
+  $member OnSetName
+  $member Name
+  $member OnSetBirthday
+  $member Birthday
+  $member NameText
+  $member BirthText
+}
+
+$rect <40,720,240,760>
+$output false
+class ECGMinMaxDialog : Monitor::Dialog
+{
+  $rect <10,370,210,410>
+  inherited property Bounds = <0,0,320,340>;
+
+  $rect <230,370,430,410>
+  inherited method UpdateViewState()
+  {
+    super( aState );
+
+    /* colorize the widget configuration used for horizontal sliders and value displays */
+    Monitor::ValueDisplayConfig.ValueColorPositive = ItemColor;
+    Monitor::HorizontalSliderConfig.TrackLeftColorActive = ItemColor;
+
+    /* colorize all member components */
+    ValueSliderHRMin.Color = CaptionColor;
+    ValueSliderHRMax.Color = CaptionColor;
+
+  }
+
+  $rect <10,420,210,460>
+  inherited property Caption = "ECG Min/Max Alarm";
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderHRMin
+  {
+    preset Bounds = <30,70,290,180>;
+    preset Outlet = ^Monitor::Device.HeartRateMin;
+    preset MinValue = Monitor::HRMinLo;
+    preset MaxValue = Monitor::HRMinHi;
+    preset Caption = "HR Min [bpm]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderHRMax
+  {
+    preset Bounds = <30,200,290,310>;
+    preset Outlet = ^Monitor::Device.HeartRateMax;
+    preset MinValue = Monitor::HRMaxLo;
+    preset MaxValue = Monitor::HRMaxHi;
+    preset Caption = "HR Max [bpm]";
+  }
+}
+
+// Constants for value ranges (Lo/Hi)
+note group Note1
+{
+  attr Bounds = <710,290,1160,1000>;
+}
+
+$rect <730,340,930,380>
+$output false
+const int32 SpeedLo = 10;
+
+$rect <940,340,1140,380>
+$output false
+const int32 SpeedHi = 500;
+
+$rect <730,380,930,420>
+$output false
+const int32 SamplesPerSecLo = 5;
+
+$rect <940,380,1140,420>
+$output false
+const int32 SamplesPerSecHi = 500;
+
+$rect <730,420,930,460>
+$output false
+const int32 GainLo = 0;
+
+$rect <940,420,1140,460>
+$output false
+const int32 GainHi = 200;
+
+$rect <730,500,930,540>
+$output false
+const int32 HRMinLo = 20;
+
+$rect <940,500,1140,540>
+$output false
+const int32 HRMinHi = 80;
+
+$rect <730,540,930,580>
+$output false
+const int32 HRMaxLo = 80;
+
+$rect <940,540,1140,580>
+$output false
+const int32 HRMaxHi = 160;
+
+$rect <730,580,930,620>
+$output false
+const int32 ABPSysMinLo = 90;
+
+$rect <940,580,1140,620>
+$output false
+const int32 ABPSysMinHi = 120;
+
+$rect <730,620,930,660>
+$output false
+const int32 ABPSysMaxLo = 120;
+
+$rect <940,620,1140,660>
+$output false
+const int32 ABPSysMaxHi = 150;
+
+$rect <730,660,930,700>
+$output false
+const int32 ABPDiaMinLo = 30;
+
+$rect <940,660,1140,700>
+$output false
+const int32 ABPDiaMinHi = 60;
+
+$rect <730,700,930,740>
+$output false
+const int32 ABPDiaMaxLo = 60;
+
+$rect <940,700,1140,740>
+$output false
+const int32 ABPDiaMaxHi = 90;
+
+$rect <730,740,930,780>
+$output false
+const int32 SpO2MinLo = 70;
+
+$rect <940,740,1140,780>
+$output false
+const int32 SpO2MinHi = 90;
+
+$rect <730,780,930,820>
+$output false
+const int32 SpO2MaxLo = 90;
+
+$rect <940,780,1140,820>
+$output false
+const int32 SpO2MaxHi = 100;
+
+$rect <730,820,930,860>
+$output false
+const int32 EtCO2MinLo = 20;
+
+$rect <940,820,1140,860>
+$output false
+const int32 EtCO2MinHi = 40;
+
+$rect <730,860,930,900>
+$output false
+const int32 EtCO2MaxLo = 40;
+
+$rect <940,860,1140,900>
+$output false
+const int32 EtCO2MaxHi = 60;
+
+$rect <730,900,930,940>
+$output false
+const int32 TempMinLo = 355;
+
+$rect <940,900,1140,940>
+$output false
+const int32 TempMinHi = 375;
+
+$rect <730,940,930,980>
+$output false
+const int32 TempMaxLo = 375;
+
+$rect <940,940,1140,980>
+$output false
+const int32 TempMaxHi = 400;
+
+// Color constants (day and night mode)
+note group Note
+{
+  attr Bounds = <1170,0,1620,430>;
+}
+
+$rect <730,460,930,500>
+$output false
+const int32 IntensityLo = 50;
+
+$rect <940,459,1140,499>
+$output false
+const int32 IntensityHi = 200;
+
+$rect <1190,330,1390,370>
+$output false
+const color DialogDay = #E6E6E680;
+
+$rect <1400,330,1600,370>
+$output false
+const color DialogNight = #6F6F6E80;
+
+$rect <1190,370,1390,410>
+$output false
+const color CurtainDay = #00000040;
+
+$rect <1400,370,1600,410>
+$output false
+const color CurtainNight = #00000040;
+
+// Font and bitmap resources
+note group Note2
+{
+  attr Bounds = <710,0,1160,270>;
+}
+
+$rect <260,390,540,426>
+$output false
+autoobject WidgetSet::HorizontalSliderConfig HorizontalSliderConfig
+{
+  preset StateTransitionDuration = 250;
+  preset KeyCodeRight = Core::KeyCode.NoKey;
+  preset KeyCodeLeft = Core::KeyCode.NoKey;
+  preset ThumbShadowColorActive = #00000030;
+  preset ThumbShadowColorFocused = #00000030;
+  preset ThumbShadowColorDefault = #00000030;
+  preset ThumbShadowBlurRadiusActive = 6;
+  preset ThumbShadowBlurRadiusFocused = 6;
+  preset ThumbShadowBlurRadiusDefault = 6;
+  preset ThumbShadowOffsetActive = <0,2>;
+  preset ThumbShadowOffsetFocused = <0,2>;
+  preset ThumbShadowOffsetDefault = <0,2>;
+  preset ThumbBorderColorActive = #848484FF;
+  preset ThumbBorderColorFocused = #848484FF;
+  preset ThumbBorderColorDefault = #848484FF;
+  preset ThumbBorderWidthActive = 2;
+  preset ThumbBorderWidthFocused = 2;
+  preset ThumbBorderWidthDefault = 2;
+  preset ThumbColorActive = #FFFFFFFF;
+  preset ThumbColorFocused = #FFFFFFFF;
+  preset ThumbColorDefault = #CCCCCCFF;
+  preset ThumbCornerRadiusActive = 20;
+  preset ThumbCornerRadiusFocused = 20;
+  preset ThumbCornerRadiusDefault = 20;
+  preset ThumbSizeActive = <40,40>;
+  preset ThumbSizeFocused = <40,40>;
+  preset ThumbSizeDefault = <30,30>;
+  preset ThumbMarginRight = 15;
+  preset ThumbMarginLeft = 15;
+  preset TrackRightColorActive = #BBBBBBFF;
+  preset TrackRightColorFocused = #BBBBBBFF;
+  preset TrackRightColorDefault = #BBBBBBFF;
+  preset TrackRightCornerRadiusActive = 5;
+  preset TrackRightCornerRadiusFocused = 5;
+  preset TrackRightCornerRadiusDefault = 5;
+  preset TrackRightThicknessActive = 3;
+  preset TrackRightThicknessFocused = 3;
+  preset TrackRightThicknessDefault = 3;
+  preset TrackRightFlattened = true;
+  preset TrackLeftColorActive = #BBBBBBFF;
+  preset TrackLeftColorFocused = #BBBBBBFF;
+  preset TrackLeftColorDefault = #BBBBBBFF;
+  preset TrackLeftCornerRadiusActive = 5;
+  preset TrackLeftCornerRadiusFocused = 5;
+  preset TrackLeftCornerRadiusDisabled = 0;
+  preset TrackLeftCornerRadiusDefault = 5;
+  preset TrackLeftThicknessActive = 3;
+  preset TrackLeftThicknessFocused = 3;
+  preset TrackLeftThicknessDefault = 3;
+  preset TrackLeftFlattened = true;
+}
+
+$rect <260,434,540,470>
+$output false
+autoobject WidgetSet::ValueDisplayConfig ValueDisplayConfig
+{
+  preset ValueColorPositive = Monitor::GreenDay;
+  preset ValueAlignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+  preset ValueFont = Monitor::FontDigitsXL;
+}
+
+$rect <730,1010,930,1050>
+$output false
+const string Title = "Patient Monitor Demo";
+
+$rect <40,760,240,800>
+$output false
+class ABPMinMaxDialog : Monitor::Dialog
+{
+  $rect <10,370,210,410>
+  inherited property Bounds = <0,0,600,340>;
+
+  $rect <230,370,430,410>
+  inherited method UpdateViewState()
+  {
+    super( aState );
+
+    /* colorize the widget configuration used for horizontal sliders and value displays */
+    Monitor::ValueDisplayConfig.ValueColorPositive = ItemColor;
+    Monitor::HorizontalSliderConfig.TrackLeftColorActive = ItemColor;
+
+    /* colorize all member components */
+    ValueSliderSysMin.Color = CaptionColor;
+    ValueSliderSysMax.Color = CaptionColor;
+
+    ValueSliderDiaMin.Color = CaptionColor;
+    ValueSliderDiaMax.Color = CaptionColor;
+
+  }
+
+  $rect <10,420,210,460>
+  inherited property Caption = "ABP Min/Max Alarm";
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderSysMin
+  {
+    preset Bounds = <30,70,290,180>;
+    preset Outlet = ^Monitor::Device.ABPSysMin;
+    preset MinValue = Monitor::ABPSysMinLo;
+    preset MaxValue = Monitor::ABPSysMinHi;
+    preset Caption = "SYS Min [mmHg]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderSysMax
+  {
+    preset Bounds = <30,200,290,310>;
+    preset Outlet = ^Monitor::Device.ABPSysMax;
+    preset MinValue = Monitor::ABPSysMaxLo;
+    preset MaxValue = Monitor::ABPSysMaxHi;
+    preset Caption = "SYS Max [mmHg]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderDiaMin
+  {
+    preset Bounds = <310,70,570,180>;
+    preset Outlet = ^Monitor::Device.ABPDiaMin;
+    preset MinValue = Monitor::ABPDiaMinLo;
+    preset MaxValue = Monitor::ABPDiaMinHi;
+    preset Caption = "DIA Min [mmHg]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderDiaMax
+  {
+    preset Bounds = <310,200,570,310>;
+    preset Outlet = ^Monitor::Device.ABPDiaMax;
+    preset MinValue = Monitor::ABPDiaMaxLo;
+    preset MaxValue = Monitor::ABPDiaMaxHi;
+    preset Caption = "DIA Max [mmHg]";
+  }
+}
+
+$rect <50,530,250,570>
+$output false
+class Curtain : Core::Group
+{
+  $rect <10,230,210,270>
+  inherited property Bounds = <0,0,300,200>;
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,300,200>;
+    preset Color = #00000080;
+    preset Visible = true;
+  }
+
+  $rect <220,230,420,270>
+  property color Color = #00000080;
+
+  $rect <220,270,420,310>
+  onset Color
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Color == value )
+      return;
+
+    // Remember the property's new value.
+    pure Color = value;
+
+    //Shadow.Color = value;
+    Rectangle.Color = value;
+  }
+}
+
+$rect <250,720,450,760>
+$output false
+class ECGSettingsDialog : Monitor::Dialog
+{
+  $rect <20,370,220,410>
+  inherited property Bounds = <0,0,600,340>;
+
+  $rect <240,370,440,410>
+  inherited method UpdateViewState()
+  {
+    super( aState );
+
+    /* colorize the widget configuration used for horizontal sliders and value displays */
+    Monitor::ValueDisplayConfig.ValueColorPositive = ItemColor;
+    Monitor::HorizontalSliderConfig.TrackLeftColorActive = ItemColor;
+
+    /* colorize all member components */
+    ValueSliderSpeed.Color = CaptionColor;
+    ValueSliderGain.Color = CaptionColor;
+    ValueSliderSamples.Color = CaptionColor;
+    ValueSliderIntensity.Color = CaptionColor;
+
+  }
+
+  $rect <20,420,220,460>
+  inherited property Caption = "ECG Graph Settings";
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderSpeed
+  {
+    preset Bounds = <30,70,290,180>;
+    preset Outlet = ^Monitor::Device.Speed;
+    preset MinValue = Monitor::SpeedLo;
+    preset MaxValue = Monitor::SpeedHi;
+    preset Caption = "Speed [pix/sec]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderGain
+  {
+    preset Bounds = <310,70,570,180>;
+    preset Outlet = ^Monitor::Device.ECGGain;
+    preset MinValue = Monitor::GainLo;
+    preset MaxValue = Monitor::GainHi;
+    preset Caption = "Gain [%%]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderSamples
+  {
+    preset Bounds = <30,200,290,310>;
+    preset Outlet = ^Monitor::Device.SamplesPerSec;
+    preset MinValue = Monitor::SamplesPerSecLo;
+    preset MaxValue = Monitor::SamplesPerSecHi;
+    preset Caption = "Samples [1/sec]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderIntensity
+  {
+    preset Bounds = <310,200,570,310>;
+    preset Outlet = ^Monitor::Device.ECGIntensity;
+    preset MinValue = Monitor::IntensityLo;
+    preset MaxValue = Monitor::IntensityHi;
+    preset Caption = "Intensity [%%]";
+  }
+}
+
+$rect <250,763,450,803>
+$output false
+class ABPSettingsDialog : Monitor::Dialog
+{
+  $rect <20,370,220,410>
+  inherited property Bounds = <0,0,600,340>;
+
+  $rect <240,370,440,410>
+  inherited method UpdateViewState()
+  {
+    super( aState );
+
+    /* colorize the widget configuration used for horizontal sliders and value displays */
+    Monitor::ValueDisplayConfig.ValueColorPositive = ItemColor;
+    Monitor::HorizontalSliderConfig.TrackLeftColorActive = ItemColor;
+
+    /* colorize all text items and decoration lines */
+    /* colorize all member components */
+    ValueSliderSpeed.Color = CaptionColor;
+    ValueSliderGain.Color = CaptionColor;
+    ValueSliderSamples.Color = CaptionColor;
+    ValueSliderIntensity.Color = CaptionColor;
+
+  }
+
+  $rect <20,420,220,460>
+  inherited property Caption = "ABP Graph Settings";
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderSpeed
+  {
+    preset Bounds = <30,70,290,180>;
+    preset Outlet = ^Monitor::Device.Speed;
+    preset MinValue = Monitor::SpeedLo;
+    preset MaxValue = Monitor::SpeedHi;
+    preset Caption = "Speed [pix/sec]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderGain
+  {
+    preset Bounds = <310,70,570,180>;
+    preset Outlet = ^Monitor::Device.ABPGain;
+    preset MinValue = Monitor::GainLo;
+    preset MaxValue = Monitor::GainHi;
+    preset Caption = "Gain [%%]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderSamples
+  {
+    preset Bounds = <30,200,290,310>;
+    preset Outlet = ^Monitor::Device.SamplesPerSec;
+    preset MinValue = Monitor::SamplesPerSecLo;
+    preset MaxValue = Monitor::SamplesPerSecHi;
+    preset Caption = "Samples [1/sec]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderIntensity
+  {
+    preset Bounds = <310,200,570,310>;
+    preset Outlet = ^Monitor::Device.ABPIntensity;
+    preset MinValue = Monitor::IntensityLo;
+    preset MaxValue = Monitor::IntensityHi;
+    preset Caption = "Intensity [%%]";
+  }
+}
+
+$rect <50,394,250,434>
+$output false
+class ValueSliderComponent : Core::Group
+{
+  $rect <10,230,210,270>
+  inherited property Bounds = <0,0,260,120>;
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorzSlider
+  {
+    preset Bounds = <10,60,250,110>;
+    preset Appearance = Monitor::HorizontalSliderConfig;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ValueDisplay ValueDisplay
+  {
+    preset Bounds = <149,0,250,50>;
+    preset Precision = 0;
+    preset Appearance = Monitor::ValueDisplayConfig;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text HeaderText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <10,16,186,46>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Caption";
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle HeaderLine
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop, ResizeHorz];
+    preset Bounds = <10,46,130,48>;
+  }
+
+  $rect <300,50,500,90>
+  onset Outlet
+  {
+    // Check if the new outlet differs from the currently used outlet
+    if ( pure Outlet == value )
+      return;
+
+    // Store the new outlet ...
+    pure Outlet = value;
+
+    // connect the slider and the value display
+    HorzSlider.Outlet = Outlet;
+    ValueDisplay.Outlet = Outlet;
+
+  }
+
+  // The property 'Outlet' can refer to any other 'int32' property the value display \
+  // component should remain synchronized with. When the referred property is modified \
+  // by another widget, the value display is automatically notified to remain in \
+  // sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the value display component represents the 'View' and the property referred \
+  // via 'Outlet' can be seen as a part of the 'Model'.
+  $rect <300,10,500,50>
+  property ^int32 Outlet = null;
+
+  // The property 'Color' stores the color of the component items.
+  $rect <710,10,910,50>
+  property color Color = #FFFFFFFF;
+
+  $rect <710,50,910,90>
+  onset Color
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Color == value )
+      return;
+
+    // Remember the property's new value.
+    pure Color = value;
+
+    // colorize all items
+    HeaderText.Color = value;
+    HeaderLine.Color = value;
+
+  }
+
+  $rect <300,140,500,180>
+  onset MinValue
+  {
+    // Check if the given value differs from the current value.
+    if ( pure MinValue == value )
+      return;
+
+    // Store the new value ...
+    pure MinValue = value;
+
+    // set the slider min limit
+    HorzSlider.MinValue = value;
+
+  }
+
+  // The property 'MinValue' stores the momentary minimum value of the component.
+  $rect <300,100,500,140>
+  property int32 MinValue = 0;
+
+  $rect <300,230,500,270>
+  onset MaxValue
+  {
+    // Check if the given value differs from the current value.
+    if ( pure MaxValue == value )
+      return;
+
+    // Store the new value ...
+    pure MaxValue = value;
+
+    // set the slider max limit
+    HorzSlider.MaxValue = value;
+
+  }
+
+  // The property 'MaxValue' stores the momentary maximum value of the component.
+  $rect <300,190,500,230>
+  property int32 MaxValue = 100;
+
+  $rect <500,50,700,90>
+  onset Caption
+  {
+    // Check if the given string differs from the current unit.
+    if ( pure Caption == value )
+      return;
+
+    // Store the new unit ...
+    pure Caption = value;
+
+    // forward the string
+    HeaderText.String = value;
+  }
+
+  // The property 'Unit' stores an optional string to append to the displayed value.
+  $rect <500,10,700,50>
+  property string Caption = "Header";
+
+  $rect <500,140,700,180>
+  onset DecimalPlace
+  {
+    // Check if the given value differs from the current value
+    if ( pure DecimalPlace == value )
+      return;
+
+    // Store the new value ...
+    pure DecimalPlace = value;
+
+    // configure the value item
+    if ( value )
+    {
+      ValueDisplay.Precision = 1;
+      ValueDisplay.CurrentFactor = 0.1;
+    }
+    else
+    {
+      ValueDisplay.Precision = 0;
+      ValueDisplay.CurrentFactor = 1.0;
+    }
+
+  }
+
+  // The property 'DecimalPlace' indicates whether the value should be shown with \
+  // one decimal place (xx.x) instead of a pure integer value (XXX).
+  $rect <500,100,700,140>
+  property bool DecimalPlace = false;
+}
+
+$rect <40,800,240,840>
+$output false
+class SpO2MinMaxDialog : Monitor::Dialog
+{
+  $rect <10,370,210,410>
+  inherited property Bounds = <0,0,320,340>;
+
+  $rect <230,370,430,410>
+  inherited method UpdateViewState()
+  {
+    super( aState );
+
+    /* colorize the widget configuration used for horizontal sliders and value displays */
+    Monitor::ValueDisplayConfig.ValueColorPositive = ItemColor;
+    Monitor::HorizontalSliderConfig.TrackLeftColorActive = ItemColor;
+
+    /* colorize all member components */
+    ValueSliderHRMin.Color = CaptionColor;
+    ValueSliderHRMax.Color = CaptionColor;
+
+  }
+
+  $rect <10,420,210,460>
+  inherited property Caption = "SpO2 Min/Max Alarm";
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderHRMin
+  {
+    preset Bounds = <30,70,290,180>;
+    preset Outlet = ^Monitor::Device.SpO2Min;
+    preset MinValue = Monitor::SpO2MinLo;
+    preset MaxValue = Monitor::SpO2MinHi;
+    preset Caption = "SpO2 Min [%%]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderHRMax
+  {
+    preset Bounds = <30,200,290,310>;
+    preset Outlet = ^Monitor::Device.SpO2Max;
+    preset MinValue = Monitor::SpO2MaxLo;
+    preset MaxValue = Monitor::SpO2MaxHi;
+    preset Caption = "SpO2 Max [%%]";
+  }
+}
+
+$rect <40,840,240,880>
+$output false
+class EtCO2MinMaxDialog : Monitor::Dialog
+{
+  $rect <10,370,210,410>
+  inherited property Bounds = <0,0,320,340>;
+
+  $rect <230,370,430,410>
+  inherited method UpdateViewState()
+  {
+    super( aState );
+
+    /* colorize the widget configuration used for horizontal sliders and value displays */
+    Monitor::ValueDisplayConfig.ValueColorPositive = ItemColor;
+    Monitor::HorizontalSliderConfig.TrackLeftColorActive = ItemColor;
+
+    /* colorize all member components */
+    ValueSliderHRMin.Color = CaptionColor;
+    ValueSliderHRMax.Color = CaptionColor;
+
+  }
+
+  $rect <10,420,210,460>
+  inherited property Caption = "EtCO2 Min/Max Alarm";
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderHRMin
+  {
+    preset Bounds = <30,70,290,180>;
+    preset Outlet = ^Monitor::Device.EtCO2Min;
+    preset MinValue = Monitor::EtCO2MinLo;
+    preset MaxValue = Monitor::EtCO2MinHi;
+    preset Caption = "EtCO2 Min [mmHg]";
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderHRMax
+  {
+    preset Bounds = <30,200,290,310>;
+    preset Outlet = ^Monitor::Device.EtCO2Max;
+    preset MinValue = Monitor::EtCO2MaxLo;
+    preset MaxValue = Monitor::EtCO2MaxHi;
+    preset Caption = "EtCO2 Max [mmHg]";
+  }
+}
+
+$rect <40,880,240,920>
+$output false
+class TempMinMaxDialog : Monitor::Dialog
+{
+  $rect <10,370,210,410>
+  inherited property Bounds = <0,0,320,340>;
+
+  $rect <230,370,430,410>
+  inherited method UpdateViewState()
+  {
+    super( aState );
+
+    /* colorize the widget configuration used for horizontal sliders and value displays */
+    Monitor::ValueDisplayConfig.ValueColorPositive = ItemColor;
+    Monitor::HorizontalSliderConfig.TrackLeftColorActive = ItemColor;
+
+    /* colorize all member components */
+    ValueSliderHRMin.Color = CaptionColor;
+    ValueSliderHRMax.Color = CaptionColor;
+
+  }
+
+  $rect <10,420,210,460>
+  inherited property Caption = "Temp Min/Max Alarm";
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderHRMin
+  {
+    preset Bounds = <30,70,290,180>;
+    preset Outlet = ^Monitor::Device.TemperatureMin;
+    preset MinValue = Monitor::TempMinLo;
+    preset MaxValue = Monitor::TempMinHi;
+    preset Caption = "Temp Min [°C]";
+    preset DecimalPlace = true;
+  }
+
+  $rect <20,20,160,60>
+  object Monitor::ValueSliderComponent ValueSliderHRMax
+  {
+    preset Bounds = <30,200,290,310>;
+    preset Outlet = ^Monitor::Device.TemperatureMax;
+    preset MinValue = Monitor::TempMaxLo;
+    preset MaxValue = Monitor::TempMaxHi;
+    preset Caption = "Temp Max [°C]";
+    preset DecimalPlace = true;
+  }
+}
+
+// Patient Monitor main screen
+note group Note4
+{
+  attr Bounds = <20,0,700,100>;
+}
+
+// Graph and Scale components
+note group Note5
+{
+  attr Bounds = <20,110,700,210>;
+}
+
+// Widgets and basic UI components
+note group Note6
+{
+  attr Bounds = <20,220,700,650>;
+}
+
+// Application dialogs
+note group Note7
+{
+  attr Bounds = <20,660,700,940>;
+}
+
+// Color management and animation
+note group Note8
+{
+  attr Bounds = <1170,440,1620,550>;
+}
+
+$rect <250,840,450,880>
+$output false
+class InfoDialog : Monitor::Dialog
+{
+  $rect <10,480,210,520>
+  inherited property Bounds = <0,0,820,460>;
+
+  $rect <230,480,430,520>
+  inherited method UpdateViewState()
+  {
+    super( aState );
+
+    InfoText.Color = HeaderText.Color;
+    Image.Color = HeaderText.Color;
+
+  }
+
+  $rect <10,530,210,570>
+  inherited property Caption = "Embedded Wizard Patient Monitor Demo";
+
+  $rect <20,20,160,60>
+  object Views::Text InfoText
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop, ResizeHorz];
+    preset Bounds = <32,60,776,340>;
+    preset WrapText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = Monitor::InfoText;
+    preset Font = Monitor::FontTextM;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <420,328,776,426>;
+    preset Bitmap = Monitor::EmWiLogo;
+  }
+}
+
+$rect <940,1010,1140,1050>
+$output false
+const string InfoText = "Patient monitors are generally used to display and monitor the physiological parameters of a patient. Typically monitored values are the heart rhythm (ECG), blood pressure (ABP), oxygen saturation (SpO2), carbon dioxide content in the exhaled air (etCO2) and the body temperature.\n\nThis demo is focused on the presentation of continuous measured data in an overwriting data recorder (like an oscilloscope).\n\nThe data graphs of the (simulated) measured values and the dialogs for user settings are presented in a modern clean medical style (with support of day and night mode). Dialogs are using a blur filter to show the content behind with a glass effect. The control items are implemented using configurable widgets.";
+
+$rect <940,1060,1140,1100>
+$output false
+resource Resources::Bitmap EmWiLogo
+{
+  attr bitmapfile FileName = .\Res\EmWiLogo.png;
+  attr bitmapdithering Dithering = Auto;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapmode Mode = Default;
+}
+
+// Directives to adapt the order of the above members according to how these members 
+// where arranged when the project content was stored. In this manner the storage 
+// and the expected order of the members don't depend. Merging of changes in the 
+// project files is simplified.
+$member Note1
+$member SpeedLo
+$member SpeedHi
+$member SamplesPerSecLo
+$member SamplesPerSecHi
+$member GainLo
+$member GainHi
+$member HRMinLo
+$member HRMinHi
+$member HRMaxLo
+$member HRMaxHi
+$member ABPSysMinLo
+$member ABPSysMinHi
+$member ABPSysMaxLo
+$member ABPSysMaxHi
+$member ABPDiaMinLo
+$member ABPDiaMinHi
+$member ABPDiaMaxLo
+$member ABPDiaMaxHi
+$member SpO2MinLo
+$member SpO2MinHi
+$member SpO2MaxLo
+$member SpO2MaxHi
+$member EtCO2MinLo
+$member EtCO2MinHi
+$member EtCO2MaxLo
+$member EtCO2MaxHi
+$member TempMinLo
+$member TempMinHi
+$member TempMaxLo
+$member TempMaxHi
+$member Note
+$member BackgroundDay
+$member BackgroundNight
+$member PanelDay
+$member PanelNight
+$member GreenDay
+$member GreenNight
+$member RedDay
+$member IntensityLo
+$member IntensityHi
+$member RedNight
+$member BlueDay
+$member BlueNight
+$member YellowDay
+$member YellowNight
+$member TextDay
+$member TextNight
+$member DialogDay
+$member DialogNight
+$member CurtainDay
+$member CurtainNight
+$member Note3
+$member DeviceClass
+$member Device
+$member DataStorage
+$member Oscilloscope
+$member Panel
+$member Dialog
+$member DialogShowHideTransition
+$member Monitor
+$member ColorSet
+$member Colors
+$member Note2
+$member FontDigitsXXL
+$member FontDigitsXL
+$member FontDigitsL
+$member FontTextM
+$member FontTextS
+$member IconButtonShadow
+$member Minus
+$member Plus
+$member Icons
+$member Scale
+$member IconButton
+$member ValueItem
+$member DualValueItem
+$member ActioinButton
+$member PatientItem
+$member ECGMinMaxDialog
+$member HorizontalSliderConfig
+$member ValueDisplayConfig
+$member Title
+$member ABPMinMaxDialog
+$member Curtain
+$member ECGSettingsDialog
+$member ABPSettingsDialog
+$member ValueSliderComponent
+$member SpO2MinMaxDialog
+$member EtCO2MinMaxDialog
+$member TempMinMaxDialog
+$member Note4
+$member Note5
+$member Note6
+$member Note7
+$member Note8
+$member InfoDialog
+$member InfoText
+$member EmWiLogo

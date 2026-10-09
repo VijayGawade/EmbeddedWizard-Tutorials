@@ -1,0 +1,2802 @@
+﻿$version 15.00
+
+// The class 'ImageProvider' is responsible to load images in the requested size \
+// and aspect ratio. In this implementation, the class 'ImageProvider' loads the \
+// images from bitmap resources. The implemenation could be changed to work with \
+// an external JPEG decoder...
+$rect <40,620,240,660>
+$output false
+class ImageProvider
+{
+  // The method 'GetImage()' returns an image object loaded from the resource array. \
+  // The image object will have the given size. In case the aspect ratio of the original \
+  // image does not correspond to the aspect ratio of the given size, the image is \
+  // clipped accordingly.
+  $rect <10,20,210,60>
+  method Resources::Bitmap GetImage()
+  {
+    /* load the next bitmap out of the pool */
+    var Resources::Bitmap bmp = resourceArray[ resourceIndex ];
+
+    /* just take the next image the next time */
+    resourceIndex = resourceIndex + 1;
+    if ( resourceIndex >= resourceArray.size )
+      resourceIndex = 0;
+
+    /* and return the image */
+    return bmp;
+
+  }
+
+  // This is an array of bitmap resources.
+  $rect <210,20,410,60>
+  array Resources::Bitmap resourceArray[ 33 ] =
+  (
+    Default[0] = Res::Bitmap0;
+    Default[1] = Res::Bitmap1;
+    Default[2] = Res::Bitmap2;
+    Default[3] = Res::Bitmap3;
+    Default[4] = Res::Bitmap4;
+    Default[5] = Res::Bitmap5;
+    Default[6] = Res::Bitmap6;
+    Default[7] = Res::Bitmap7;
+    Default[8] = Res::Bitmap8;
+    Default[9] = Res::Bitmap9;
+    Default[10] = Res::Bitmap10;
+    Default[11] = Res::Bitmap11;
+    Default[12] = Res::Bitmap12;
+    Default[13] = Res::Bitmap13;
+    Default[14] = Res::Bitmap14;
+    Default[15] = Res::Bitmap15;
+    Default[16] = Res::Bitmap16;
+    Default[17] = Res::Bitmap17;
+    Default[18] = Res::Bitmap18;
+    Default[19] = Res::Bitmap19;
+    Default[20] = Res::Bitmap20;
+    Default[21] = Res::Bitmap21;
+    Default[22] = Res::Bitmap22;
+    Default[23] = Res::Bitmap23;
+    Default[24] = Res::Bitmap24;
+    Default[25] = Res::Bitmap25;
+    Default[26] = Res::Bitmap26;
+    Default[27] = Res::Bitmap27;
+    Default[28] = Res::Bitmap28;
+    Default[29] = Res::Bitmap29;
+    Default[30] = Res::Bitmap30;
+    Default[31] = Res::Bitmap31;
+    Default[32] = Res::Bitmap32;
+  );
+
+  // This is a variable to store the index of the next bitmap resource.
+  $rect <210,60,410,100>
+  var int32 resourceIndex = 0;
+
+  // The class 'ImageProvider' is responsible to load images in the requested size \
+  // and aspect ratio.
+  // 
+  // In this implementation, the class 'ImageProvider' loads the images from bitmap \
+  // resources. The implemenation could be changed to work with an external JPEG \
+  // decoder...
+  note legend Note
+  {
+    attr Bounds = <10,120,610,220>;
+  }
+}
+
+// The class 'CarouselImage' represents a single image of the @'ScreenSaver::CarouselScreenSaver'. \
+// The class contains all necessary properties and methods to calculate the appearance \
+// of each animation step.
+$rect <40,230,240,270>
+$output false
+class CarouselImage : Views::WarpImage
+{
+  // The method 'Animate' calculates the next animation step of the image object.
+  $rect <10,130,210,170>
+  method void Animate()
+  {
+    /* we only have to modify the current rotation angles in X and Y direction of the image */
+    RotateX = RotateX + DeltaX;
+    RotateY = RotateY + DeltaY;
+
+    /* calculate opacity depending on current angle and transparency angle */
+    var float angle = RotateY;
+    if ( angle < 0.0 )
+      angle = -angle;
+    if ( angle > 90.0 )
+      angle = 90.0;
+
+    if ( (int32)angle > Transparency )
+      Opacity = (int32)((((float)(Transparency + 45) - angle) * 255.0 ) / 45.0);
+    else
+      Opacity = 0xFF;
+
+    /* make the 3D transformation */
+    SourceAnchor = point( Bitmap.FrameSize.x / 2, Bitmap.FrameSize.y / 2);
+
+    var Graphics::WarpMatrix m = new Graphics::WarpMatrix;
+    m.LoadIdentity();
+    m.EyeDistance = EyeDistance;
+    m.Rotate( RotateX, RotateY, 0.0 );
+    m.Translate( TranslateX, TranslateY, TranslateZ );
+    m.Scale( ScaleX, ScaleY, 1.0 );
+
+    Warp3D( point( Owner.Bounds.w / 2, Owner.Bounds.h / 2 ), m );
+  }
+
+  // The property 'RotateX' is used to store the current rotation angle in X direction.
+  $rect <10,0,210,40>
+  property float RotateX = 0.0;
+
+  // The property 'RotateY' is used to store the current rotation angle in Y direction.
+  $rect <210,0,410,40>
+  property float RotateY = 0.0;
+
+  // The property 'TranslateX' is used to store the current translation distance \
+  // in X direction.
+  $rect <410,0,610,40>
+  property float TranslateX = 0.0;
+
+  // The property 'TranslateY' is used to store the current translation distance \
+  // in Y direction.
+  $rect <610,0,810,40>
+  property float TranslateY = 0.0;
+
+  // The property 'DeltaX' defines the value added to the propery @RotateX in each \
+  // step of the animation done by the method @Animate().
+  $rect <10,40,210,80>
+  property float DeltaX = 0.0;
+
+  // The property 'DeltaY' defines the value added to the propery @RotateY in each \
+  // step of the animation done by the method @Animate().
+  $rect <210,40,410,80>
+  property float DeltaY = 0.0;
+
+  // The property 'TranslateZ' is used to store the current translation distance \
+  // in Z direction.
+  $rect <810,0,1010,40>
+  property float TranslateZ = 0.0;
+
+  // The property 'EyeDistance' defines the distance for the 3D transformation within \
+  // the method @Animate().
+  $rect <10,80,210,120>
+  property int32 EyeDistance = 0;
+
+  // The property 'Transparency' defines the start / end angle for making the fade \
+  // in / fade out effect.
+  $rect <211,80,411,120>
+  property int32 Transparency;
+
+  // The property 'ScaleX' defines the scale factor of the image.
+  $rect <410,40,610,80>
+  property float ScaleX = 1.0;
+
+  // The property 'ScaleY' defines the scale factor of the image.
+  $rect <610,40,810,80>
+  property float ScaleY = 1.0;
+
+  // This class is derived from Views::WarpImage and stores the current attributes \
+  // of an image shown within the ScreenSaver::CarouselScreenSaver.
+  // 
+  // The method Animate() is called to calculate the next animation phase of the \
+  // image.
+  note legend Note
+  {
+    attr Bounds = <10,190,610,290>;
+  }
+}
+
+// The class 'CarouselScreenSaver' implements a screen saver which displays three \
+// rows of images in an image Carousel. The single images are objects from the class \
+// @'ScreenSaver::CarouselImage'. In order to configure the screen saver object dynamically, \
+// the @'ScreenSaver::CarouselControlPanel' can be used and connected with the corresponding \
+// properties. The size of the screen saver is flexible and can be adapted easily \
+// by setting the Bounds property.
+$rect <40,190,240,230>
+$output false
+class CarouselScreenSaver : Core::Group
+{
+  $rect <430,10,630,50>
+  inherited property Bounds = <0,0,400,300>;
+
+  // The slot method 'AnimationSlot' is responsible to call all involved animation \
+  // methods in order to calculate and display the next animation phase.
+  $rect <10,360,210,400>
+  slot AnimationSlot
+  {
+    /* in case the slot method is called the first time, create the three rows */
+    if ( firstRun == true )
+    {
+      InitTop();
+      InitMiddle();
+      InitBottom();
+      firstRun = false;
+    }
+
+    /* make the next animation step in all three rows */
+    AnimateTop();
+    AnimateMiddle();
+    AnimateBottom();
+
+    /* and redraw the scene */
+    //InvalidateView();
+
+
+  }
+
+  // The array 'middleImages' contains all currently created and used image objects \
+  // of the middle row. Each image is an instance of the class @'ScreenSaver::CarouselImage'.
+  $rect <640,360,840,400>
+  array ScreenSaver::CarouselImage middleImages[ 10 ];
+
+  // The object 'ImageProvider' provides the screen saver with new image objects \
+  // with the desired size.
+  $rect <640,280,840,320>
+  object ScreenSaver::ImageProvider ImageProvider;
+
+  // The timer 'AnimationTimer' is used to trigger each animation phase by calling \
+  // the slot method @AnimationSlot.
+  $rect <10,320,210,360>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationSlot;
+    preset Period = 1;
+    preset Enabled = true;
+  }
+
+  // The property 'EyeDistance' defines the distance used for calculating the 3D \
+  // effect.
+  $rect <430,60,630,100>
+  property int32 EyeDistance = 1000;
+
+  $rect <430,100,630,140>
+  onset EyeDistance
+  {
+    /* limit range of value */
+    if ( value <= Bounds.w / 2 )
+      value = Bounds.w / 2 ;
+
+    if ( value >= Bounds.w * 2 )
+      value = Bounds.w * 2;
+
+    var int32 i;
+    var ScreenSaver::CarouselImage img;
+
+    /* update all images */
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+        img.EyeDistance = value;
+    }
+    /* update all images */
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+        img.EyeDistance = value;
+    }
+    /* update all images */
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+        img.EyeDistance = value;
+    }
+
+    pure EyeDistance = value;
+  }
+
+  // The array 'topImages' contains all currently created and used image objects \
+  // of the upper row. Each image is an instance of the class @'ScreenSaver::CarouselImage'.
+  $rect <640,320,840,360>
+  array ScreenSaver::CarouselImage topImages[ 10 ];
+
+  // The array 'bottomImages' contains all currently created and used image objects \
+  // of the lower row. Each image is an instance of the class @'ScreenSaver::CarouselImage'.
+  $rect <640,400,840,440>
+  array ScreenSaver::CarouselImage bottomImages[ 10 ];
+
+  // The method 'AnimateMiddle()' is responsible to calculate the next animation \
+  // phase of the middle row of the screen saver object. If necessary, invisible \
+  // images are removed or new images are created and added to the group of views.
+  $rect <430,360,630,400>
+  method void AnimateMiddle()
+  {
+    var int32 i;
+    var ScreenSaver::CarouselImage img;
+
+    /* first remove images which are moved out of visible part */
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+      {
+        if ( img.RotateY <= -80.0 )
+        {
+          Remove( img );
+          middleImages[ i ] = null;
+        }
+      }
+    }
+
+    /* search if there is a new image necessary */
+    var bool needNewImage = true;
+    var int32 emptyIndex = 0;
+
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+      {
+        if ( img.RotateY > 60.0 )
+          needNewImage = false;
+      }
+      else
+        emptyIndex = i;
+    }
+
+    /* create new image if needed */
+    if ( needNewImage == true )
+    {
+      var int32 w = Bounds.w / 4;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::CarouselImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = 0.0;
+      img.TranslateY  = 0.0;
+      img.TranslateZ  = 0.80 * (float)Bounds.w;
+      img.RotateX     = 0.0;
+      img.RotateY     = 80.0;
+      img.DeltaX      = 0.0;
+      img.DeltaY      = -speed;
+      img.EyeDistance = EyeDistance;
+      img.Transparency = Transparency;
+
+      /* store the image at a free position within the array */
+      middleImages[ emptyIndex ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+    /* update all images */
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+      {
+        img.Animate();
+      }
+    }
+
+  }
+
+  // The method 'AnimateTop()' is responsible to calculate the next animation phase \
+  // of the upper row of the screen saver object. If necessary, invisible images \
+  // are removed or new images are created and added to the group of views.
+  $rect <430,320,630,360>
+  method void AnimateTop()
+  {
+    var int32 i;
+    var ScreenSaver::CarouselImage img;
+
+    /* first remove images which are moved out of visible part */
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+      {
+        if ( img.RotateY > 80.0 )
+        {
+          Remove( img );
+          topImages[ i ] = null;
+        }
+      }
+    }
+
+    /* search if there is a new image necessary */
+    var bool needNewImage = true;
+    var int32 emptyIndex = 0;
+
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+      {
+        if ( img.RotateY < -60.0 )
+          needNewImage = false;
+      }
+      else
+        emptyIndex = i;
+    }
+
+    /* create new image if needed */
+    if ( needNewImage == true )
+    {
+      var int32 w = Bounds.w / 4;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::CarouselImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = 0.0;
+      img.TranslateY  = -0.22 * (float)Bounds.w;
+      img.TranslateZ  = 0.80 * (float)Bounds.w;
+      img.RotateX     = 0.0;
+      img.RotateY     = -80.0;
+      img.DeltaX      = 0.0;
+      img.DeltaY      = speed;
+      img.EyeDistance = EyeDistance;
+      img.Transparency = Transparency;
+
+      /* store the image at a free position within the array */
+      topImages[ emptyIndex ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+    /* update all images */
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+      {
+        img.Animate();
+      }
+    }
+
+  }
+
+  // The method 'AnimateBottom()' is responsible to calculate the next animation \
+  // phase of the lower row of the screen saver object. If necessary, invisible images \
+  // are removed or new images are created and added to the group of views.
+  $rect <430,400,630,440>
+  method void AnimateBottom()
+  {
+    var int32 i;
+    var ScreenSaver::CarouselImage img;
+
+    /* first remove images which are moved out of visible part */
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+      {
+        if ( img.RotateY >= 80.0 )
+        {
+          Remove( img );
+          bottomImages[ i ] = null;
+        }
+      }
+    }
+
+    /* search if there is a new image necessary */
+    var bool needNewImage = true;
+    var int32 emptyIndex = 0;
+
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+      {
+        if ( img.RotateY < -60.0 )
+          needNewImage = false;
+      }
+      else
+        emptyIndex = i;
+    }
+
+    /* create new image if needed */
+    if ( needNewImage == true )
+    {
+      var int32 w = Bounds.w / 4;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::CarouselImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = 0.0;
+      img.TranslateY  = 0.22 * (float)Bounds.w;
+      img.TranslateZ  = 0.80 * (float)Bounds.w;
+      img.RotateX     = 0.0;
+      img.RotateY     = -80.0;
+      img.DeltaX      = 0.0;
+      img.DeltaY      = speed;
+      img.EyeDistance = EyeDistance;
+      img.Transparency = Transparency;
+
+      /* store the image at a free position within the array */
+      bottomImages[ emptyIndex ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+    /* update all images */
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+      {
+        img.Animate();
+      }
+    }
+
+  }
+
+  // The property 'Transparency' defines the angle at which the transparency effect \
+  // (fade in / fade out) begins.
+  $rect <640,60,840,100>
+  property int32 Transparency = 30;
+
+  $rect <640,100,840,140>
+  onset Transparency
+  {
+    /* limit range of value */
+    if ( value < 0 )
+      value = 0 ;
+
+    if ( value > 90 )
+      value = 90;
+
+    var int32 i;
+    var ScreenSaver::CarouselImage img;
+
+    /* update all images */
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+        img.Transparency = value;
+    }
+    /* update all images */
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+        img.Transparency = value;
+    }
+    /* update all images */
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+        img.Transparency = value;
+    }
+
+    pure Transparency = value;
+  }
+
+  // The property 'Speed' controls the animation speed of all image animations within \
+  // the screen saver.
+  $rect <640,150,840,190>
+  property int32 Speed = 50;
+
+  $rect <640,190,840,230>
+  onset Speed
+  {
+    /* limit range of value */
+    if ( value < 10 )
+      value = 10;
+
+    if ( value > 1000 )
+      value = 1000;
+
+    var int32 i;
+    var ScreenSaver::CarouselImage img;
+    var float speed = (float)value / 1000.0;
+
+    /* update all images */
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+        img.DeltaY = speed;
+    }
+    /* update all images */
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+        img.DeltaY = -speed;
+    }
+    /* update all images */
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+        img.DeltaY = speed;
+    }
+
+    pure Speed = value;
+  }
+
+  // This is a private flag to make intialization of screen saver only once.
+  $rect <10,400,210,440>
+  var bool firstRun = true;
+
+  // The method 'InitMiddle()' is responsible to create the middle row of @'ScreenSaver::CarouselImages' \
+  // used within the screen saver object.
+  $rect <220,360,420,400>
+  method void InitMiddle()
+  {
+    var int32 i;
+    var ScreenSaver::CarouselImage img;
+
+    /* create all new images */
+    for ( i = 0; i < 8; i = i + 1 )
+    {
+      var int32 w = Bounds.w / 4;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::CarouselImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = 0.0;
+      img.TranslateY  = 0.0;
+      img.TranslateZ  = 0.80 * (float)Bounds.w;
+      img.RotateX     = 0.0;
+      img.RotateY     = float(i) * 20.0 - 80.0;
+      img.DeltaX      = 0.0;
+      img.DeltaY      = -speed;
+      img.EyeDistance = EyeDistance;
+      img.Transparency = Transparency;
+
+      /* store the image at a free position within the array */
+      middleImages[ i ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+  }
+
+  // The method 'InitTop()' is responsible to create the upper row of @'ScreenSaver::CarouselImages' \
+  // used within the screen saver object.
+  $rect <220,320,420,360>
+  method void InitTop()
+  {
+    var int32 i;
+    var ScreenSaver::CarouselImage img;
+
+    /* create all new images */
+    for ( i = 0; i < 8; i = i + 1 )
+    {
+      var int32 w = Bounds.w / 4;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::CarouselImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = 0.0;
+      img.TranslateY  = -0.22 * (float)Bounds.w;
+      img.TranslateZ  = 0.80 * (float)Bounds.w;
+      img.RotateX     = 0.0;
+      img.RotateY     = float(i) * 20.0 - 80.0;
+      img.DeltaX      = 0.0;
+      img.DeltaY      = speed;
+      img.EyeDistance = EyeDistance;
+      img.Transparency = Transparency;
+
+      /* store the image at a free position within the array */
+      topImages[ i ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+  }
+
+  // The method 'InitBottom()' is responsible to create the lower row of @'ScreenSaver::CarouselImages' \
+  // used within the screen saver object.
+  $rect <220,400,420,440>
+  method void InitBottom()
+  {
+    var int32 i;
+    var ScreenSaver::CarouselImage img;
+
+    /* create all new images */
+    for ( i = 0; i < 8; i = i + 1 )
+    {
+      var int32 w = Bounds.w / 4;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::CarouselImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = 0.0;
+      img.TranslateY  = 0.22 * (float)Bounds.w;
+      img.TranslateZ  = 0.80 * (float)Bounds.w;
+      img.RotateX     = 0.0;
+      img.RotateY     = float(i) * 20.0 - 80.0;
+      img.DeltaX      = 0.0;
+      img.DeltaY      = speed;
+      img.EyeDistance = EyeDistance;
+      img.Transparency = Transparency;
+
+      /* store the image at a free position within the array */
+      bottomImages[ i ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+  }
+
+  // The 'CarouselScreenSaver' displays three rows of images in an image Carousel. \
+  // It can be configured by the following properties:
+  // - 'EyeDistance' defines the distance used for calculating the 3D effect.
+  // - 'Transparency' defines the angle at which the transparency effect (fade in \
+  // / fade out) begins.
+  // - 'Speed' controls the animation speed of all image animations within the screen \
+  // saver.
+  // 
+  // The methods 'AnimateTop()', 'AnimateMiddle()' and 'AnimateBottom()' are responsible \
+  // to calculate the next animation phase of one row within the screen saver object. \
+  // If necessary, invisible images are removed or new images are created and added \
+  // to the group of views.
+  note legend Note4
+  {
+    attr Bounds = <10,450,840,640>;
+  }
+
+  // How to add fancy 2D/3D scale and rotate effects?
+  // 
+  // https://doc.embedded-wizard.de/warp-image-view
+  note legend Note5
+  {
+    attr Bounds = <10,650,390,730>;
+  }
+}
+
+// The class 'PerspectiveImage' represents a single image of the @'ScreenSaver::PerspectiveScreenSaver'. \
+// The class contains all necessary properties and methods to calculate the appearance \
+// of each animation step.
+$rect <40,380,240,420>
+$output false
+class PerspectiveImage : Views::WarpImage
+{
+  // The method 'Animate' calculates the next animation step of the image object.
+  $rect <10,130,210,170>
+  method void Animate()
+  {
+    /* we only have to modify the current translation in X direction of the image */
+    TranslateX = TranslateX + DeltaX;
+
+    /* make a soft fade in effect */
+    if ( Opacity < 0xFF )
+      Opacity = Opacity + 2;
+
+    /* make the 3D transformation */
+    SourceAnchor = point( Bitmap.FrameSize.x / 2, 0 );
+
+    var Graphics::WarpMatrix m = new Graphics::WarpMatrix;
+    m.LoadIdentity();
+    m.EyeDistance = Owner.Bounds.w;
+    m.Rotate( RotateX, RotateY, 0.0 );
+    m.Translate( TranslateX, TranslateY, 0.0 );
+    m.Scale( ScaleX, ScaleY, 1.0 );
+
+    Warp3D( point( Owner.Bounds.w / 2, 0 ), m );
+
+
+  }
+
+  // The property 'RotateX' is used to store the current rotation angle in X direction.
+  $rect <10,0,210,40>
+  property float RotateX = 0.0;
+
+  // The property 'RotateY' is used to store the current rotation angle in Y direction.
+  $rect <210,0,410,40>
+  property float RotateY = 0.0;
+
+  // The property 'TranslateX' is used to store the current translation distance \
+  // in X direction.
+  $rect <410,0,610,40>
+  property float TranslateX = 0.0;
+
+  // The property 'TranslateY' is used to store the current translation distance \
+  // in Y direction.
+  $rect <610,0,810,40>
+  property float TranslateY = 0.0;
+
+  // The property 'DeltaX' defines the value added to the propery @TranslateX in \
+  // each step of the animation done by the method @Animate().
+  $rect <410,40,610,80>
+  property float DeltaX = 0.0;
+
+  // The property 'ScaleX' defines the scale factor of the image.
+  $rect <10,40,210,80>
+  property float ScaleX = 1.0;
+
+  // The property 'ScaleY' defines the scale factor of the image.
+  $rect <210,40,410,80>
+  property float ScaleY = 1.0;
+
+  // This class is derived from Views::WarpImage and stores the current attributes \
+  // of an image shown within the ScreenSaver::PerspectiveScreenSaver.
+  // 
+  // The method Animate() is called to calculate the next animation phase of the \
+  // image.
+  note legend Note
+  {
+    attr Bounds = <10,190,610,290>;
+  }
+}
+
+// The class 'PerspectiveScreenSaver' implements a screen saver which displays three \
+// rows of images in a perspective rotated layer. The single images are objects from \
+// the class @'ScreenSaver::PerspectiveImage'. In order to configure the screen saver \
+// object dynamically, the @'ScreenSaver::PerspectiveControlPanel' can be used and \
+// connected with the corresponding properties. The size of the screen saver is flexible \
+// and can be adapted easily by setting the Bounds property.
+$rect <40,340,240,380>
+$output false
+class PerspectiveScreenSaver : Core::Group
+{
+  $rect <430,10,630,50>
+  inherited property Bounds = <0,0,400,300>;
+
+  // The slot method 'AnimationSlot' is responsible to call all involved animation \
+  // methods in order to calculate and display the next animation phase.
+  $rect <10,360,210,400>
+  slot AnimationSlot
+  {
+    /* in case the slot method is called the first time, create the three rows */
+    if ( firstRun == true )
+    {
+      InitTop();
+      InitMiddle();
+      InitBottom();
+      firstRun = false;
+    }
+
+    /* make the next animation step in all three rows */
+    AnimateTop();
+    AnimateMiddle();
+    AnimateBottom();
+
+    /* and redraw the scene */
+    //InvalidateView();
+
+
+  }
+
+  // The array 'middleImages' contains all currently created and used image objects \
+  // of the middle row. Each image is an instance of the class @'ScreenSaver::PerspectiveImage'.
+  $rect <640,360,840,400>
+  array ScreenSaver::PerspectiveImage middleImages[ 10 ];
+
+  // The object 'ImageProvider' provides the screen saver with new image objects \
+  // with the desired size.
+  $rect <640,280,840,320>
+  object ScreenSaver::ImageProvider ImageProvider;
+
+  // The timer 'AnimationTimer' is used to trigger each animation phase by calling \
+  // the slot method @AnimationSlot.
+  $rect <10,320,210,360>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationSlot;
+    preset Period = 10;
+    preset Enabled = true;
+  }
+
+  // The array 'topImages' contains all currently created and used image objects \
+  // of the upper row. Each image is an instance of the class @'ScreenSaver::PerspectiveImage'.
+  $rect <640,320,840,360>
+  array ScreenSaver::PerspectiveImage topImages[ 10 ];
+
+  // The method 'AnimateMiddle()' is responsible to calculate the next animation \
+  // phase of the middle row of the screen saver object. If necessary, invisible \
+  // images are removed or new images are created and added to the group of views.
+  $rect <430,360,630,400>
+  method void AnimateMiddle()
+  {
+    var int32 i;
+    var ScreenSaver::PerspectiveImage img;
+
+    /* first remove images which are moved out of visible part */
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+      {
+        if (( img.Point1.x < 0 ) && ( img.Point2.x < 0 ) && ( img.Point3.x < 0 ) && ( img.Point4.x < 0 ))
+        {
+          Remove( img );
+          middleImages[ i ] = null;
+        }
+      }
+    }
+
+    /* search if there is a new image necessary */
+    var bool needNewImage = true;
+    var int32 emptyIndex = 0;
+
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+      {
+        if ( (int32)img.TranslateX > Bounds.w )
+          needNewImage = false;
+      }
+      else
+        emptyIndex = i;
+    }
+
+    /* create new image if needed */
+    if ( needNewImage == true )
+    {
+      var int32 w = Bounds.w / 6;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed / 100.0;
+
+      /* create new image object */
+      img = new ScreenSaver::PerspectiveImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = Bounds.w + w * 5 / 4;
+      img.TranslateY  = h * 6 / 4;
+      img.RotateX     = (float)RotateX;
+      img.RotateY     = (float)RotateY;
+      img.DeltaX      = -speed;
+      img.Opacity     = 0x00;
+
+      /* store the image at a free position within the array */
+      middleImages[ emptyIndex ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+    /* update all images */
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+      {
+        img.Animate();
+      }
+    }
+
+  }
+
+  // The method 'AnimateTop()' is responsible to calculate the next animation phase \
+  // of the upper row of the screen saver object. If necessary, invisible images \
+  // are removed or new images are created and added to the group of views.
+  $rect <430,320,630,360>
+  method void AnimateTop()
+  {
+    var int32 i;
+    var ScreenSaver::PerspectiveImage img;
+
+    /* first remove images which are moved out of visible part */
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+      {
+        if (( img.Point1.x < 0 ) && ( img.Point2.x < 0 ) && ( img.Point3.x < 0 ) && ( img.Point4.x < 0 ))
+        {
+          Remove( img );
+          topImages[ i ] = null;
+        }
+      }
+    }
+
+    /* search if there is a new image necessary */
+    var bool needNewImage = true;
+    var int32 emptyIndex = 0;
+
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+      {
+        if ( (int32)img.TranslateX > Bounds.w )
+          needNewImage = false;
+      }
+      else
+        emptyIndex = i;
+    }
+
+    /* create new image if needed */
+    if ( needNewImage == true )
+    {
+      var int32 w = Bounds.w / 6;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed * 8.0 / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::PerspectiveImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = Bounds.w + w * 5 / 4;
+      img.TranslateY  = h * 1 / 4;
+      img.RotateX     = (float)RotateX;
+      img.RotateY     = (float)RotateY;
+      img.DeltaX      = -speed;
+      img.Opacity     = 0x00;
+
+      /* store the image at a free position within the array */
+      topImages[ emptyIndex ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+    /* update all images */
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+      {
+        img.Animate();
+      }
+    }
+
+  }
+
+  // The property 'Speed' controls the animation speed of all image animations within \
+  // the screen saver.
+  $rect <640,150,840,190>
+  property int32 Speed = 100;
+
+  $rect <640,190,840,230>
+  onset Speed
+  {
+    /* limit range of value */
+    if ( value < 10 )
+      value = 10;
+
+    if ( value > 1000 )
+      value = 1000;
+
+    var int32 i;
+    var ScreenSaver::PerspectiveImage img;
+    var float speed;
+
+    /* update all images */
+    speed = (float)value * 8.0 / 1000.0;
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+        img.DeltaX = -speed;
+    }
+    /* update all images */
+    speed = (float)value / 100.0;
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+        img.DeltaX = -speed;
+    }
+    /* update all images */
+    speed = (float)value * 12.0 / 1000.0;
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+        img.DeltaX = -speed;
+    }
+
+    pure Speed = value;
+  }
+
+  // This is a private flag to make intialization of screen saver only once.
+  $rect <10,400,210,440>
+  var bool firstRun = true;
+
+  // The array 'bottomImages' contains all currently created and used image objects \
+  // of the lower row. Each image is an instance of the class @'ScreenSaver::PerspectiveImage'.
+  $rect <640,400,840,440>
+  array ScreenSaver::PerspectiveImage bottomImages[ 10 ];
+
+  // The method 'AnimateBottom()' is responsible to calculate the next animation \
+  // phase of the lower row of the screen saver object. If necessary, invisible images \
+  // are removed or new images are created and added to the group of views.
+  $rect <430,400,630,440>
+  method void AnimateBottom()
+  {
+    var int32 i;
+    var ScreenSaver::PerspectiveImage img;
+
+    /* first remove images which are moved out of visible part */
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+      {
+        if (( img.Point1.x < 0 ) && ( img.Point2.x < 0 ) && ( img.Point3.x < 0 ) && ( img.Point4.x < 0 ))
+        {
+          Remove( img );
+          bottomImages[ i ] = null;
+        }
+      }
+    }
+
+    /* search if there is a new image necessary */
+    var bool needNewImage = true;
+    var int32 emptyIndex = 0;
+
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+      {
+        if ( (int32)img.TranslateX > Bounds.w )
+          needNewImage = false;
+      }
+      else
+        emptyIndex = i;
+    }
+
+    /* create new image if needed */
+    if ( needNewImage == true )
+    {
+      var int32 w = Bounds.w / 6;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed * 12.0 / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::PerspectiveImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = Bounds.w + w * 5 / 4;
+      img.TranslateY  = h * 11 / 4;
+      img.RotateX     = (float)RotateX;
+      img.RotateY     = (float)RotateY;
+      img.DeltaX      = -speed;
+      img.Opacity     = 0x00;
+
+      /* store the image at a free position within the array */
+      bottomImages[ emptyIndex ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+    /* update all images */
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+      {
+        img.Animate();
+      }
+    }
+
+  }
+
+  // The property 'RotateX' defines the viewing angle of the layer in X direction.
+  $rect <430,60,630,100>
+  property int32 RotateX = 0;
+
+  $rect <430,100,630,140>
+  onset RotateX
+  {
+    /* limit range of value */
+    if ( value < -60 )
+      value = -60;
+
+    if ( value > 0 )
+      value = 0;
+
+    var int32 i;
+    var ScreenSaver::PerspectiveImage img;
+    var float f = float( value );
+
+    /* update all images */
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+        img.RotateX = f;
+    }
+    /* update all images */
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+        img.RotateX = f;
+    }
+    /* update all images */
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+        img.RotateX = f;
+    }
+
+    pure RotateX = value;
+  }
+
+  // The method 'InitMiddle()' is responsible to create the middle row of @'ScreenSaver::PerspectiveImages' \
+  // used within the screen saver object.
+  $rect <220,360,420,400>
+  method void InitMiddle()
+  {
+    var int32 i;
+    var ScreenSaver::PerspectiveImage img;
+
+    /* create all new images */
+    for ( i = 0; i < 8; i = i + 1 )
+    {
+      var int32 w = Bounds.w / 6;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed / 100.0;
+
+      /* create new image object */
+      img = new ScreenSaver::PerspectiveImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = Bounds.w - i * w * 5 / 4;
+      img.TranslateY  = h * 6 / 4;
+      img.RotateX     = (float)RotateX;
+      img.RotateY     = (float)RotateY;
+      img.DeltaX      = -speed;
+      img.Opacity     = i * 32;
+
+      /* store the image at a free position within the array */
+      middleImages[ i ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+  }
+
+  // The method 'InitTop()' is responsible to create the upper row of @'ScreenSaver::PerspectiveImages' \
+  // used within the screen saver object.
+  $rect <220,320,420,360>
+  method void InitTop()
+  {
+    var int32 i;
+    var ScreenSaver::PerspectiveImage img;
+
+    /* create all new images */
+    for ( i = 0; i < 8; i = i + 1 )
+    {
+      var int32 w = Bounds.w / 6;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed * 8.0 / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::PerspectiveImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = Bounds.w - i * w * 5 / 4;
+      img.TranslateY  = h * 1 / 4;
+      img.RotateX     = (float)RotateX;
+      img.RotateY     = (float)RotateY;
+      img.DeltaX      = -speed;
+      img.Opacity     = i * 32;
+
+      /* store the image at a free position within the array */
+      topImages[ i ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+  }
+
+  // The method 'InitBottom()' is responsible to create the lower row of @'ScreenSaver::PerspectiveImages' \
+  // used within the screen saver object.
+  $rect <220,400,420,440>
+  method void InitBottom()
+  {
+    var int32 i;
+    var ScreenSaver::PerspectiveImage img;
+
+    /* create all new images */
+    for ( i = 0; i < 8; i = i + 1 )
+    {
+      var int32 w = Bounds.w / 6;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed * 12.0 / 1000.0;
+
+      /* create new image object */
+      img = new ScreenSaver::PerspectiveImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateX  = Bounds.w - i * w * 5 / 4;
+      img.TranslateY  = h * 11 / 4;
+      img.RotateX     = (float)RotateX;
+      img.RotateY     = (float)RotateY;
+      img.DeltaX      = -speed;
+      img.Opacity     = i * 32;
+
+      /* store the image at a free position within the array */
+      bottomImages[ i ] = img;
+
+      /* insert the new image to the group */
+      Add( img, 0 );
+    }
+
+  }
+
+  // The property 'RotateY' defines the viewing angle of the layer in Y direction.
+  $rect <640,60,840,100>
+  property int32 RotateY = -45;
+
+  $rect <640,100,840,140>
+  onset RotateY
+  {
+    /* limit range of value */
+    if ( value < -50 )
+      value = -50;
+
+    if ( value > -15 )
+      value = -15;
+
+    var int32 i;
+    var ScreenSaver::PerspectiveImage img;
+    var float f = float( value );
+
+    /* update all images */
+    for ( i = 0; i < topImages.size; i = i + 1 )
+    {
+      img = topImages[ i ];
+      if ( img != null )
+        img.RotateY = f;
+    }
+    /* update all images */
+    for ( i = 0; i < middleImages.size; i = i + 1 )
+    {
+      img = middleImages[ i ];
+      if ( img != null )
+        img.RotateY = f;
+    }
+    /* update all images */
+    for ( i = 0; i < bottomImages.size; i = i + 1 )
+    {
+      img = bottomImages[ i ];
+      if ( img != null )
+        img.RotateY = f;
+    }
+
+    pure RotateY = value;
+  }
+
+  // The 'PerspectiveScreenSaver' displays three rows of images in a perspective \
+  // rotated layer. It can be configured by the following properties:
+  // - 'RotateX' defines the viewing angle of the layer in X direction.
+  // - 'RotateY' defines the viewing angle of the layer in Y direction.
+  // - 'Speed' controls the animation speed of all image animations within the screen \
+  // saver.
+  // 
+  // The methods 'AnimateTop()', 'AnimateMiddle()' and 'AnimateBottom()' are responsible \
+  // to calculate the next animation phase of one row within the screen saver object. \
+  // If necessary, invisible images are removed or new images are created and added \
+  // to the group of views.
+  note legend Note4
+  {
+    attr Bounds = <10,450,840,640>;
+  }
+
+  // How to add fancy 2D/3D scale and rotate effects?
+  // 
+  // https://doc.embedded-wizard.de/warp-image-view
+  note legend Note5
+  {
+    attr Bounds = <10,650,390,730>;
+  }
+}
+
+// The class 'StarfieldImage' represents a single image of the @'ScreenSaver::StarfieldScreenSaver'. \
+// The class contains all necessary properties and methods to calculate the appearance \
+// of each animation step.
+$rect <40,530,240,570>
+$output false
+class StarfieldImage : Views::WarpImage
+{
+  // The method 'Animate' calculates the next animation step of the image object.
+  $rect <10,130,210,170>
+  method void Animate()
+  {
+    /* we only have to modify the current translation in Z direction of the image */
+    TranslateZ = TranslateZ + DeltaZ;
+
+    /* and we have to calculate the scaling factor depending on the translation */
+    var float scale = TranslateZ / 1000.0;
+
+    /* depending on the position in Z direction, the image has to fade in or fade out */
+    if ( (int32)TranslateZ < 200 )
+      Opacity = (int32)TranslateZ * 255 / 200;
+    else if ( (int32)TranslateZ > 800 )
+      Opacity = ( 1000 - (int32)TranslateZ ) * 255 / 200;
+    else
+      Opacity = 0xFF;
+
+    /* make the 3D transformation */
+    SourceAnchor = point( Bitmap.FrameSize.x / 2, Bitmap.FrameSize.y / 2 );
+
+    var Graphics::WarpMatrix m = new Graphics::WarpMatrix;
+    m.LoadIdentity();
+    m.EyeDistance = EyeDistance;
+    m.Rotate( RotateX, RotateY, 0.0 );
+    m.Scale( scale, scale, 1.0 );
+    m.Translate( 0.0, 0.0, TranslateZ );
+    m.Scale( ScaleX, ScaleY, 1.0 );
+
+    Warp3D( point( Owner.Bounds.w / 2, Owner.Bounds.h / 2 ), m );
+
+
+
+
+  }
+
+  // The property 'RotateX' is used to store the current rotation angle in X direction.
+  $rect <10,0,210,40>
+  property float RotateX = 0.0;
+
+  // The property 'RotateY' is used to store the current rotation angle in Y direction.
+  $rect <210,0,410,40>
+  property float RotateY = 0.0;
+
+  // The property 'TranslateZ' is used to store the current translation distance \
+  // in Z direction.
+  $rect <410,0,610,40>
+  property float TranslateZ = 0.0;
+
+  // The property 'EyeDistance' defines the distance for the 3D transformation within \
+  // the method @Animate().
+  $rect <10,80,210,120>
+  property int32 EyeDistance = 0;
+
+  // The property 'DeltaZ' defines the value added to the propery @TranslateZ in \
+  // each step of the animation done by the method @Animate().
+  $rect <410,40,610,80>
+  property float DeltaZ = 0.0;
+
+  // The property 'ScaleX' defines the scale factor of the image.
+  $rect <10,40,210,80>
+  property float ScaleX = 1.0;
+
+  // The property 'ScaleY' defines the scale factor of the image.
+  $rect <210,40,410,80>
+  property float ScaleY = 1.0;
+
+  // This class is derived from Views::WarpImage and stores the current attributes \
+  // of an image shown within the ScreenSaver::StarfieldScreenSaver.
+  // 
+  // The method Animate() is called to calculate the next animation phase of the \
+  // image.
+  note legend Note
+  {
+    attr Bounds = <10,190,610,290>;
+  }
+}
+
+// The class 'StarfieldScreenSaver' implements a screen saver which displays a set \
+// of images in a star field manner. The single images are objects from the class \
+// @'ScreenSaver::PerspectiveImage'. In order to configure the screen saver object \
+// dynamically, the @'ScreenSaver::PerspectiveControlPanel' can be used and connected \
+// with the corresponding properties. The size of the screen saver is flexible and \
+// can be adapted easily by setting the Bounds property.
+$rect <40,490,240,530>
+$output false
+class StarfieldScreenSaver : Core::Group
+{
+  $rect <430,10,630,50>
+  inherited property Bounds = <0,0,400,300>;
+
+  // The slot method 'AnimationSlot' is responsible to call all involved animation \
+  // methods in order to calculate and display the next animation phase.
+  $rect <10,360,210,400>
+  slot AnimationSlot
+  {
+    /* make the next animation step */
+    Animate();
+
+    /* and redraw the scene */
+    //InvalidateView();
+
+
+
+  }
+
+  // The array 'images' contains all currently created and used image objects of \
+  // the screen saver. Each image is an instance of the class @'ScreenSaver::StarfieldImage'.
+  $rect <430,320,630,360>
+  array ScreenSaver::StarfieldImage images[ 50 ];
+
+  // The object 'ImageProvider' provides the screen saver with new image objects \
+  // with the desired size.
+  $rect <430,280,630,320>
+  object ScreenSaver::ImageProvider ImageProvider;
+
+  // The timer 'AnimationTimer' is used to trigger each animation phase by calling \
+  // the slot method @AnimationSlot.
+  $rect <10,320,210,360>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationSlot;
+    preset Period = 10;
+    preset Enabled = true;
+  }
+
+  // The method 'Animate()' is responsible to calculate the next animation phase \
+  // of the screen saver object. If necessary, invisible images are removed or new \
+  // images are created and added to the group of views.
+  $rect <220,320,420,360>
+  method void Animate()
+  {
+    var int32 i;
+    var ScreenSaver::StarfieldImage img;
+
+    /* first remove images which are moved out of visible part */
+    for ( i = 0; i < images.size; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+      {
+        var int32 x1 = img.Point1.x;
+        if ( img.Point2.x < x1 ) x1 = img.Point2.x;
+        if ( img.Point3.x < x1 ) x1 = img.Point3.x;
+        if ( img.Point4.x < x1 ) x1 = img.Point4.x;
+        var int32 x2 = img.Point1.x;
+        if ( img.Point2.x > x2 ) x2 = img.Point2.x;
+        if ( img.Point3.x > x2 ) x2 = img.Point3.x;
+        if ( img.Point4.x > x2 ) x2 = img.Point4.x;
+        var int32 y1 = img.Point1.y;
+        if ( img.Point2.y < y1 ) y1 = img.Point2.y;
+        if ( img.Point3.y < y1 ) y1 = img.Point3.y;
+        if ( img.Point4.y < y1 ) y1 = img.Point4.y;
+        var int32 y2 = img.Point1.y;
+        if ( img.Point2.y > y2 ) y2 = img.Point2.y;
+        if ( img.Point3.y > y2 ) y2 = img.Point3.y;
+        if ( img.Point4.y > y2 ) y2 = img.Point4.y;
+
+        if ((( x2 < 0 ) || ( y2 < 0 ) || ( x1 > Bounds.w ) || ( y1 > Bounds.h )) || ( img.Opacity == 0x00 ))
+        {
+          Remove( img );
+          images[ i ] = null;
+        }
+      }
+    }
+
+    /* search if there is place in the starfield to add a new image */
+    var bool needNewImage = true;
+    var int32 emptyIndex = -1;
+
+    for ( i = 0; i < Count; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+      {
+        if ( (int32)img.TranslateZ < 40 )
+          needNewImage = false;
+      }
+    }
+
+    /* search if there is place in the image array or if the limit is reached */
+    if ( needNewImage == true )
+    {
+      for ( i = 0; i < Count; i = i + 1 )
+      {
+        img = images[ i ];
+        if ( img == null )
+          emptyIndex = i;
+      }
+    }
+    if (( emptyIndex < 0 ) || ( emptyIndex > Count ))
+      needNewImage = false;
+
+    /* create new image if needed */
+    if ( needNewImage == true )
+    {
+      var int32 w = Bounds.w / 8;
+      var int32 h = w * 3 / 4;
+
+      var Resources::Bitmap bmp = ImageProvider.GetImage();
+      var float speed = (float)Speed / 100.0;
+
+      /* create new image object */
+      img = new ScreenSaver::StarfieldImage;
+
+      /* initialize the image object */
+      img.Bitmap      = bmp;
+      img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+      img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+      img.TranslateZ  = 20.0;
+      img.RotateX     = math_rand(-15.0, 15.0);
+      img.RotateY     = math_rand(160.0, 200.0);
+      img.DeltaZ      = speed;
+      img.EyeDistance = EyeDistance;
+      img.Opacity     = 0x00;
+
+      /* store the image at a free position within the array */
+      images[ emptyIndex ] = img;
+
+      /* insert the new image backmost to the group */
+      Add( img, -Count );
+    }
+
+
+    /* update all images */
+    for ( i = 0; i < images.size; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+      {
+        img.Animate();
+      }
+    }
+
+  }
+
+  // The property 'Speed' controls the animation speed of all image animations within \
+  // the screen saver.
+  $rect <640,150,840,190>
+  property int32 Speed = 500;
+
+  $rect <640,190,840,230>
+  onset Speed
+  {
+    /* limit range of value */
+    if ( value < 10 )
+      value = 10;
+
+    if ( value > 1000 )
+      value = 1000;
+
+    var int32 i;
+    var ScreenSaver::StarfieldImage img;
+    var float speed;
+
+    /* update all images */
+    speed = (float)value / 100.0;
+    for ( i = 0; i < images.size; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+        img.DeltaZ = speed;
+    }
+
+    pure Speed = value;
+  }
+
+  // The property 'EyeDistance' defines the distance used for calculating the 3D \
+  // effect.
+  $rect <640,60,840,100>
+  property int32 EyeDistance = 1500;
+
+  $rect <640,100,840,140>
+  onset EyeDistance
+  {
+    /* limit range of value */
+    if ( value < 100 )
+      value = 100;
+
+    if ( value > 5000 )
+      value = 5000;
+
+    var int32 i;
+    var ScreenSaver::StarfieldImage img;
+
+    /* update all images */
+    for ( i = 0; i < images.size; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+        img.EyeDistance = value;
+    }
+
+    pure EyeDistance = value;
+  }
+
+  // The property 'Count' defines the number of visible images in the screen saver \
+  // object.
+  $rect <430,60,630,100>
+  property int32 Count = 30;
+
+  $rect <430,100,630,140>
+  onset Count
+  {
+    /* check limits */
+    if ( value < 0 )
+      value = 0;
+
+    if ( value > images.size )
+      value = images.size;
+
+    /* if there are old images (index higher than Count) let's make them to garbage... */
+    var int32 i;
+
+    for ( i = value; i < images.size; i = i + 1 )
+    {
+      if ( images[ i ] != null )
+        Remove( images[ i ] );
+      images[ i ] = null;
+    }
+
+    /* assigne new value */
+    pure Count = value;
+  }
+
+  // The 'StarfieldScreenSaver' displays a set of images in a star field manner. \
+  // It can be configured by the following properties:
+  // - 'Count' defines the number of visible images in the screen saver object.
+  // - 'EyeDistance' defines the distance used for calculating the 3D effect.
+  // - 'Speed' controls the animation speed of all image animations within the screen \
+  // saver.
+  // 
+  // The method 'Animate()' is responsible to calculate the next animation phase \
+  // of the screen saver object. If necessary, invisible images are removed or new \
+  // images are created and added to the group of views.
+  note legend Note4
+  {
+    attr Bounds = <10,410,840,580>;
+  }
+
+  // How to add fancy 2D/3D scale and rotate effects?
+  // 
+  // https://doc.embedded-wizard.de/warp-image-view
+  note legend Note5
+  {
+    attr Bounds = <10,590,390,670>;
+  }
+}
+
+// The class 'LevitationImage' represents a single image of the @'ScreenSaver::LevitationScreenSaver'. \
+// The class contains all necessary properties and methods to calculate the appearance \
+// of each animation step.
+$rect <40,80,240,120>
+$output false
+class LevitationImage : Views::WarpImage
+{
+  // The method 'Animate' calculates the next animation step of the image object.
+  $rect <10,130,210,170>
+  method void Animate()
+  {
+    /* first we have to modify the current position of the image */
+    TranslateX = TranslateX + DeltaX;
+    TranslateY = TranslateY + DeltaY;
+
+    /* now we have to animate the opacity depending the current life cyle */
+    if ( lifeCycle > 0 )
+    {
+      /* image object has to fade in */
+      Opacity = Opacity + 4;
+
+      /* if image is fully opaque, the next phase of the life cycle beginns... */
+      if ( Opacity == 0xFF )
+        lifeCycle = 0;
+    }
+    else if ( lifeCycle == 0 )
+    {
+      /* image is fully opaque, we have to decrement the life time */
+      LifeTime = LifeTime - 1;
+
+      /* if LifeTime is zero, the next phase of the life cycle beginns... */
+      if ( LifeTime <= 0 )
+        lifeCycle = -1;
+    }
+    else
+    {
+      /* image object has to fade out */
+      Opacity = Opacity - 4;
+    }
+
+    /* make the 3D transformation */
+    SourceAnchor = point( Bitmap.FrameSize.x / 2, Bitmap.FrameSize.y / 2 );
+
+    var Graphics::WarpMatrix m = new Graphics::WarpMatrix;
+    m.LoadIdentity();
+    //m.EyeDistance = Owner.Bounds.w;
+    //m.Rotate( RotateX, RotateY, 0.0 );
+    m.Translate( TranslateX, TranslateY, 0.0 );
+    m.Scale( ScaleX, ScaleY, 1.0 );
+
+    Warp3D( point( Owner.Bounds.w / 2, Owner.Bounds.h / 2 ), m );
+
+
+  }
+
+  // The property 'RotateX' is used to store the current rotation angle in X direction.
+  $rect <10,0,210,40>
+  property float RotateX = 0.0;
+
+  // The property 'RotateY' is used to store the current rotation angle in Y direction.
+  $rect <210,0,410,40>
+  property float RotateY = 0.0;
+
+  // The property 'TranslateX' is used to store the current translation distance \
+  // in X direction.
+  $rect <410,0,610,40>
+  property float TranslateX = 0.0;
+
+  // The property 'TranslateY' is used to store the current translation distance \
+  // in Y direction.
+  $rect <610,0,810,40>
+  property float TranslateY = 0.0;
+
+  // The property 'DeltaX' defines the value added to the propery @TranslateX in \
+  // each step of the animation done by the method @Animate().
+  $rect <410,40,610,80>
+  property float DeltaX = 0.0;
+
+  // The property 'ScaleX' defines the scale factor of the image.
+  $rect <10,40,210,80>
+  property float ScaleX = 1.0;
+
+  // The property 'ScaleY' defines the scale factor of the image.
+  $rect <210,40,410,80>
+  property float ScaleY = 1.0;
+
+  // Number of animation cycles, where the image has full opacity.
+  $rect <211,80,411,120>
+  property int32 LifeTime = 10;
+
+  // The 'lifeCyle' determines the status of the image object: +1 fade in, 0 still \
+  // alive, -1 fade out.
+  $rect <10,80,210,120>
+  var int32 lifeCycle = 1;
+
+  // The property 'DeltaY' defines the value added to the propery @TranslateY in \
+  // each step of the animation done by the method @Animate().
+  $rect <611,40,811,80>
+  property float DeltaY = 0.0;
+
+  // This class is derived from Views::WarpImage and stores the current attributes \
+  // of an image shown within the ScreenSaver::LevitationScreenSaver.
+  // 
+  // The method Animate() is called to calculate the next animation phase of the \
+  // image.
+  note legend Note
+  {
+    attr Bounds = <10,190,610,290>;
+  }
+}
+
+// The class 'LevitationScreenSaver' implements a screen saver which displays a set \
+// of images in a levitation manner. The single images are objects from the class \
+// @'ScreenSaver::LevitationImage'. In order to configure the screen saver object \
+// dynamically, the @'ScreenSaver::LevitationControlPanel' can be used and connected \
+// with the corresponding properties. The size of the screen saver is flexible and \
+// can be adapted easily by setting the Bounds property.
+$rect <40,40,240,80>
+$output false
+class LevitationScreenSaver : Core::Group
+{
+  $rect <430,10,630,50>
+  inherited property Bounds = <0,0,400,300>;
+
+  // The slot method 'AnimationSlot' is responsible to call all involved animation \
+  // methods in order to calculate and display the next animation phase.
+  $rect <10,360,210,400>
+  slot AnimationSlot
+  {
+    /* make the next animation step */
+    Animate();
+
+    /* and redraw the scene */
+    //InvalidateView();
+
+
+  }
+
+  // The property 'Count' defines the number of visible images in the screen saver \
+  // object.
+  $rect <430,60,630,100>
+  property int32 Count = 15;
+
+  $rect <430,100,630,140>
+  onset Count
+  {
+    /* check limits */
+    if ( value < 0 )
+      value = 0;
+
+    if ( value > images.size )
+      value = images.size;
+
+    /* if there are old images (index higher than Count) let's make them to garbage... */
+    var int32 i;
+
+    for ( i = value; i < images.size; i = i + 1 )
+    {
+      if ( images[ i ] != null )
+        Remove( images[ i ] );
+      images[ i ] = null;
+    }
+
+    /* assigne new value */
+    pure Count = value;
+  }
+
+  // The array 'images' contains all currently created and used image objects of \
+  // the screen saver. Each image is an instance of the class @'ScreenSaver::LevitationImage'.
+  $rect <430,320,630,360>
+  array ScreenSaver::LevitationImage images[ 64 ];
+
+  // The object 'ImageProvider' provides the screen saver with new image objects \
+  // with the desired size.
+  $rect <430,280,630,320>
+  object ScreenSaver::ImageProvider ImageProvider;
+
+  // The timer 'AnimationTimer' is used to trigger each animation phase by calling \
+  // the slot method @AnimationSlot.
+  $rect <10,320,210,360>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationSlot;
+    preset Period = 10;
+    preset Enabled = true;
+  }
+
+  // The property 'Time' defines the duration time (life-time) of all image objects \
+  // within the screen saver.
+  $rect <640,60,840,100>
+  property int32 Time = 2;
+
+  $rect <640,100,840,140>
+  onset Time
+  {
+    var ScreenSaver::LevitationImage img;
+
+    /* check limits */
+    if ( value < 0 )
+      value = 0;
+
+    if ( value > images.size )
+      value = images.size;
+
+    /* update the LifeTime of all images... */
+    var int32 i;
+    var int32 lifeTime = value * 1000 / AnimationTimer.Period;
+
+    for ( i = 0; i < images.size; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+      {
+        /* reduce the lifeTime of the images if they are longer */
+        if ( img.LifeTime > lifeTime )
+          img.LifeTime = lifeTime;
+      }
+    }
+
+    /* assigne new value */
+    pure Time = value;
+  }
+
+  // The property 'ShiftHorz' can be set to activate the horizontal movement of all \
+  // images within the screen saver.
+  $rect <430,150,630,190>
+  property bool ShiftHorz = false;
+
+  $rect <430,190,630,230>
+  onset ShiftHorz
+  {
+    /* update the direction of all images... */
+    var int32 i;
+    var ScreenSaver::LevitationImage img;
+
+    for ( i = 0; i < images.size; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+      {
+        var int32 hDir = 0;
+        var int32 w;
+
+        /* make 4 levels of images with different size */
+        if ( i < 4 )
+          w = Bounds.w / 4;
+        else if ( i < 12 )
+          w = Bounds.w / 8;
+        else if ( i < 24 )
+          w = Bounds.w / 12;
+        else
+          w = Bounds.w / 16;
+
+        /* calculate new direction */
+        if ( value == true )
+          hDir = math_rand( -img.Bitmap.FrameSize.x, img.Bitmap.FrameSize.x );
+
+        /* set new direction */
+        img.DeltaX      = (float)hDir / (float)w;
+      }
+    }
+
+    /* assigne new value */
+    pure ShiftHorz = value;
+
+
+  }
+
+  // The property 'ShiftVert' can be set to activate the vertical movement of all \
+  // images within the screen saver.
+  $rect <640,150,840,190>
+  property bool ShiftVert = true;
+
+  $rect <640,190,840,230>
+  onset ShiftVert
+  {
+    /* update the direction of all images... */
+    var int32 i;
+    var ScreenSaver::LevitationImage img;
+
+    for ( i = 0; i < images.size; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+      {
+        var int32 vDir = 0;
+        var int32 w;
+        var int32 h;
+
+        /* make 4 levels of images with different size */
+        if ( i < 4 )
+          w = Bounds.w / 4;
+        else if ( i < 12 )
+          w = Bounds.w / 8;
+        else if ( i < 24 )
+          w = Bounds.w / 12;
+        else
+          w = Bounds.w / 16;
+
+        h = w * 3 / 4;
+
+
+        /* calculate new direction */
+        if ( value == true )
+          vDir = math_rand( -img.Bitmap.FrameSize.y, img.Bitmap.FrameSize.y );
+
+        /* set new direction */
+        img.DeltaY      = (float)vDir / (float)h;
+      }
+    }
+
+    /* assigne new value */
+    pure ShiftVert = value;
+
+
+  }
+
+  // The method 'Animate()' is responsible to calculate the next animation phase \
+  // of the screen saver object. If necessary, invisible images are removed or new \
+  // images are created and added to the group of views.
+  $rect <220,320,420,360>
+  method void Animate()
+  {
+    var int32 i;
+    var ScreenSaver::LevitationImage img;
+
+    /* first we check if there are images out of bounce or transparent - in this case we make them to garbage */
+    for ( i = 0; i < Count; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+      {
+        var int32 x1 = img.Point1.x;
+        if ( img.Point2.x < x1 ) x1 = img.Point2.x;
+        if ( img.Point3.x < x1 ) x1 = img.Point3.x;
+        if ( img.Point4.x < x1 ) x1 = img.Point4.x;
+        var int32 x2 = img.Point1.x;
+        if ( img.Point2.x > x2 ) x2 = img.Point2.x;
+        if ( img.Point3.x > x2 ) x2 = img.Point3.x;
+        if ( img.Point4.x > x2 ) x2 = img.Point4.x;
+        var int32 y1 = img.Point1.y;
+        if ( img.Point2.y < y1 ) y1 = img.Point2.y;
+        if ( img.Point3.y < y1 ) y1 = img.Point3.y;
+        if ( img.Point4.y < y1 ) y1 = img.Point4.y;
+        var int32 y2 = img.Point1.y;
+        if ( img.Point2.y > y2 ) y2 = img.Point2.y;
+        if ( img.Point3.y > y2 ) y2 = img.Point3.y;
+        if ( img.Point4.y > y2 ) y2 = img.Point4.y;
+
+        if ((( x2 < 0 ) || ( y2 < 0 ) || ( x1 > Bounds.w ) || ( y1 > Bounds.h )) || ( img.Opacity == 0x00 ))
+        {
+          Remove( img );
+          images[ i ] = null;
+        }
+      }
+    }
+
+    /* create new images if necessary */
+    for ( i = 0; i < Count; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img == null )
+      {
+        var int32 w;
+        var int32 h;
+
+        /* make 4 levels of images with different size */
+        if ( i < 4 )
+          w = Bounds.w / 4;
+        else if ( i < 12 )
+          w = Bounds.w / 8;
+        else if ( i < 24 )
+          w = Bounds.w / 12;
+        else
+          w = Bounds.w / 16;
+
+        h = w * 3 / 4;
+
+        /* load new image with calculated size */
+        var Resources::Bitmap bmp = ImageProvider.GetImage();
+        var int32 hDir = 0;
+        var int32 vDir = 0;
+
+        if ( ShiftHorz == true )
+          hDir = math_rand( -w, w );
+        if ( ShiftVert == true )
+          vDir = math_rand( -h, h );
+
+        /* create new image object */
+        img = new ScreenSaver::LevitationImage;
+
+        /* initialize the image object */
+        img.Bitmap      = bmp;
+        img.ScaleX      = (float)w / (float)bmp.FrameSize.x;
+        img.ScaleY      = (float)h / (float)bmp.FrameSize.y;
+        img.RotateX     = 0.0;
+        img.RotateY     = 0.0;
+        img.TranslateX  = (float)math_rand( -Bounds.w / 2, Bounds.w / 2 );
+        img.TranslateY  = (float)math_rand( -Bounds.h / 2, Bounds.h / 2 );
+        img.DeltaX      = (float)hDir / (float)w;
+        img.DeltaY      = (float)vDir / (float)h;
+        img.Opacity     = 0x00;
+        img.LifeTime  = Time * math_rand( 700, 1300 ) / AnimationTimer.Period;
+
+        images[ i ] = img;
+        Add( img, -i );
+      }
+    }
+
+    /* update all images */
+    for ( i = 0; i < Count; i = i + 1 )
+    {
+      img = images[ i ];
+      if ( img != null )
+      {
+        img.Animate();
+      }
+    }
+
+
+  }
+
+  // The 'LevitationScreenSaver' displays a set of images in a levitation manner. \
+  // It can be configured by the following properties:
+  // - 'Count' defines the number of visible images in the screen saver object.
+  // - 'Time' defines the duration time (life-time) of all image objects within the \
+  // screen saver.
+  // - 'ShiftHorz' can be set to activate the horizontal movement of all images within \
+  // the screen saver.
+  // - 'ShiftVert' can be set to activate the vertical movement of all images within \
+  // the screen saver.
+  // 
+  // The method 'Animate()' is responsible to calculate the next animation phase \
+  // of the screen saver object. If necessary, invisible images are removed or new \
+  // images are created and added to the group of views.
+  note legend Note4
+  {
+    attr Bounds = <10,410,840,580>;
+  }
+
+  // How to add fancy 2D/3D scale and rotate effects?
+  // 
+  // https://doc.embedded-wizard.de/warp-image-view
+  note legend Note5
+  {
+    attr Bounds = <10,590,390,670>;
+  }
+}
+
+// Control panel to configure the corresponding screen saver.
+$rect <250,190,450,230>
+$output false
+class CarouselControlPanel : ScreenSaver::ControlPanel
+{
+  $rect <240,10,440,50>
+  inherited property Caption = "Carousel\nScreen Saver";
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderEyeDistance
+  {
+    preset Bounds = <20,60,200,110>;
+    preset MaxValue = 2000;
+    preset MinValue = 500;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text0
+  {
+    preset Bounds = <30,100,190,130>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Eye Distance";
+    preset Font = Resources::FontSmall;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderTransparency
+  {
+    preset Bounds = <20,130,200,180>;
+    preset MaxValue = 90;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderSpeed
+  {
+    preset Bounds = <20,200,200,250>;
+    preset MaxValue = 1000;
+    preset MinValue = 10;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text1
+  {
+    preset Bounds = <30,170,190,200>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Transparency";
+    preset Font = Resources::FontSmall;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text2
+  {
+    preset Bounds = <30,240,190,270>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Speed";
+    preset Font = Resources::FontSmall;
+  }
+
+  // This is the control panel for the Carousel screen saver.
+  // It contains the additional control items for the corresponding screen saver.
+  note legend Note
+  {
+    attr Bounds = <240,340,590,440>;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder onKeyPressSlot 5
+  $reorder KeyHandler 5
+  $reorder Caption 2
+  $reorder SliderEyeDistance 3
+  $reorder Text0 3
+  $reorder SliderTransparency 3
+  $reorder SliderSpeed 2
+}
+
+// Control panel to configure the corresponding screen saver.
+$rect <250,340,450,380>
+$output false
+class PerspectiveControlPanel : ScreenSaver::ControlPanel
+{
+  $rect <240,10,440,50>
+  inherited property Caption = "Perspective\nScreen Saver";
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderRotateX
+  {
+    preset Bounds = <20,60,200,110>;
+    preset MaxValue = 0;
+    preset MinValue = -60;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text0
+  {
+    preset Bounds = <30,100,190,130>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Rotate X";
+    preset Font = Resources::FontSmall;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderRotateY
+  {
+    preset Bounds = <20,130,200,180>;
+    preset MaxValue = -15;
+    preset MinValue = -50;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderSpeed
+  {
+    preset Bounds = <20,200,200,250>;
+    preset MaxValue = 1000;
+    preset MinValue = 10;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text1
+  {
+    preset Bounds = <30,170,190,200>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Rotate Y";
+    preset Font = Resources::FontSmall;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text2
+  {
+    preset Bounds = <30,240,180,270>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Speed";
+    preset Font = Resources::FontSmall;
+  }
+
+  // This is the control panel for the perspecitve screen saver.
+  // It contains the additional control items for the corresponding screen saver.
+  note legend Note
+  {
+    attr Bounds = <240,340,590,440>;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder onKeyPressSlot 5
+  $reorder KeyHandler 5
+  $reorder Caption 2
+  $reorder SliderRotateX 3
+  $reorder Text0 3
+  $reorder SliderRotateY 3
+  $reorder SliderSpeed 2
+}
+
+// Control panel to configure the corresponding screen saver.
+$rect <250,490,450,530>
+$output false
+class StarfieldControlPanel : ScreenSaver::ControlPanel
+{
+  $rect <240,10,440,50>
+  inherited property Caption = "Starfield\nScreen Saver";
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderEyeDistance
+  {
+    preset Bounds = <20,60,200,110>;
+    preset MaxValue = 5000;
+    preset MinValue = 200;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text0
+  {
+    preset Bounds = <30,100,190,130>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Eye Distance";
+    preset Font = Resources::FontSmall;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderCount
+  {
+    preset Bounds = <20,130,200,180>;
+    preset MaxValue = 50;
+    preset MinValue = 1;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  inherited object CaptionText;
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderSpeed
+  {
+    preset Bounds = <20,200,200,250>;
+    preset MaxValue = 1000;
+    preset MinValue = 10;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text1
+  {
+    preset Bounds = <30,170,190,200>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Count";
+    preset Font = Resources::FontSmall;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text2
+  {
+    preset Bounds = <30,240,190,270>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Speed";
+    preset Font = Resources::FontSmall;
+  }
+
+  // This is the control panel for the starfield screen saver.
+  // It contains the additional control items for the corresponding screen saver.
+  note legend Note
+  {
+    attr Bounds = <240,340,590,440>;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder onKeyPressSlot 5
+  $reorder KeyHandler 5
+  $reorder Caption 2
+  $reorder SliderEyeDistance 3
+  $reorder Text0 3
+  $reorder SliderCount 3
+  $reorder SliderSpeed 2
+}
+
+// Control panel to configure the corresponding screen saver.
+$rect <250,40,450,80>
+$output false
+class LevitationControlPanel : ScreenSaver::ControlPanel
+{
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderCount
+  {
+    preset Bounds = <20,60,200,110>;
+    preset MaxValue = 64;
+    preset MinValue = 1;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text0
+  {
+    preset Bounds = <30,100,190,130>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Count";
+    preset Font = Resources::FontSmall;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider SliderDuration
+  {
+    preset Bounds = <20,130,200,180>;
+    preset MaxValue = 10;
+    preset MinValue = 1;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  $rect <240,10,440,50>
+  inherited property Caption = "Levitation\nScreen Saver";
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text1
+  {
+    preset Bounds = <30,170,190,200>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Duration";
+    preset Font = Resources::FontSmall;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text2
+  {
+    preset Bounds = <10,250,100,280>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Vertical";
+    preset Font = Resources::FontSmall;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton SwitchVertical
+  {
+    preset Bounds = <20,200,91,250>;
+    preset Appearance = WidgetSet::Switch_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton SwitchHorizontal
+  {
+    preset Bounds = <130,200,200,250>;
+    preset Appearance = WidgetSet::Switch_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text4
+  {
+    preset Bounds = <120,250,210,280>;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+    preset String = "Horizontal";
+    preset Font = Resources::FontSmall;
+  }
+
+  // This is the control panel for the levitation screen saver.
+  // It contains the additional control items for the corresponding screen saver.
+  note legend Note
+  {
+    attr Bounds = <240,340,590,440>;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder SliderCount 5
+  $reorder Text0 5
+  $reorder SliderDuration 5
+  $reorder Caption 1
+  $reorder Text1 2
+  $reorder Text2 2
+  $reorder SwitchVertical 2
+  $reorder SwitchHorizontal 2
+  $reorder Text4 1
+}
+
+// The base class of all control panels.
+$rect <250,620,450,660>
+$output false
+class ControlPanel : Core::Group
+{
+  $rect <240,0,440,40>
+  inherited property Bounds = <0,0,220,400>;
+
+  $rect <240,180,440,220>
+  inherited method UpdateLayout()
+  {
+    // Per default, the panel will always arrange itself in the bottom right corner of the given
+    // aBoundsArea.
+    Bounds.origin = Owner.Bounds.origin + Owner.Bounds.size - aSize;
+
+  }
+
+  $rect <20,20,160,60>
+  object Views::Frame Frame
+  {
+    preset Bounds = <0,0,220,400>;
+    preset Bitmap = Resources::DefaultFrame;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton NextButton
+  {
+    preset Bounds = <10,290,210,340>;
+    preset Label = "Next Screen Saver";
+    preset Appearance = WidgetSet::PushButton_Lime_Medium;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text CaptionText
+  {
+    preset Bounds = <10,10,210,60>;
+    preset WrapText = true;
+    preset String = "Control Panel";
+    preset Font = Resources::FontMedium;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Logo
+  {
+    preset Bounds = <40,350,183,382>;
+    preset AutoSize = true;
+    preset Bitmap = Res::Logo;
+  }
+
+  // This slot method is connected to the KeyHandler. It will be invoked, when the \
+  // user has pressed the Left/Right/Up/Down keys.
+  $rect <240,280,440,320>
+  slot onKeyPressSlot
+  {
+    var Core::Direction direction = Core::Direction.None;
+    var Core::View      view;
+
+    // Depending on the pressed key, determine the direction to look for
+    // other widgets.
+    switch ( KeyHandler.Code )
+    {
+      case Core::KeyCode.Left  : direction = Core::Direction.Left;
+      case Core::KeyCode.Right : direction = Core::Direction.Right;
+      case Core::KeyCode.Up    : direction = Core::Direction.Top;
+      case Core::KeyCode.Down  : direction = Core::Direction.Bottom;
+      default :;
+    }
+
+    // Try to find another widget in the given direction relative to the
+    // currently selected (Focus) widget. Search for widgets able to handle
+    // keyboard inputs only (Enabled and Focusable).
+    view = FindViewInDirection( Focus, direction,
+                                Core::ViewState[ Enabled, Focusable ]);
+
+    // Item found? Select this widget then.
+    if ( view != null )
+      Focus = view;
+  }
+
+  // This is a key press handler. It responds to the Up/Down/Left/Right key events \
+  // and passes them to the onPressKey slot method.
+  $rect <240,240,440,280>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onKeyPressSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = onKeyPressSlot;
+  }
+
+  // This is a property.
+  $rect <240,50,440,90>
+  property string Caption = 0;
+
+  $rect <240,100,440,140>
+  onset Caption
+  {
+    pure Caption = value;
+    CaptionText.String = value;
+  }
+
+  // This is the base class of the different control panels used within the demo.
+  // It contains the background, the caption text, the icon image and a button to \
+  // navigate to the next screen saver.
+  note legend Note
+  {
+    attr Bounds = <240,340,590,440>;
+  }
+}
+
+// Levitation Screen Saver
+note group Note
+{
+  attr Bounds = <20,0,470,140>;
+}
+
+// Carousel Screen Saver
+note group Note1
+{
+  attr Bounds = <20,150,470,290>;
+}
+
+// Perspective Screen Saver
+note group Note2
+{
+  attr Bounds = <20,300,470,440>;
+}
+
+// Starfield Screen Saver
+note group Note3
+{
+  attr Bounds = <20,450,470,590>;
+}
+
+// The 'LevitationScreenSaver' displays a set of images in a levitation manner. The \
+// single images are objects from the class 'LevitationImage'. In order to configure \
+// the screen saver object dynamically, a 'LevitationControlPanel' can be used and \
+// connected with the corresponding properties.
+note legend Note4
+{
+  attr Bounds = <480,0,860,140>;
+}
+
+// The 'CarouselScreenSaver' displays three rows of images in an image Carousel. \
+// The single images are objects from the class 'CarouselImage'. In order to configure \
+// the screen saver object dynamically, a 'CarouselControlPanel' can be used and \
+// connected with the corresponding properties.
+note legend Note5
+{
+  attr Bounds = <480,150,860,290>;
+}
+
+// The 'PerspectiveScreenSaver' displays three rows of images in a perspective rotated \
+// layer. The single images are objects from the class 'PerspectiveImage'. In order \
+// to configure the screen saver object dynamically, a 'PerspectiveControlPanel' \
+// can be used and connected with the corresponding properties.
+note legend Note6
+{
+  attr Bounds = <480,300,860,440>;
+}
+
+// The 'StarfieldScreenSaver' displays a set of images in a star field manner. The \
+// single images are objects from the class 'StarfieldImage'. In order to configure \
+// the screen saver object dynamically, a 'StarfieldControlPanel' can be used and \
+// connected with the corresponding properties.
+note legend Note7
+{
+  attr Bounds = <480,450,860,590>;
+}

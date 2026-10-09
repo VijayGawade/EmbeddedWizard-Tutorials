@@ -1,0 +1,1286 @@
+﻿$version 15.00
+
+// Color constant for the start action button.
+$rect <440,530,640,570>
+$output false
+const color StartColor = #304F29FF;
+
+// Color constant for the stop action button.
+$rect <440,570,640,610>
+$output false
+const color StopColor = #731717FF;
+
+// This is a GUI component.
+$rect <440,50,640,90>
+$output false
+class WelcomeScreen : Core::Group
+{
+  $rect <500,0,700,40>
+  inherited property Bounds = <0,0,480,272>;
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <0,0,480,272>;
+    preset Bitmap = Coffee::WelcomeBackground;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <200,0,480,270>;
+    preset WrapText = true;
+    preset String = "Embedded\nWizard\nCoffee Machine";
+    preset Font = Coffee::FontLarge;
+  }
+
+  // This is a pulse color effect.
+  $rect <500,40,700,80>
+  object Effects::ColorEffect ColorEffect
+  {
+    preset Symmetric = true;
+    preset CycleDuration = 5000;
+    preset Enabled = true;
+    preset Value2 = #E3DBD8FF;
+    preset Value1 = #CC9767FF;
+    preset Outlet = ^Text.Color;
+  }
+
+  // This is the welcome screen of the coffee machine. This screen is shown after \
+  // starting the machine and it is used as screen saver. A color effect is used \
+  // to make a smooth color animation of the text.
+  note legend Note
+  {
+    attr Bounds = <0,290,480,400>;
+  }
+}
+
+// Base class of all product configuration components with one slider.
+$rect <20,170,220,210>
+$output false
+class Product : Core::Group
+{
+  $rect <500,0,700,40>
+  inherited property Bounds = <0,0,480,272>;
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ProductName
+  {
+    preset Bounds = <0,0,480,60>;
+    preset String = "Product";
+    preset Font = Coffee::FontLarge;
+    preset Color = Coffee::TextColor;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image DirectLeft
+  {
+    preset Bounds = <0,0,60,60>;
+    preset Color = Coffee::TextColor;
+    preset Bitmap = Coffee::DirectionIcons;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image DirectRight
+  {
+    preset Bounds = <420,0,480,60>;
+    preset Color = Coffee::TextColor;
+    preset FrameNumber = 1;
+    preset Bitmap = Coffee::DirectionIcons;
+  }
+
+  $rect <20,20,160,60>
+  object Coffee::HorzSlider SettingsSlider
+  {
+    preset Bounds = <90,100,290,135>;
+    preset MinValue = 0;
+    preset MaxValue = 100;
+    preset CurrentValue = 50;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image SettingsIcon
+  {
+    preset Bounds = <30,93,80,143>;
+    preset Color = Coffee::TextColor;
+    preset FrameNumber = 0;
+    preset Bitmap = Coffee::SettingIcons;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text MinCaption
+  {
+    preset Bounds = <90,140,190,170>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "weak";
+    preset Font = Coffee::FontSmall;
+    preset Color = Coffee::TextColor;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text MaxCaption
+  {
+    preset Bounds = <190,140,290,170>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "strong";
+    preset Font = Coffee::FontSmall;
+    preset Color = Coffee::TextColor;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image ProductIcon
+  {
+    preset Bounds = <350,70,430,150>;
+    preset Color = Coffee::TextColor;
+    preset FrameNumber = 0;
+    preset Bitmap = Coffee::ProductIcons;
+  }
+
+  // This is the base class of all product configuration components with one slider. \
+  // In order to create a dedicated product configurator for the coffee machine, \
+  // derive this class and set the caption, change the slider description and choose \
+  // the icons. 
+  note legend Note
+  {
+    attr Bounds = <0,290,480,420>;
+  }
+}
+
+// Base class of all product configuration components with two sliders.
+$rect <20,220,220,260>
+$output false
+class ExtendedProduct : Coffee::Product
+{
+  $rect <20,20,160,60>
+  inherited object ProductName
+  {
+    preset String = "ExtendendProduct";
+  }
+
+  $rect <20,20,160,60>
+  object Coffee::HorzSlider ExSettingsSlider
+  {
+    preset Bounds = <90,177,290,212>;
+    preset MinValue = 0;
+    preset MaxValue = 100;
+    preset CurrentValue = 50;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image ExSettingsIcon
+  {
+    preset Bounds = <30,170,80,220>;
+    preset Color = Coffee::TextColor;
+    preset FrameNumber = 0;
+    preset Bitmap = Coffee::SettingIcons;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ExMinCaption
+  {
+    preset Bounds = <90,217,190,247>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Min";
+    preset Font = Coffee::FontSmall;
+    preset Color = Coffee::TextColor;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ExMaxCaption
+  {
+    preset Bounds = <190,217,290,247>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "Max";
+    preset Font = Coffee::FontSmall;
+    preset Color = Coffee::TextColor;
+  }
+
+  // This is the base class of all product configuration components with two sliders. \
+  // In order to create a dedicated product configurator for the coffee machine, \
+  // derive this class and set the caption, change the slider descriptions and choose \
+  // the icons. 
+  note legend Note
+  {
+    attr Bounds = <0,290,480,420>;
+  }
+}
+
+// Product configuration component to choose parameters for brewing an espresso.
+$rect <230,170,430,210>
+$output false
+class Espresso : Coffee::Product
+{
+  $rect <20,20,160,60>
+  inherited object ProductName
+  {
+    preset String = "Espresso";
+  }
+
+  $rect <20,20,160,60>
+  inherited object DirectLeft
+  {
+    preset Visible = false;
+  }
+
+  $rect <20,20,160,60>
+  inherited object MinCaption;
+
+  $rect <20,20,160,60>
+  inherited object MaxCaption;
+}
+
+// Product configuration component to choose parameters for brewing a cappuccino.
+$rect <440,170,640,210>
+$output false
+class Cappuccino : Coffee::ExtendedProduct
+{
+  $rect <20,20,160,60>
+  inherited object ProductName
+  {
+    preset String = "Cappuccino";
+  }
+
+  $rect <20,20,160,60>
+  inherited object ProductIcon
+  {
+    preset FrameNumber = 1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ExSettingsIcon
+  {
+    preset FrameNumber = 1;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ExMinCaption
+  {
+    preset String = "less";
+  }
+
+  $rect <20,20,160,60>
+  inherited object ExMaxCaption
+  {
+    preset String = "more";
+  }
+}
+
+// Product configuration component to choose parameters for brewing a coffee.
+$rect <440,210,640,250>
+$output false
+class Coffee : Coffee::ExtendedProduct
+{
+  $rect <20,20,160,60>
+  inherited object ProductName
+  {
+    preset String = "Coffee";
+  }
+
+  $rect <20,20,160,60>
+  inherited object ProductIcon
+  {
+    preset FrameNumber = 2;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ExSettingsIcon
+  {
+    preset FrameNumber = 2;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ExMinCaption
+  {
+    preset String = "regular";
+  }
+
+  $rect <20,20,160,60>
+  inherited object ExMaxCaption
+  {
+    preset String = "large";
+  }
+}
+
+// Product configuration component to choose parameters for brewing hot water.
+$rect <440,250,640,290>
+$output false
+class HotWater : Coffee::ExtendedProduct
+{
+  $rect <20,20,160,60>
+  inherited object ProductName
+  {
+    preset String = "Hot Water";
+  }
+
+  $rect <20,20,160,60>
+  inherited object DirectRight
+  {
+    preset Visible = false;
+  }
+
+  $rect <20,20,160,60>
+  inherited object SettingsIcon
+  {
+    preset FrameNumber = 3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object MinCaption
+  {
+    preset String = "warm";
+  }
+
+  $rect <20,20,160,60>
+  inherited object MaxCaption
+  {
+    preset String = "hot";
+  }
+
+  $rect <20,20,160,60>
+  inherited object ProductIcon
+  {
+    preset FrameNumber = 3;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ExSettingsIcon
+  {
+    preset FrameNumber = 2;
+  }
+
+  $rect <20,20,160,60>
+  inherited object ExMinCaption
+  {
+    preset String = "regular";
+  }
+
+  $rect <20,20,160,60>
+  inherited object ExMaxCaption
+  {
+    preset String = "large";
+  }
+}
+
+// This is a class.
+$rect <230,50,430,90>
+$output false
+$multilingual true
+class BrewingScreen : Core::Group
+{
+  $rect <500,0,700,40>
+  inherited property Bounds = <0,0,480,272>;
+
+  $rect <500,330,700,370>
+  inherited method UpdateViewState()
+  {
+    aState;
+
+    /* set percent string */
+    ProgressText.String = string( Progress ) + "%%";
+
+    /* place foreground cup over background cup */
+    FgCup.Bounds = BgCup.Bounds;
+
+    /* and show part that corresponds current progress */
+    FgCup.Bounds.y1 = FgCup.Bounds.y2 - ( BgCup.Bounds.h * Progress ) / 100;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <0,0,480,272>;
+    preset Bitmap = Coffee::BrewingBackground;
+  }
+
+  $rect <20,20,160,60>
+  object Coffee::ActionButton ActionButton
+  {
+    preset Bounds = <350,162,480,272>;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text ProgressText
+  {
+    preset Bounds = <190,170,300,230>;
+    preset String = "0%%";
+    preset Font = Coffee::FontLarge;
+    preset Color = Coffee::TextColor;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text WaitText
+  {
+    preset Bounds = <10,220,180,270>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = "Please wait...";
+    preset Font = Coffee::FontSmall;
+    preset Color = Coffee::TextColor;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image BgCup
+  {
+    preset Bounds = <190,30,300,170>;
+    preset Color = #6C442AFF;
+    preset Bitmap = Coffee::Cup;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image FgCup
+  {
+    preset Bounds = <180,150,290,150>;
+    preset Color = Coffee::TextColor;
+    preset Alignment = Views::ImageAlignment[AlignHorzCenter, AlignVertBottom];
+    preset Bitmap = Coffee::Cup;
+  }
+
+  // This is a bool change effect.
+  $rect <500,50,700,90>
+  object Effects::BoolEffect BlinkEffect
+  {
+    preset Outlet = ^WaitText.Visible;
+    preset CycleDuration = 500;
+    preset InterCycleDelay = 500;
+    preset Enabled = true;
+  }
+
+  // This is an int32 change effect.
+  $rect <500,90,700,130>
+  object Effects::Int32Effect ProgressEffect
+  {
+    preset Timing = Effects::Timing.EaseIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 7500;
+    preset Enabled = true;
+    preset Value2 = 100;
+    preset Outlet = ^Progress;
+  }
+
+  // This is a property.
+  $rect <500,140,700,180>
+  property int32 Progress = 0;
+
+  $rect <500,180,700,220>
+  onset Progress
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Progress == value )
+      return;
+
+    // Remember the property's new value.
+    pure Progress = value;
+
+    InvalidateViewState();
+  }
+
+  // Slot property to register a slot method that will be called when the user presses \
+  // the action button.
+  $rect <500,230,700,270>
+  property slot OnCancelBrewing;
+
+  $rect <500,270,700,310>
+  onset OnCancelBrewing
+  {
+    /* check for any update */
+    if ( pure OnCancelBrewing == value )
+      return;
+
+    /* store the given slot method */
+    pure OnCancelBrewing = value;
+
+    /* connect the action button with the provided slot method */
+    ActionButton.OnAction = value;
+    ProgressEffect.OnFinished = value;
+
+  }
+
+  // This is the brewing screen of the coffee machine. This screen is shown when \
+  // the user has configured a product and has started the brewing process. The progress \
+  // of the brewing process is shown a cup that is filled and by a percent string.
+  note legend Note
+  {
+    attr Bounds = <0,290,480,400>;
+  }
+}
+
+// This class implements a 'slider' widget. The user can touch and drag the slider \
+// to change the slider's value accordingly. The current value of the slider is represented \
+// by the property @CurrentValue. The valid range for this value is determined by \
+// the properties @MinValue and @MaxValue.
+// While the user is dragging the slider, the widget sends signals to the slot method \
+// stored in the property @OnChange. When the user terminates the interaction, a \
+// signal is sent to the slot method stored in @OnApply.
+// Alternatively the property @Outlet can refer to any other 'int32' property the \
+// widget should remain synchronized with. When the user drags the slider, the affected \
+// property is automatically updated to reflect the slider's current value. On the \
+// other hand, when the referred property is modified by another one, the slider \
+// is automatically notified to remain in sync with the property.
+// This approach follows the Model-View-Controller (MVC) programming paradigm. Here \
+// the slider represents the 'View' and the property referred via 'Outlet' can be \
+// seen as a part of the 'Model'.
+$rect <20,370,220,410>
+$output false
+class HorzSlider : Core::Group
+{
+  $rect <20,140,220,180>
+  inherited property Bounds = <0,0,200,35>;
+
+  $rect <250,360,450,400>
+  inherited method UpdateViewState()
+  {
+    /* always invoke the inherited method */
+    super( aState );
+
+    var int32 newPos = 0;
+
+    /* convert the slider's current value to a pixel position */
+    if ( MaxValue != MinValue )
+      newPos = (( CurrentValue - MinValue ) * Bounds.w ) / ( MaxValue - MinValue );
+
+    /* take care that the width is a multiple of 10 to show only entire segments */
+    newPos = ((newPos + 5 ) / 10 ) * 10;
+
+    /* set the width of the foreground to the calculated position */
+    Foreground.Bounds.x2 = newPos;
+
+
+  }
+
+  // State management
+  note group Note4
+  {
+    attr Bounds = <240,320,460,420>;
+  }
+
+  // Controller events
+  note group Note3
+  {
+    attr Bounds = <240,200,460,300>;
+  }
+
+  // Touch screen events
+  note group Note1
+  {
+    attr Bounds = <10,200,230,420>;
+  }
+
+  // This internal variable stores the slider's value at the moment when the user \
+  // begun to drag. It is used to calculate the new value from the knob displacement.
+  $rect <20,360,220,400>
+  var int32 touchStartValue;
+
+  // This internal slot method is called when the user drags the finger while pressing \
+  // the slider's area. The method calculates from the made displacement the alternation \
+  // of the slider's value and updates the slider accordingly.
+  $rect <20,320,220,360>
+  slot onDragTouch
+  {
+    /* calculate the displacement in pixel relative to the originally touched position */
+    var point delta    = TouchHandler.CurrentPos - TouchHandler.HittingPos;
+    var int32 oldValue = CurrentValue;
+
+    /* calculate from the knob displacement the alternation of the slider's value */
+    CurrentValue = (( delta.x * ( MaxValue - MinValue )) / Bounds.w ) + touchStartValue;
+
+    /* return if nothing has changed */
+    if ( oldValue == CurrentValue )
+      return;
+
+    /* notify the owner of the slider that the value has been changed */
+    postsignal OnChange;
+
+    /* if a property is associated to the slider, update it accordingly and notify other widgets */
+    if ( Outlet != null )
+    {
+      Outlet^ = CurrentValue;
+      notifyobservers Outlet; 
+    }
+  }
+
+  // This internal slot method is called when the user releases the screen after \
+  // touching the slider --> when the drag interaction ends.
+  $rect <20,280,220,320>
+  slot onReleaseTouch
+  {
+    /* the appearance of the slider may change, when the touch interactin ends */
+    InvalidateViewState();
+
+    /* notify owner if the user changed the slider's value */
+    if ( CurrentValue != touchStartValue )
+      postsignal OnApply;
+  }
+
+  // This internal slot method is called when the user touches the slider area --> \
+  // when the drag interaction begins.
+  $rect <20,240,220,280>
+  slot onPressTouch
+  {
+    /* immediately set the current value according touch position */
+    var point pos = TouchHandler.CurrentPos;
+    CurrentValue = (( pos.x * ( MaxValue - MinValue )) / Bounds.w );
+
+    /* remember the slider's value at the beginning of the drag operation */
+    touchStartValue = CurrentValue;
+
+    /* finally, force an update of the component */
+    InvalidateViewState();
+
+
+  }
+
+  $rect <450,140,650,180>
+  onset Outlet
+  {
+    /* check if the new outlet differs from the currently used outlet */
+    if ( pure Outlet == value )
+      return;
+
+    /* detach from the previous outlet */
+    detachobserver outletSlot, pure Outlet;
+
+    /* store the new outlet */
+    pure Outlet = value;
+
+    /* ... and attach to the new one */
+    attachobserver outletSlot, value;
+
+    /* finally, update the current state of the widget by posting a signal to the outlet slot */
+    if ( value != null )
+      postsignal outletSlot;
+  }
+
+  $rect <650,50,850,90>
+  onset MaxValue
+  {
+    /* check if the given value differs from the current value */
+    if ( pure MaxValue == value )
+      return;
+
+    /* store the new value */
+    pure MaxValue = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  $rect <450,50,650,90>
+  onset MinValue
+  {
+    /* check if the given value differs from the current value */
+    if ( pure MinValue == value )
+      return;
+
+    /* store the new value */
+    pure MinValue = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  $rect <250,50,450,90>
+  onset CurrentValue
+  {
+    /* limit the given value to the range between MinValue and MaxValue */
+    if ( value < MinValue )
+      value = MinValue;
+    if ( value > MaxValue )
+      value = MaxValue;
+
+    /* check if the given value differs from the current value */
+    if ( pure CurrentValue == value )
+      return;
+
+    /* store the new value */
+    pure CurrentValue = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler TouchHandler
+  {
+    preset Layout = Core::Layout[];
+    preset Point4 = <0,35>;
+    preset Point3 = <200,35>;
+    preset Point2 = <200,0>;
+    preset Point1 = <0,0>;
+    preset OnDrag = onDragTouch;
+    preset OnRelease = onReleaseTouch;
+    preset OnPress = onPressTouch;
+    preset MaxStrikeCount = 100;
+  }
+
+  // The property 'OnApply' can refer to a slot method, which will receive a signal \
+  // when the user has released the slider. Thereupon the method's logic will be \
+  // executed. In the associated slot method you can evaluate the slider's current \
+  // value @CurrentValue.
+  $rect <650,140,850,180>
+  property slot OnApply = null;
+
+  // The property 'OnChange' can refer to a slot method, which will receive a signal \
+  // each time the user changes the sliders position. Thereupon the method's logic \
+  // will be executed. In the associated slot method you can evaluate the slider's \
+  // current value @CurrentValue.
+  $rect <650,100,850,140>
+  property slot OnChange = null;
+
+  // The property 'Outlet' can refer to any other 'int32' property the widget should \
+  // remain synchronized with. When the user drags the slider's knob, the affected \
+  // property is automatically updated to reflect the slider's current value. On \
+  // the other hand, when the referred property is modified by another one, the slider \
+  // is automatically notified to remain in sync with the property.
+  // This approach follows the Model-View-Controller (MVC) programming paradigm. \
+  // Here the slider represents the 'View' and the property referred via 'Outlet' \
+  // can be seen as a part of the 'Model'.
+  $rect <450,100,650,140>
+  property ^int32 Outlet = null;
+
+  // The property 'MaxValue' defines the slider's possible value at the right end \
+  // of the slider's movement range.
+  $rect <650,10,850,50>
+  property int32 MaxValue = 100;
+
+  // The property 'MinValue' defines the slider's possible value at the left end \
+  // of the slider's movement range.
+  $rect <450,10,650,50>
+  property int32 MinValue = 0;
+
+  // The property 'CurrentValue' stores the momentary value of the slider. The value \
+  // is limited automatically to the range between @MinValue and @MaxValue.
+  $rect <250,10,450,50>
+  property int32 CurrentValue = 50;
+
+  // This is a wallpaper view.
+  $rect <20,20,160,60>
+  object Views::Wallpaper Background
+  {
+    preset Bounds = <0,0,200,35>;
+    preset Color = #4F4F4FFF;
+    preset Bitmap = Coffee::SliderArea;
+  }
+
+  // This is a wallpaper view.
+  $rect <20,20,160,60>
+  object Views::Wallpaper Foreground
+  {
+    preset Bounds = <0,0,200,35>;
+    preset Color = Coffee::TextColor;
+    preset Bitmap = Coffee::SliderArea;
+  }
+
+  // This slot method will receive a signal, if the value of the property assigned \
+  // to @Outlet has been changed by another widget or by the application logic. In \
+  // response to this notification, the widget will update itself.
+  $rect <260,240,440,280>
+  slot outletSlot
+  {
+    /* update the current state of the widget */
+    if ( Outlet != null )
+      CurrentValue = Outlet^;
+  }
+
+  // The class 'HorzSlider' implements a horizontal slider widget, that is used to \
+  // change a value by moving the level indicator. 
+  // The property 'CurrentValue' represents the momentary value of the widget and \
+  // corresponds to the size of the level indicatorb. The supported value range of \
+  // the slider can be defined by setting the properties 'MinValue' and 'MaxValue'.
+  // A slider can be connected with an Int32 'Outlet' property to show the current \
+  // value of the property and to change it by setting the indicator level. 
+  // Additionally, a slider can trigger the slot methods 'OnChange' and 'OnApply' \
+  // as soon as the user has changed the value or released the slider.
+  note legend Note
+  {
+    attr Bounds = <10,430,950,570>;
+  }
+}
+
+// This class implements a 'push button' widget. When the user presses the button, \
+// a signal is sent to the slot method stored in its @OnAction property.
+$rect <230,370,430,410>
+$output false
+class ActionButton : Core::Group
+{
+  $rect <20,140,220,180>
+  inherited property Bounds = <0,0,130,110>;
+
+  $rect <250,230,450,270>
+  inherited method UpdateViewState()
+  {
+    /* invoke the inherited method */
+    super( aState );
+
+    /* determine the new state of the push button */
+    var bool isPressed  = ( TouchHandler.Down && TouchHandler.Inside );
+    var color bgColor;
+
+    /* select the icon according current action type */
+    if ( pure ActionType  == Coffee::ActionType.Start )
+    {
+      Image.FrameNumber = 0;
+      bgColor = Coffee::StartColor;
+    }
+    else
+    {
+      Image.FrameNumber = 1;
+      bgColor = Coffee::StopColor;
+    }
+
+    /* colorize button according current state of the button */
+    if ( isPressed )
+    {
+      Background.Color = #80808080;
+      Border.Color     = bgColor;
+      Image.Color      = bgColor;
+    }
+    else
+    {
+      Background.Color = bgColor;
+      Border.Color     = Coffee::TextColor;
+      Image.Color      = Coffee::TextColor;
+    }
+
+  }
+
+  // State management
+  note group Note4
+  {
+    attr Bounds = <240,190,460,320>;
+  }
+
+  // Touch screen events
+  note group Note1
+  {
+    attr Bounds = <10,190,230,320>;
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler TouchHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Point4 = <10,110>;
+    preset Point3 = <130,110>;
+    preset Point2 = <130,10>;
+    preset Point1 = <10,10>;
+    preset OnLeave = enterLeaveSlot;
+    preset OnEnter = enterLeaveSlot;
+    preset OnRelease = pressReleaseSlot;
+    preset OnPress = pressReleaseSlot;
+    preset MaxStrikeCount = 100;
+  }
+
+  // The property 'OnAction' can refer to a slot method, which will receive a signal \
+  // as soon as the user has activated the button. Thereupon the method's logic will \
+  // be executed.
+  $rect <170,10,370,50>
+  property slot OnAction = null;
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,130,110>;
+    preset Bitmap = Coffee::ActionButtonBorder;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Border
+  {
+    preset Bounds = <0,0,130,110>;
+    preset FrameNumber = 1;
+    preset Bitmap = Coffee::ActionButtonBorder;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <55,50,105,100>;
+    preset FrameNumber = 1;
+    preset Bitmap = Coffee::ActionButtonIcons;
+  }
+
+  // The property 'ActionType' is used to define the type and the appearance of the \
+  // button.
+  $rect <390,10,590,50>
+  property Coffee::ActionType ActionType = Coffee::ActionType.Stop;
+
+  $rect <390,50,590,90>
+  onset ActionType
+  {
+    /* check for any updates */
+    if ( pure ActionType == value )
+      return;
+
+    /* store the new value */
+    pure ActionType = value;
+
+    /* finally, force an update of the component */
+    InvalidateViewState();
+
+  }
+
+  // This internal slot method is used to receive the corresponding signals form \
+  // the touch handler.
+  $rect <30,270,210,310>
+  slot pressReleaseSlot
+  {
+    /* releasing the finger outside the button area is ignored */
+    if ( !TouchHandler.Down && TouchHandler.Inside )
+    {
+      /* inform the connected slot method */
+      idlesignal OnAction;
+    }
+  }
+
+  // This internal slot method is used to receive the corresponding signals form \
+  // the touch handler.
+  $rect <30,230,210,270>
+  slot enterLeaveSlot
+  {
+    /* force an update of the button */
+    InvalidateViewState();
+  }
+
+  // The class 'ActionButton' implements a simple push button to start or cancel \
+  // a certain action.
+  // The property 'ActionType' is used to choose the type of action button.
+  // Each time the user has pressed the button a signal is sent to the slot method \
+  // 'OnAction'.
+  note legend Note
+  {
+    attr Bounds = <10,330,700,430>;
+  }
+}
+
+// This is an enumeration definition for selecting the type of ActionButton.
+$rect <440,370,640,410>
+$output false
+enum ActionType
+{
+  // Enum for start action.
+  $rect <10,10,210,50>
+  item Start;
+
+  // Enum for stop action.
+  $rect <220,10,420,50>
+  item Stop;
+}
+
+// Background images for the coffee machine screens.
+$rect <440,770,640,810>
+$output false
+resource Resources::Bitmap WelcomeBackground
+{
+  attr bitmapfile FileName = .\Res\WelcomeBackground.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for the action button.
+$rect <20,590,220,630>
+$output false
+resource Resources::Bitmap ActionButtonBorder
+{
+  attr bitmapfile FileName = .\Res\ActionButtonBorder.png;
+  attr framesize FrameSize = <130,110>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for the action button.
+$rect <20,630,220,670>
+$output false
+resource Resources::Bitmap ActionButtonIcons
+{
+  attr bitmapfile FileName = .\Res\ActionButtonIcons.png;
+  attr framesize FrameSize = <40,40>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for the slider.
+$rect <230,490,430,530>
+$output false
+resource Resources::Bitmap SliderArea
+{
+  attr bitmapfile FileName = .\Res\SliderArea.png;
+  attr framesize FrameSize = <10,35>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for left/right indicator.
+$rect <230,610,430,650>
+$output false
+resource Resources::Bitmap DirectionIcons
+{
+  attr bitmapfile FileName = .\Res\DirectionIcons.png;
+  attr framesize FrameSize = <15,24>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Set of icons for the different coffee machine parameters.
+$rect <230,570,430,610>
+$output false
+resource Resources::Bitmap SettingIcons
+{
+  attr bitmapfile FileName = .\Res\SettingIcons.png;
+  attr framesize FrameSize = <50,50>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Set of icons for the different coffee machine producs.
+$rect <230,530,430,570>
+$output false
+resource Resources::Bitmap ProductIcons
+{
+  attr bitmapfile FileName = .\Res\ProductIcons.png;
+  attr framesize FrameSize = <80,80>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmap resource for the brewing screen.
+$rect <230,650,430,690>
+$output false
+resource Resources::Bitmap Cup
+{
+  attr bitmapfile FileName = .\Res\Cup.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Background images for the coffee machine screens.
+$rect <20,770,220,810>
+$output false
+resource Resources::Bitmap ProductBackground
+{
+  attr bitmapfile FileName = .\Res\ProductBackground.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Background images for the coffee machine screens.
+$rect <230,770,430,810>
+$output false
+resource Resources::Bitmap BrewingBackground
+{
+  attr bitmapfile FileName = .\Res\BrewingBackground.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a font resource.
+$rect <20,490,220,530>
+$output false
+resource Resources::Font FontLarge
+{
+  attr fontname FontName = Roboto;
+  attr fontheight Height = 48;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0xFF;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// This is a font resource.
+$rect <20,530,220,570>
+$output false
+resource Resources::Font FontSmall
+{
+  attr fontname FontName = Roboto;
+  attr fontheight Height = 24;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0xFF;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// Color constant used for all text items.
+$rect <440,490,640,530>
+$output false
+const color TextColor = #FFFFFFFF;
+
+// Product selection screen.
+$rect <20,50,220,90>
+$output false
+class ProductScreen : Core::Group
+{
+  $rect <510,0,710,40>
+  inherited property Bounds = <0,0,480,272>;
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <0,0,480,272>;
+    preset Bitmap = Coffee::ProductBackground;
+  }
+
+  // This is a slide gesture handler.
+  $rect <20,20,160,60>
+  object Core::SlideTouchHandler SlideTouchHandler
+  {
+    preset Bounds = <0,0,480,272>;
+    preset SnapNext = <480,0>;
+    preset SlideVert = false;
+  }
+
+  // This is an outline view to group other views together.
+  $rect <20,20,160,60>
+  object Core::Outline Outline
+  {
+    preset Bounds = <0,0,480,272>;
+    preset SlideHandler = SlideTouchHandler;
+    preset Formation = Core::Formation.LeftToRight;
+  }
+
+  $rect <20,20,160,60>
+  object Coffee::Espresso Espresso
+  {
+    preset Bounds = <20,20,500,292>;
+    preset Embedded = true;
+  }
+
+  $rect <20,20,160,60>
+  object Coffee::Cappuccino Cappuccino
+  {
+    preset Bounds = <70,70,550,342>;
+    preset Embedded = true;
+  }
+
+  $rect <20,20,160,60>
+  object Coffee::Coffee Coffee
+  {
+    preset Bounds = <130,120,610,392>;
+    preset Embedded = true;
+  }
+
+  $rect <20,20,160,60>
+  object Coffee::HotWater HotWater
+  {
+    preset Bounds = <190,170,670,442>;
+    preset Embedded = true;
+  }
+
+  $rect <20,20,160,60>
+  object Coffee::ActionButton ActionButton
+  {
+    preset Bounds = <350,162,480,272>;
+    preset ActionType = Coffee::ActionType.Start;
+  }
+
+  // Slot property to register a slot method that will be called when the user presses \
+  // the action button.
+  $rect <510,200,710,240>
+  property slot OnStartBrewing;
+
+  $rect <510,240,710,280>
+  onset OnStartBrewing
+  {
+    /* check for any update */
+    if ( pure OnStartBrewing == value )
+      return;
+
+    /* store the given slot method */
+    pure OnStartBrewing = value;
+
+    /* connect the action button with the provided slot method */
+    ActionButton.OnAction = value;
+  }
+
+  // This is the product screen of the coffee machine. This screen is used to select \
+  // a coffee machine product, to configure it and to start the brewing process. \
+  // All different product configuration components (e.g. Espresso, Cappuccino,...) \
+  // are embedded within an Outline component. The Outline takes care that the embedded \
+  // components are arranged automatically in a horizontal order. The Outline is \
+  // combined with a SlideTouchHandler, so that the current coffee machine product \
+  // can be selected by a simple wipe gesture.
+  note legend Note
+  {
+    attr Bounds = <0,290,700,420>;
+  }
+}
+
+// Coffee Machine Screens
+note group Note
+{
+  attr Bounds = <10,10,650,110>;
+}
+
+// Classes for Product Configuration
+note group Note1
+{
+  attr Bounds = <10,120,650,310>;
+}
+
+// Coffee Machine Widgets
+note group Note2
+{
+  attr Bounds = <10,320,650,430>;
+}
+
+// Fonts, Bitmaps and Colors
+note group Note3
+{
+  attr Bounds = <10,440,650,710>;
+}
+
+// Coffee Machine Background Images
+note group Note4
+{
+  attr Bounds = <10,720,650,830>;
+}

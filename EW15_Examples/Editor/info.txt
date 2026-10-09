@@ -1,0 +1,1 @@
+This example demonstrates the usage of the text editor template and the virtual keyboard, boath are delivered with Embedded Wizard. The editor supports automatic word wrapping and different text alignments.

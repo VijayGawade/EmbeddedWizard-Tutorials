@@ -1,0 +1,1 @@
+This demo shows the implementation of a washing machine with a couple of fancy scrollable list widgets to choose the washing program and parameters. The speciality of this sample application is the magnification effect of the centered list items and the soft fade-in/fade-out effects.

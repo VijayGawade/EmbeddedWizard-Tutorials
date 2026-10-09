@@ -1,0 +1,818 @@
+﻿$version 15.00
+
+// This UI component implements a watch.
+$rect <20,110,220,150>
+$output false
+class Base : Core::Group
+{
+  $rect <10,340,210,380>
+  inherited property Bounds = <0,0,240,240>;
+
+  $rect <10,380,210,420>
+  inherited method UpdateViewState()
+  {
+    aState;
+
+    /* appearance has to be implemented in derived classes */
+  }
+
+  $rect <10,300,210,340>
+  inherited method Init()
+  {
+    if ( pure AutoUpdate )
+      signal updateTime;
+  }
+
+  // Tis method is invoked periodically to update the current time.
+  $rect <480,250,680,290>
+  slot updateTime
+  {
+    // Get the current time
+    var Core::Time time = Time.CurrentTime;
+
+    Hour   = time.Hour;
+    Minute = time.Minute;
+    Second = time.Second;
+
+
+  }
+
+  $rect <270,210,470,250>
+  object Core::Time Time;
+
+  $rect <270,250,470,290>
+  object Core::Timer updateTimer
+  {
+    preset OnTrigger = updateTime;
+    preset Period = 100;
+    preset Enabled = true;
+  }
+
+  $rect <470,0,670,40>
+  onset Hour
+  {
+    // Validate the value
+    value = value % 24;
+
+    // Nothing to do
+    if ( pure Hour == value )
+      return;
+
+    // Remember the new value
+    pure Hour = value;
+
+    // Recalculate the position of the watch hands
+    InvalidateViewState();
+  }
+
+  $rect <470,40,670,80>
+  onset Minute
+  {
+    // Validate the value
+    value = value % 60;
+
+    // Nothing to do
+    if ( pure Minute == value )
+      return;
+
+    // Remember the new value
+    pure Minute = value;
+
+    // Recalculate the position of the watch hands
+    InvalidateViewState();
+  }
+
+  $rect <470,80,670,120>
+  onset Second
+  {
+    // Validate the value
+    value = value % 60;
+
+    // Nothing to do
+    if ( pure Second == value )
+      return;
+
+    // Remember the new value
+    pure Second = value;
+
+    // Recalculate the position of the watch hands
+    InvalidateViewState();
+  }
+
+  $rect <470,120,670,160>
+  onset AutoUpdate
+  {
+    // No changes? Nothing to do.
+    if ( pure AutoUpdate == value )
+      return;
+
+    // Remember the new value
+    pure AutoUpdate = value;
+
+    // Start/Stop the update Timer
+    updateTimer.Enabled = value;
+
+    // If the current time view has been activated - update the screen
+    // immediatelly.
+    if ( value )
+      postsignal updateTime;
+  }
+
+  $rect <470,160,670,200>
+  onset TimeZone
+  {
+    // No changes? Nothing to do.
+    if ( pure TimeZone == value )
+      return;
+
+    // Remember the new value
+    pure TimeZone = value;
+
+    // Recalculate the position of the watch hands
+    InvalidateViewState();
+  }
+
+  // The property 'Hour' stores the time to show in the watch.
+  $rect <270,0,470,40>
+  property int32 Hour = 0;
+
+  // The property 'Minute' stores the time to show in the watch.
+  $rect <270,40,470,80>
+  property int32 Minute = 0;
+
+  // The property 'Second' stores the time to show in the watch.
+  $rect <270,80,470,120>
+  property int32 Second = 20;
+
+  // This property 'AutoUpdate' determines, whether the watch should update itself \
+  // with the current time. Otherwise, the displayed time is taken from the properties \
+  // @Hour, @Minute and @Second.
+  $rect <270,120,470,160>
+  property bool AutoUpdate = true;
+
+  // The property 'TimeZone' contains an additional time zone offset in hours.
+  $rect <270,160,470,200>
+  property int32 TimeZone = 0;
+
+  // This is the base class of all analog watches and provides the interface to control \
+  // a watch.
+  // The watch can either show a given time by setting the properties 'Hour', 'Minute' \
+  // and 'Second', or it can show the current system time if the property 'AutoUpdate' \
+  // is true.
+  // The calculation of the needles and shadows is done within the method 'UpdateViewState'.
+  note legend Note
+  {
+    attr Bounds = <220,300,870,420>;
+  }
+}
+
+// This UI component implements a watch.
+$rect <30,210,230,250>
+$output false
+class Watch1 : AnimatedWatch::Base
+{
+  $rect <10,260,210,300>
+  inherited method UpdateViewState()
+  {
+    aState;
+
+    // Calculate the rotation angles of the three indicators
+    var float min = ((float)Minute * 6.0 ) + ((float)Second * 0.1 );
+    var float hou = ((float)( Hour + TimeZone ) * 30.0 ) + ((float)Minute * 0.5 ) + ((float)Second * ( 0.5 / 60.0 ));
+
+    // Rotate the three indicators arround the center of the clock
+    HoursImage.  RotateAndScale(<120,120>, -hou, 1.0, 1.0 );
+    MinutesImage.RotateAndScale(<120,120>, -min, 1.0, 1.0 );
+
+    // Rotate the three shadows arround a displaced center of the clock
+    HoursShadowImage.  RotateAndScale(<123,123>, -hou, 1.0, 1.0 );
+    MinutesShadowImage.RotateAndScale(<123,123>, -min, 1.0, 1.0 );
+
+    // start the soft movement of the seconds hand - or just set the new seconds value
+    FloatEffect.Enabled = false;
+
+    if ( Soft )
+      FloatEffect.Enabled = true;
+
+    postsignal updateSeconds;
+
+  }
+
+  // This method implements the jitter animation of the seconds indicator.
+  $rect <480,200,680,240>
+  slot updateSeconds
+  {
+    var float sec = (float)Second * 6.0;
+    if ( Soft )
+      sec = sec + FloatEffect.Value;
+
+    SecondsImage.RotateAndScale(<120,120>, -sec, 1.0, 1.0 );
+    SecondsShadowImage.RotateAndScale(<123,123>, -sec, 1.0, 1.0 );
+
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,240,240>;
+    preset Bitmap = AnimatedWatch::Watch1Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage HoursShadowImage
+  {
+    preset Point4 = <126,185>;
+    preset Point3 = <185,185>;
+    preset Point2 = <185,60>;
+    preset Point1 = <126,60>;
+    preset SourceAnchor = <3,73>;
+    preset Opacity = 128;
+    preset Bitmap = AnimatedWatch::Watch1HourShadow;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage HoursImage
+  {
+    preset Point4 = <130,171>;
+    preset Point3 = <171,171>;
+    preset Point2 = <171,58>;
+    preset Point1 = <130,58>;
+    preset SourceAnchor = <3,73>;
+    preset Bitmap = AnimatedWatch::Watch1Hour;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage MinutesShadowImage
+  {
+    preset Point4 = <128,186>;
+    preset Point3 = <187,186>;
+    preset Point2 = <187,31>;
+    preset Point1 = <128,31>;
+    preset SourceAnchor = <3,104>;
+    preset Opacity = 128;
+    preset Bitmap = AnimatedWatch::Watch1MinuteShadow;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage MinutesImage
+  {
+    preset Point4 = <130,171>;
+    preset Point3 = <171,171>;
+    preset Point2 = <171,28>;
+    preset Point1 = <130,28>;
+    preset SourceAnchor = <3,104>;
+    preset Bitmap = AnimatedWatch::Watch1Minute;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage SecondsShadowImage
+  {
+    preset Point4 = <139,198>;
+    preset Point3 = <180,198>;
+    preset Point2 = <180,33>;
+    preset Point1 = <139,33>;
+    preset SourceAnchor = <7,103>;
+    preset Opacity = 128;
+    preset Bitmap = AnimatedWatch::Watch1SecondShadow;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage SecondsImage
+  {
+    preset Point4 = <140,182>;
+    preset Point3 = <161,182>;
+    preset Point2 = <161,29>;
+    preset Point1 = <140,29>;
+    preset SourceAnchor = <7,103>;
+    preset Bitmap = AnimatedWatch::Watch1Second;
+  }
+
+  // The property 'Soft' determines whether the second indicator should move soft \
+  // or not.
+  $rect <270,150,470,190>
+  property bool Soft = true;
+
+  // This class implements an entire analog watch with three needle indicators to \
+  // show the current hours, minutes and seconds.
+  // In order to make a realistic appearance of the watch, each clock hand has its \
+  // own shadow. The clock hands are turning arround the center of the clock, the \
+  // shadows of the clock hands are turning arround a slightly displaced center of \
+  // the clock.
+  // The additional property 'Soft' controls the update of the seconds indicator. \
+  // If 'Soft' is true, then the seconds hand will move smoothly into the next position \
+  // every second.
+  // The calculation of the needles and shadows is done within the method 'UpdateViewState' \
+  // and 'updateSeconds'.
+  note legend Note
+  {
+    attr Bounds = <220,260,880,460>;
+  }
+
+  $rect <270,200,470,240>
+  object Effects::FloatEffect FloatEffect
+  {
+    preset OnAnimate = updateSeconds;
+    preset Timing = Effects::Timing.EaseIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1000;
+    preset Value2 = 0.0;
+    preset Value1 = -6.0;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder updateSeconds 13
+  $reorder Background 5
+  $reorder HoursShadowImage 5
+  $reorder HoursImage 5
+  $reorder MinutesShadowImage 5
+  $reorder MinutesImage 5
+  $reorder SecondsShadowImage 5
+  $reorder SecondsImage 5
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <230,210,430,250>
+$output false
+resource Resources::Bitmap Watch1Background
+{
+  attr bitmapfile FileName = .\Res\Watch1Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <430,210,630,250>
+$output false
+resource Resources::Bitmap Watch1Hour
+{
+  attr bitmapfile FileName = .\Res\Watch1Hour.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <430,250,630,290>
+$output false
+resource Resources::Bitmap Watch1HourShadow
+{
+  attr bitmapfile FileName = .\Res\Watch1HourShadow.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <630,210,830,250>
+$output false
+resource Resources::Bitmap Watch1Minute
+{
+  attr bitmapfile FileName = .\Res\Watch1Minute.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <630,250,830,290>
+$output false
+resource Resources::Bitmap Watch1MinuteShadow
+{
+  attr bitmapfile FileName = .\Res\Watch1MinuteShadow.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <830,210,1030,250>
+$output false
+resource Resources::Bitmap Watch1Second
+{
+  attr bitmapfile FileName = .\Res\Watch1Second.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <830,250,1030,290>
+$output false
+resource Resources::Bitmap Watch1SecondShadow
+{
+  attr bitmapfile FileName = .\Res\Watch1SecondShadow.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Implementation and Resources of Watch #1
+note group Note1
+{
+  attr Bounds = <10,170,1050,310>;
+}
+
+// This UI component implements a watch.
+$rect <30,360,230,400>
+$output false
+class Watch2 : AnimatedWatch::Base
+{
+  $rect <10,260,210,300>
+  inherited method UpdateViewState()
+  {
+    aState;
+
+    // Calculate the rotation angles of the three indicators
+    var float min = ((float)Minute * 6.0 ) + ((float)Second * 0.1 );
+    var float hou = ((float)( Hour + TimeZone ) * 30.0 ) + ((float)Minute * 0.5 ) + ((float)Second * ( 0.5 / 60.0 ));
+
+    // Rotate the three indicators arround the center of the clock
+    HoursImage.  RotateAndScale(<120,120>, -hou, 1.0, 1.0 );
+    MinutesImage.RotateAndScale(<120,120>, -min, 1.0, 1.0 );
+
+    // start the soft movement of the seconds hand - or just set the new seconds value
+    FloatEffect.Enabled = false;
+
+    if ( Soft )
+      FloatEffect.Enabled = true;
+
+    postsignal updateSeconds;
+
+  }
+
+  // This method implements the jitter animation of the seconds indicator.
+  $rect <480,210,680,250>
+  slot updateSeconds
+  {
+    var float sec = (float)Second * 6.0;
+    if ( Soft )
+      sec = sec + FloatEffect.Value;
+
+    SecondsImage.RotateAndScale(<120,120>, -sec, 1.0, 1.0 );
+
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Bounds = <0,0,240,240>;
+    preset Bitmap = AnimatedWatch::Watch2Background;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage HoursImage
+  {
+    preset Point4 = <130,171>;
+    preset Point3 = <171,171>;
+    preset Point2 = <171,58>;
+    preset Point1 = <130,58>;
+    preset SourceAnchor = <4,50>;
+    preset Bitmap = AnimatedWatch::Watch2Hour;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage MinutesImage
+  {
+    preset Point4 = <130,171>;
+    preset Point3 = <171,171>;
+    preset Point2 = <171,28>;
+    preset Point1 = <130,28>;
+    preset SourceAnchor = <4,87>;
+    preset Bitmap = AnimatedWatch::Watch2Minute;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage SecondsImage
+  {
+    preset Point4 = <140,182>;
+    preset Point3 = <161,182>;
+    preset Point2 = <161,29>;
+    preset Point1 = <140,29>;
+    preset SourceAnchor = <4,93>;
+    preset Bitmap = AnimatedWatch::Watch2Second;
+  }
+
+  // The property 'Soft' determines whether the second indicator should move soft \
+  // or not.
+  $rect <270,160,470,200>
+  property bool Soft = true;
+
+  // This class implements an entire analog watch with three needle indicators to \
+  // show the current hours, minutes and seconds.
+  // The additional property 'Soft' controls the update of the seconds indicator. \
+  // If 'Soft' is true, then the seconds hand will move smoothly into the next position \
+  // every second.
+  // The calculation of the needles is done within the method 'UpdateViewState' and \
+  // 'updateSeconds'.
+  note legend Note
+  {
+    attr Bounds = <220,260,880,390>;
+  }
+
+  $rect <270,210,470,250>
+  object Effects::FloatEffect FloatEffect
+  {
+    preset OnAnimate = updateSeconds;
+    preset Timing = Effects::Timing.EaseIn_EaseOut;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 1000;
+    preset Value2 = 0.0;
+    preset Value1 = -6.0;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder updateSeconds 13
+  $reorder Background 5
+  $reorder HoursImage 5
+  $reorder MinutesImage 5
+  $reorder SecondsImage 5
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <230,360,430,400>
+$output false
+resource Resources::Bitmap Watch2Background
+{
+  attr bitmapfile FileName = .\Res\Watch2Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <430,360,630,400>
+$output false
+resource Resources::Bitmap Watch2Hour
+{
+  attr bitmapfile FileName = .\Res\Watch2Hour.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <630,360,830,400>
+$output false
+resource Resources::Bitmap Watch2Minute
+{
+  attr bitmapfile FileName = .\Res\Watch2Minute.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This resource contains an image needed to compose the watch.
+$rect <830,360,1030,400>
+$output false
+resource Resources::Bitmap Watch2Second
+{
+  attr bitmapfile FileName = .\Res\Watch2Second.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Implementation and Resources of Watch #2
+note group Note2
+{
+  attr Bounds = <10,320,1050,420>;
+}
+
+// The UI component shows a spinning watch.
+$rect <20,20,220,60>
+$output false
+class AnimatedWatch : Core::Group
+{
+  $rect <500,10,700,50>
+  inherited property Bounds = <0,0,480,480>;
+
+  $rect <0,810,200,850>
+  inherited method UpdateLayout()
+  {
+    aSize;
+
+    // Update the arrangement if screen size is changed
+    postsignal AnimationTimerSlot;
+  }
+
+  // This slot method is invoked durring the animation. It calculates the next position \
+  // of the spinning watch.
+  $rect <500,130,700,170>
+  slot AnimationTimerSlot
+  {
+    var int32 i;
+
+    for ( i = 0; i < Watches.size; i++ )
+    {
+      /* create new watch if necessary */
+      if ( Watches[i] == null )
+      {
+        Watches[i] = new AnimatedWatch::WarpGroup;
+        if ( i % 2 == 0 )
+          Watches[i].Watch = Watch1;
+        else
+          Watches[i].Watch = Watch2;
+        Watches[i].Opacity = 0x01;
+        Watches[i].XPos = (float)math_rand( Bounds.w / 8, Bounds.w * 7 / 8);
+        Watches[i].YPos = (float)Bounds.h * 10 /8;
+        Watches[i].LightingEffect = 0.0;
+        Watches[i].SourceAnchor = <120,120>;
+        Watches[i].Angle = 0.0;
+        Watches[i].DeltaAngle = math_rand( -1.0, 1.0 );
+        Watches[i].DeltaX = 0.0;
+        Watches[i].DeltaY = math_rand( -0.5, -2.0 );
+        if ( i < 2 )
+          Watches[i].Scale = math_rand( 0.9, 1.3 );
+        else
+          Watches[i].Scale = math_rand( 0.6, 0.9 );
+        Add( Watches[i], 0 );
+      }
+
+      /* fade-out or fade-in watch if necessary */
+      if ( (int32)Watches[i].YPos < 0 )
+      {
+        if ( Watches[i].Opacity > 0x10 )
+          Watches[i].Opacity -= 0x10;
+        else
+          Watches[i].Opacity = 0x00;
+      }
+      else if ( Watches[i].Opacity < 0xFF )
+      {
+        if ( Watches[i].Opacity < 0xEF )
+          Watches[i].Opacity += 0x10;
+        else
+          Watches[i].Opacity = 0xFF;
+      }
+
+      /* finally, make the animation */
+      Watches[i].Animate();
+
+      /* remove old watch if necessary */
+      if ( Watches[i].Opacity == 0 )
+      {
+        Remove( Watches[i] );
+        Watches[i] = null;
+      }
+    }
+
+
+  }
+
+  $rect <500,90,700,130>
+  object Core::Timer AnimationTimer
+  {
+    preset OnTrigger = AnimationTimerSlot;
+    preset Period = 10;
+    preset Enabled = true;
+  }
+
+  $rect <500,190,700,230>
+  array AnimatedWatch::WarpGroup Watches[ 4 ];
+
+  $rect <20,20,160,60>
+  object Views::Image Background
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,480,480>;
+    preset Alignment = Views::ImageAlignment[AlignHorzCenter, AlignVertCenter, ScaleToFill, ScaleToFit];
+    preset Bitmap = AnimatedWatch::Background;
+  }
+
+  $rect <20,20,160,60>
+  object AnimatedWatch::Watch1 Watch1
+  {
+    preset Bounds = <0,240,240,480>;
+    preset Buffered = true;
+    preset Visible = false;
+  }
+
+  $rect <20,20,160,60>
+  object AnimatedWatch::Watch2 Watch2
+  {
+    preset Bounds = <233,0,473,240>;
+    preset Buffered = true;
+    preset Visible = false;
+  }
+}
+
+$rect <450,20,640,60>
+$output false
+class WarpGroup : Views::WarpGroup
+{
+  $rect <20,70,220,110>
+  property float DeltaAngle = 0.8;
+
+  $rect <19,22,219,62>
+  property float Angle;
+
+  $rect <231,68,431,108>
+  property float DeltaX = 0.8;
+
+  $rect <230,20,430,60>
+  property float XPos;
+
+  $rect <441,68,641,108>
+  property float DeltaY = 0.8;
+
+  $rect <440,20,640,60>
+  property float YPos;
+
+  $rect <650,20,850,60>
+  property float Scale;
+
+  $rect <20,150,220,190>
+  property AnimatedWatch::Base Watch;
+
+  $rect <20,190,220,230>
+  onset Watch
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Watch == value )
+      return;
+
+    // Remember the property's new value.
+    pure Watch = value;
+
+    if ( Watch != null )
+    {
+      Group = value;       
+    }
+  }
+
+  // The method 'Animate' calculates the next animation step of the image object.
+  $rect <20,260,220,300>
+  method void Animate()
+  {
+    /* first we have to modify the current translation in X/Y direction of the image */
+    XPos += DeltaX;
+    YPos += DeltaY;
+
+    /* calculate the next rotation angle */
+    Angle = Angle + DeltaAngle;
+
+    var Graphics::WarpMatrix m = new Graphics::WarpMatrix;
+    m.LoadIdentity();
+    m.EyeDistance = 240.0 * Scale;
+    m.Scale( Scale, Scale, Scale );
+    m.Rotate( Angle * 0.9, Angle, Angle );
+
+    Warp3D( point( (int32)XPos, (int32)YPos), m );
+
+
+
+
+  }
+
+  // This class is derived from Views::WarpGroup and stores the current attributes \
+  // of a watch shown within the AnimatedWatch::AnimatedWatch.
+  // 
+  // The method Animate() is called to calculate the next animation phase of the \
+  // watch.
+  note legend Note
+  {
+    attr Bounds = <20,330,620,430>;
+  }
+}
+
+$rect <230,20,430,60>
+$output false
+resource Resources::Bitmap Background
+{
+  attr bitmapfile FileName = .\Res\Background.png;
+  attr bitmapdithering Dithering = Auto;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = RGB565;
+  attr bitmapmode Mode = Default;
+}

@@ -1,0 +1,1 @@
+The StarField demo application implements a star field animation (space flight) with a variable number of images within the 3D space. The user can configure the eye distance and the animation speed. This demo makes intensive usage of the Warp3D functionality.

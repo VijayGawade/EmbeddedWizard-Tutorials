@@ -1,0 +1,245 @@
+﻿$version 15.00
+
+// The application class to launch the different screen savers.
+$rect <40,60,240,100>
+class Application : Core::Root
+{
+  $rect <990,10,1190,50>
+  inherited method Init()
+  {
+    /* the size of the complete application depends on the size of the screen */
+    Bounds = rect( 0, 0, $ScreenSize.x, $ScreenSize.y );
+    Rectangle.Bounds = Bounds;
+
+    /* start the initialization of the first screen saver */
+    postsignal NextScreenSaver;
+
+  }
+
+  // The slot method 'NextScreenSaver' is responsible to launch the different screen \
+  // saver objects. Each time the slot method is called, the currently active screen \
+  // saver and its corresponding control panel are destroyed and a new screen saver \
+  // object and the corresponding control panel are created.
+  $rect <990,80,1190,120>
+  slot NextScreenSaver
+  {
+    /* first remove the old screen saver - if there is one */
+    if ( ScreenSaver != null )
+    {
+      Remove( ScreenSaver );
+      ScreenSaver = null;
+    }
+    /* and remove the old control panel - if there is one */
+    if ( ControlPanel != null )
+    {
+      Remove( ControlPanel );
+      ControlPanel = null;
+    }
+
+    /* create new screen saver */
+    switch( ScreenSaverNumber )
+    {
+      case 0: /* Levitation Screen Saver */
+      {
+        var ScreenSaver::LevitationScreenSaver screenSaver = new ScreenSaver::LevitationScreenSaver;
+        var ScreenSaver::LevitationControlPanel controlPanel = new ScreenSaver::LevitationControlPanel;
+
+        screenSaver.Bounds = Bounds;
+
+        Add( screenSaver, 0 );
+        Add( controlPanel, 0 );
+        Focus = controlPanel;
+
+        /* connect outlets of the control panel with the corresponding properties of the screen saver */
+        controlPanel.SliderCount.Outlet  = ^screenSaver.Count;
+        controlPanel.SliderDuration.Outlet   = ^screenSaver.Time;
+        controlPanel.SwitchHorizontal.Outlet = ^screenSaver.ShiftHorz;
+        controlPanel.SwitchVertical.Outlet = ^screenSaver.ShiftVert;
+
+        /* connect close button with this slot method */
+        controlPanel.NextButton.OnActivate = NextScreenSaver;
+
+        ScreenSaver = screenSaver;
+        ControlPanel = controlPanel;
+      }
+      case 1: /* Carousel Screen Saver */
+      {
+        var ScreenSaver::CarouselScreenSaver screenSaver = new ScreenSaver::CarouselScreenSaver;
+        var ScreenSaver::CarouselControlPanel controlPanel = new ScreenSaver::CarouselControlPanel;
+
+        screenSaver.Bounds = Bounds;
+
+        Add( screenSaver, 0 );
+        Add( controlPanel, 0 );
+        Focus = controlPanel;
+
+        /* connect outlets of the control panel with the corresponding properties of the screen saver */
+        controlPanel.SliderEyeDistance.Outlet = ^screenSaver.EyeDistance;
+        controlPanel.SliderTransparency.Outlet = ^screenSaver.Transparency;
+        controlPanel.SliderSpeed.Outlet       = ^screenSaver.Speed;
+
+        /* connect close button with this slot method */
+        controlPanel.NextButton.OnActivate = NextScreenSaver;
+
+        ScreenSaver = screenSaver;
+        ControlPanel = controlPanel;
+      }
+      case 2: /* Perspective Screen Saver */
+      {
+        var ScreenSaver::PerspectiveScreenSaver screenSaver = new ScreenSaver::PerspectiveScreenSaver;
+        var ScreenSaver::PerspectiveControlPanel controlPanel = new ScreenSaver::PerspectiveControlPanel;
+
+        screenSaver.Bounds = Bounds;
+
+        Add( screenSaver, 0 );
+        Add( controlPanel, 0 );
+        Focus = controlPanel;
+
+        /* connect outlets of the control panel with the corresponding properties of the screen saver */
+        controlPanel.SliderRotateX.Outlet     = ^screenSaver.RotateX;
+        controlPanel.SliderRotateY.Outlet     = ^screenSaver.RotateY;
+        controlPanel.SliderSpeed.Outlet       = ^screenSaver.Speed;
+
+        /* connect close button with this slot method */
+        controlPanel.NextButton.OnActivate = NextScreenSaver;
+
+        ScreenSaver = screenSaver;
+        ControlPanel = controlPanel;
+      }
+      case 3: /* Starfield Screen Saver */
+      {
+        var ScreenSaver::StarfieldScreenSaver screenSaver = new ScreenSaver::StarfieldScreenSaver;
+        var ScreenSaver::StarfieldControlPanel controlPanel = new ScreenSaver::StarfieldControlPanel;
+
+        screenSaver.Bounds = Bounds;
+
+        Add( screenSaver, 0 );
+        Add( controlPanel, 0 );
+        Focus = controlPanel;
+
+        /* connect outlets of the control panel with the corresponding properties of the screen saver */
+        controlPanel.SliderEyeDistance.Outlet = ^screenSaver.EyeDistance;
+        controlPanel.SliderCount.Outlet       = ^screenSaver.Count;
+        controlPanel.SliderSpeed.Outlet       = ^screenSaver.Speed;
+
+        /* connect close button with this slot method */
+        controlPanel.NextButton.OnActivate = NextScreenSaver;
+
+        ScreenSaver = screenSaver;
+        ControlPanel = controlPanel;
+      }
+      default:
+      ;
+    }
+
+    /* choose the next screen saver next time... */
+    ScreenSaverNumber = ScreenSaverNumber + 1;
+    if ( ScreenSaverNumber > 3 )
+      ScreenSaverNumber = 0;
+  }
+
+  // The variable 'ScreenSaverNumber' stores the number of the currently active screen \
+  // saver.
+  $rect <990,120,1190,160>
+  var int32 ScreenSaverNumber = 0;
+
+  // The variable 'ScreenSaver' stores the handle of the currently active screen \
+  // saver object.
+  $rect <990,160,1190,200>
+  var Core::Group ScreenSaver = null;
+
+  // The variable 'ControlPanel' stores the handle of the currently active control \
+  // panel object.
+  $rect <990,200,1190,240>
+  var Core::Group ControlPanel = null;
+
+  // This is a filled rectangle view.
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,840,490>;
+    preset Color = #000000FF;
+  }
+
+  // This is the application class to host the different screen savers.
+  // 
+  // The slot method 'NextScreenSaver' is responsible to launch the different screen \
+  // saver objects. Each time the slot method is called, the currently active screen \
+  // saver and its corresponding control panel are destroyed and a new screen saver \
+  // object and the corresponding control panel are created.
+  note legend Note
+  {
+    attr Bounds = <990,250,1520,410>;
+  }
+
+  // Directives to adapt the order of members belonging to this class so they appear 
+  // correctly arranged relative to the members inherited from the ancestor (super) 
+  // classes. The numbers indicate the order-displacement to apply on the respective 
+  // member once all members have been loaded and combined with members from the 
+  // ancestor classes.
+  $reorder NextScreenSaver 86
+  $reorder RestackBehind 1
+  $reorder RestackBack 1
+  $reorder RestackTop 1
+  $reorder Restack 1
+  $reorder Remove 1
+  $reorder AddBehind 1
+  $reorder Add 1
+  $reorder Focus 1
+  $reorder Buffered 1
+  $reorder Enabled 1
+  $reorder Opacity 1
+  $reorder Embedded 1
+  $reorder AlphaBlended 1
+  $reorder Visible 1
+  $reorder modalGroups 1
+  $reorder cursorHoldTimerProc 1
+  $reorder cursorHoldTimer 1
+  $reorder cursorSequelCounter 1
+  $reorder cursorSequelArea 1
+  $reorder cursorHoldPeriod 1
+  $reorder cursorHittingPos 1
+  $reorder cursorCaptureView 1
+  $reorder cursorCurrentPos 1
+  $reorder cursorTargetView 1
+  $reorder cursorHitOffset 1
+  $reorder cursorLastPos 1
+  $reorder cursorFinger 1
+  $reorder lastRegions 1
+  $reorder noOfLastRegions 1
+  $reorder canvas 1
+  $reorder regions 1
+  $reorder noOfRegions 1
+  $reorder Update 1
+  $reorder UpdateGE20 1
+  $reorder Initialize 1
+  $reorder DriveCursorMovement 1
+  $reorder DriveCursorHitting 1
+  $reorder OnSetVirtualKeyboard 1
+  $reorder OnSetCursorDragLimit 1
+  $reorder OnSetCursorSequelDelay 1
+  $reorder OnGetStyles 1
+  $reorder OnSetStyles 1
+  $reorder OnGetLanguage 1
+  $reorder OnSetLanguage 1
+  $reorder CaptureCursor 1
+  $reorder RetargetCursor 1
+  $reorder DeflectCursor 1
+  $reorder GetModalGroup 1
+  $reorder EndModal 1
+  $reorder BeginModal 1
+  $reorder VirtualKeyboard 1
+  $reorder CursorDragLimit 1
+  $reorder CursorSequelDelay 1
+  $reorder Styles 1
+  $reorder Language 1
+  $reorder ScreenSaverNumber 1
+  $reorder ScreenSaver 1
+  $reorder ControlPanel 1
+}
+
+// Application class
+note group Note
+{
+  attr Bounds = <20,10,260,120>;
+}

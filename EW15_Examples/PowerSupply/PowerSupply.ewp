@@ -1,0 +1,130 @@
+﻿$version 15.00
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,70,240,110>
+unit Core
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,110,240,150>
+unit Resources
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,150,240,190>
+unit Graphics
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,190,240,230>
+unit Effects
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,230,240,270>
+unit Views
+{
+  attr Directory = $Mosaic;
+}
+
+$rect <290,190,490,230>
+unit Application
+{
+  attr Directory = .\;
+}
+
+// The 'default' Language. Each project has to contain at least one language brick \
+// called 'Default'
+$rect <540,70,740,110>
+language Default;
+
+// The 'German' Language.
+$rect <540,110,740,150>
+language German;
+
+// The 'Spanish' Language.
+$rect <540,150,740,190>
+language Spanish;
+
+// Mosaic Framework
+note group Note1
+{
+  attr Bounds = <20,20,260,330>;
+}
+
+// Profile Configuration
+note group Note2
+{
+  attr Bounds = <270,20,510,130>;
+}
+
+// Languages
+note group Note3
+{
+  attr Bounds = <520,20,760,210>;
+}
+
+// Project Units
+note group Note5
+{
+  attr Bounds = <270,140,510,330>;
+}
+
+// The sample application 'PowerSupply' implements the user interface of a simple \
+// power supply device.
+// A couple of customized widgets are used to create the main panel of the power \
+// supply application, e.g. to control the voltage output and the current limit. \
+// A settings menu allows the user to change the language of the application.
+// The data of the power supply application is accessed via a device class. It stores \
+// the power supply values of voltage and current.
+// 
+// This power supply demo is designed for a screen size of 640x384 pixels.
+// 
+// You can double-click on the 'Application' brick to open the unit within the Composer \
+// and to analyze the implementation.
+// 
+// To start the application within the Prototyper, press 'Ctrl'+'F5'.
+note legend Note
+{
+  attr Bounds = <20,340,760,590>;
+}
+
+$rect <40,270,240,310>
+unit WidgetSet
+{
+  attr Directory = $Mosaic\;
+}
+
+$rect <290,230,490,270>
+unit SteelWidgets
+{
+  attr Directory = .\;
+}
+
+// This is the 'default' profile for the new project. This profile will be used for \
+// test, prototyping, etc.
+$rect <290,70,490,110>
+profile Win32 : Windows.Software.RGBA8888
+{
+  attr ScreenSize = <640,384>;
+  attr Optimization = High;
+  attr ApplicationClass = Application::Application;
+  attr CleanOutputDirectories = false;
+  attr Verbose = false;
+  attr ScreenOrientation = Normal;
+  attr FontConversion = Windows;
+  attr OutputFileNameExtension = c;
+  attr StorageOfResources = Code;
+  attr StorageOfConstants = Code;
+
+  $rect <10,10,154,50>
+  macro Author = "Dipl. Ing. Paul Banach and Dipl. Ing. Manfred Schweyer, Copyright (C) TARA Systems GmbH";
+}

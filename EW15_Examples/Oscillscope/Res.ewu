@@ -1,0 +1,210 @@
+﻿$version 15.00
+
+// This is a font resource used for text beside buttons.
+$rect <30,60,230,100>
+$output false
+resource Resources::Font DescriptionFont
+{
+  attr fontname FontName = Arial;
+  attr fontheight Height = 12;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0x7F;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// This is a font resource used for all text outputs within the oscilloscope.
+$rect <30,100,230,140>
+$output false
+resource Resources::Font DisplayFont
+{
+  attr fontname FontName = Verdana;
+  attr fontheight Height = 16;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0x7F;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// This is a color constant used for drawing the beam of the oscilloscope.
+$rect <280,270,480,310>
+$output false
+const color BeamColor0 = #68FF29FF;
+
+// This is a color constant used for drawing the beam of the oscilloscope.
+$rect <280,310,480,350>
+$output false
+const color BeamColor1 = #2DD5C3FF;
+
+// This is a color constant used for drawing the beam of the oscilloscope.
+$rect <280,350,480,390>
+$output false
+const color BeamColor2 = #BE8F28FF;
+
+// This is a color constant used for drawing the beam of the oscilloscope.
+$rect <280,390,480,430>
+$output false
+const color BeamColor3 = #3022DBFF;
+
+// This is a color constant used for drawing the beam of the oscilloscope.
+$rect <280,430,480,470>
+$output false
+const color BeamColor4 = #E0E3DEFF;
+
+// This is a color constant used for drawing the grid of the oscilloscope.
+$rect <280,60,480,100>
+$output false
+const color GridColor0 = #626A6240;
+
+// This is a color constant used for drawing the grid of the oscilloscope.
+$rect <280,100,480,140>
+$output false
+const color GridColor1 = #FFE76A3E;
+
+// This is a color constant used for drawing the grid of the oscilloscope.
+$rect <280,140,480,180>
+$output false
+const color GridColor2 = #419F1960;
+
+// This is a color constant used for drawing the grid of the oscilloscope.
+$rect <280,180,480,220>
+$output false
+const color GridColor3 = #3B71FF60;
+
+// This is a color constant used for drawing the grid of the oscilloscope.
+$rect <280,220,480,260>
+$output false
+const color GridColor4 = #AEABAA60;
+
+// This is a string constant containing the name of a beam color.
+$rect <490,270,690,310>
+$output false
+const string BeamColorText0 = "Beam Color: Limegreen";
+
+// This is a string constant containing the name of a beam color.
+$rect <490,310,690,350>
+$output false
+const string BeamColorText1 = "Beam Color: Aquamarine";
+
+// This is a string constant containing the name of a beam color.
+$rect <490,350,690,390>
+$output false
+const string BeamColorText2 = "Beam Color: Amber";
+
+// This is a string constant containing the name of a beam color.
+$rect <490,390,690,430>
+$output false
+const string BeamColorText3 = "Beam Color: Midnightblue";
+
+// This is a string constant containing the name of a beam color.
+$rect <490,430,690,470>
+$output false
+const string BeamColorText4 = "Beam Color: Lightgray";
+
+// This is a string constant containing the name of a grid color.
+$rect <490,60,690,100>
+$output false
+const string GridColorText0 = "Grid Color: Darkgray";
+
+// This is a string constant containing the name of a grid color.
+$rect <490,100,690,140>
+$output false
+const string GridColorText1 = "Grid Color: Copper";
+
+// This is a string constant containing the name of a grid color.
+$rect <490,140,690,180>
+$output false
+const string GridColorText2 = "Grid Color: Olive";
+
+// This is a string constant containing the name of a grid color.
+$rect <490,180,690,220>
+$output false
+const string GridColorText3 = "Grid Color: Royalblue";
+
+// This is a string constant containing the name of a grid color.
+$rect <490,220,690,260>
+$output false
+const string GridColorText4 = "Grid Color: Lightgray";
+
+// This is a bitmap resource.
+$rect <30,350,230,390>
+$output false
+resource Resources::Bitmap SteelBitmap
+{
+  attr bitmapfile FileName = .\Res\SteelBackground.bmp;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,220,230,260>
+$output false
+resource Resources::Bitmap PushButtonImages
+{
+  attr bitmapfile FileName = .\Res\SteelButtonStripe40x40.png;
+  attr framesize FrameSize = <40,40>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,260,230,300>
+$output false
+resource Resources::Bitmap PushButtonImagesRed
+{
+  attr bitmapfile FileName = .\Res\SteelButtonStripeRed40x40.png;
+  attr framesize FrameSize = <40,40>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <30,300,230,340>
+$output false
+resource Resources::Bitmap PushButtonImagesGreen
+{
+  attr bitmapfile FileName = .\Res\SteelButtonStripeGreen40x40.png;
+  attr framesize FrameSize = <40,40>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Font resources
+note group Note
+{
+  attr Bounds = <10,10,250,160>;
+}
+
+// Bitmap resources
+note group Note1
+{
+  attr Bounds = <10,170,250,410>;
+}
+
+// Colors and their names
+note group Note2
+{
+  attr Bounds = <260,10,710,490>;
+}
+
+// How to manage resources and assets?
+// 
+// https://doc.embedded-wizard.de/managing-resource-data
+note legend Note6
+{
+  attr Bounds = <10,500,500,570>;
+}

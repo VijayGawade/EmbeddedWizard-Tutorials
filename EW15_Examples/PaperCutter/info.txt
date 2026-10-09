@@ -1,0 +1,1 @@
+This demo shows the implementation of a paper cutting machine, where the user can define the pagination and format of the paper as well as the cutting speed and the amount of papers. The application contains many rect effects and fade-in/fade-out effects to change dynamically the layout of the screen.

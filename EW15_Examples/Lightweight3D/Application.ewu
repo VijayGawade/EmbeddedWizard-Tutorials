@@ -1,0 +1,688 @@
+﻿$version 15.00
+
+// This is the main application component
+$rect <30,50,230,90>
+class Application : Core::Root
+{
+  $rect <10,630,210,670>
+  inherited property Bounds = <0,0,800,600>;
+
+  // THis slot method is connected to the menu. It is invoked when the user has activated \
+  // the corresponding menu button
+  $rect <210,630,410,670>
+  slot StartImageFlow
+  {
+    // Create a new instance of an image flow
+    var ImageFlow::ImageFlow tmp = new ImageFlow::ImageFlow;
+
+    // ... initialize it
+    tmp.Bounds.size = Bounds.size;
+    tmp.DataAdapter = ImageFlow::BuildInDataAdapter;
+    tmp.Mirroring   = true;
+    tmp.OnBack      = BackToMenuSlot;
+
+    // ... and make it visible
+    Add( tmp, 0 );
+    Focus = tmp;
+
+    // Durring the image flow is visible -> the menu may not react to user
+    // inputs
+    Menu.Enabled = false;
+  }
+
+  // THis slot method is connected to the menu. It is invoked when the user has activated \
+  // the corresponding menu button
+  $rect <210,670,410,710>
+  slot StartWatchCarousel
+  {
+    // Create a new instance of a watch carousel
+    var Watch::WatchCarousel tmp = new Watch::WatchCarousel;
+
+    // ... initialize it
+    tmp.Bounds.size = Bounds.size;
+    tmp.Mirroring   = true;
+    tmp.OnBack      = BackToMenuSlot;
+
+    // ... and make it visible 
+    Add( tmp, 0 );
+    Focus = tmp;
+
+    // Durring the watch carousel is visible -> the menu may not react to user
+    // inputs
+    Menu.Enabled = false;
+  }
+
+  // THis slot method is connected to the menu. It is invoked when the user has activated \
+  // the corresponding menu button
+  $rect <210,710,410,750>
+  slot StartSpinningWatch
+  {
+    // Create a new instance of a spinning watch
+    var Watch::SpinningWatch tmp = new Watch::SpinningWatch;
+
+    // ... initialize it
+    tmp.Bounds.size = Bounds.size;
+    tmp.OnBack      = BackToMenuSlot;
+
+    // ... and make it visible
+    Add( tmp, 0 );
+    Focus = tmp;
+
+    // Durring the spinning watch is visible -> the menu may not react to user
+    // inputs
+    Menu.Enabled = false;
+  }
+
+  // This method is invoked when the user has activated the 'back' button in the \
+  // running example.
+  $rect <400,630,600,670>
+  slot BackToMenuSlot
+  {
+    // Hide and close the current example application
+    Remove( Focus );
+
+    // Make the main menu visible again - it should also react to user inputs
+    Menu.Visible = true;
+    Menu.Enabled = true;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Background
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,800,600>;
+    preset Color = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Menu Menu
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,800,600>;
+    preset OnItem1 = StartImageFlow;
+    preset OnItem2 = StartWatchCarousel;
+    preset OnItem3 = StartSpinningWatch;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image LogoImage
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, ResizeHorz, ResizeVert];
+    preset Bounds = <0,510,170,597>;
+    preset Alignment = Views::ImageAlignment[AlignHorzCenter, AlignVertCenter];
+    preset Bitmap = Application::EmWiLogo;
+  }
+}
+
+// Resource containing images for the menu
+$rect <30,310,230,350>
+$output false
+resource Resources::Bitmap Item1Icon
+{
+  attr bitmapfile FileName = .\MenuRes\Item1.png;
+  attr framesize FrameSize = <300,230>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Resource containing images for the menu
+$rect <30,350,230,390>
+$output false
+resource Resources::Bitmap Item2Icon
+{
+  attr bitmapfile FileName = .\MenuRes\Item2.png;
+  attr framesize FrameSize = <300,230>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Resource containing images for the menu
+$rect <30,390,230,430>
+$output false
+resource Resources::Bitmap Item3Icon
+{
+  attr bitmapfile FileName = .\MenuRes\Item3.png;
+  attr framesize FrameSize = <300,230>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This UI component implements the menu to select the animation
+$rect <240,200,440,240>
+$output false
+class Menu : Core::Group
+{
+  $rect <10,620,150,660>
+  inherited property Bounds = <0,0,800,600>;
+
+  $rect <10,660,150,700>
+  inherited property Focus = Item1;
+
+  $rect <200,820,390,860>
+  var Views::WarpGroup fadeOutView;
+
+  // The effect drives the fade-out animation after the user has activated one of \
+  // the menu buttons. The effect invokes the methods @onAnimate and @onFinished.
+  $rect <10,860,200,900>
+  object Effects::FloatEffect fadeOutEffect
+  {
+    preset OnFinished = onFinished;
+    preset OnAnimate = onAnimate;
+    preset NoOfCycles = 1;
+    preset Timing = Effects::Timing.FastIn_EaseOut;
+    preset CycleDuration = 750;
+  }
+
+  // This slot method is invoked when the user has selected the first button in the \
+  // menu.
+  $rect <200,620,390,660>
+  slot Item1Slot
+  {
+    StartAnimation( Item1 );
+
+
+  }
+
+  // This slot method is invoked when the user has selected the second button in \
+  // the menu.
+  $rect <200,660,390,700>
+  slot Item2Slot
+  {
+    StartAnimation( Item2 );
+  }
+
+  // This slot method is invoked when the user has selected the third button in the \
+  // menu.
+  $rect <200,700,390,740>
+  slot Item3Slot
+  {
+    StartAnimation( Item3 );
+  }
+
+  // This method is invoked from the @fadeOutEffect durring the fade-out animation.
+  $rect <200,860,390,900>
+  slot onAnimate
+  {
+    var float phase = fadeOutEffect.Value;
+
+    // In the first halftime of the animation - fade-out all items and mirrors
+    if ( phase <= 0.5 )
+    {
+      Item1.Opacity = int32( 255.0 * ( 1.0 - ( phase * 2.0 )));
+      Item2.Opacity = Item1.Opacity;
+      Item3.Opacity = Item1.Opacity;
+
+      Mirror1.Visible = false;
+      Mirror2.Visible = false;
+      Mirror3.Visible = false;
+    }
+
+    // Hide the invisible items
+    if ( phase >= 0.5 )
+    {
+      Item1.Visible = false;
+      Item2.Visible = false;
+      Item3.Visible = false;
+    }
+
+    // Durring the fade-out animation ...
+    var float scaleFactor = 1.0 + phase;
+    var point pos1        = fadeOutView.Group.Bounds.center;
+    var point pos2        = Bounds.orect.center;
+    var point dstPos      = <0,0>;
+
+    dstPos.x = int32( float( pos1.x ) * ( 1.0 - phase ) + float( pos2.x ) * phase );
+    dstPos.y = int32( float( pos1.y ) * ( 1.0 - phase ) + float( pos2.y ) * phase );
+
+    // ... zoom the image of the selected button 
+    fadeOutView.RotateAndScale( dstPos, 0.0, scaleFactor, scaleFactor );
+    fadeOutView.Opacity = int32( 255.0 * ( 1.0 - phase ));
+  }
+
+  // This method is invoked at the end of the fade-out animation.
+  $rect <200,900,390,940>
+  slot onFinished
+  {
+    // Which item was faded out (activated)? Inform the owner
+    if ( fadeOutView.Group == Item1 ) idlesignal OnItem1;
+    if ( fadeOutView.Group == Item2 ) idlesignal OnItem2;
+    if ( fadeOutView.Group == Item3 ) idlesignal OnItem3;
+
+    // Hide the animation view
+    Remove( fadeOutView );
+    fadeOutView = null;
+
+    // Restore the default menu state and hide the entire menu
+    Visible         = false;
+    Item1.Opacity   = 255;
+    Item2.Opacity   = 255;
+    Item3.Opacity   = 255;
+    Item1.Visible   = true;
+    Item2.Visible   = true;
+    Item3.Visible   = true;
+    Mirror1.Visible = true;
+    Mirror2.Visible = true;
+    Mirror3.Visible = true;
+
+    // Finally restore the event flow
+    Enabled = true;
+  }
+
+  // The slot method is invoked from the @KeyHandler when the user has pressed one \
+  // of th cursor keys up/down/left/right. Accordingly to the pressed key the appropriate \
+  // button is selected.
+  $rect <200,760,390,800>
+  slot onPressKey
+  {
+    var Core::Direction dir  = Core::Direction.None;
+    var Core::View      view = Focus;
+
+    // Direction to look for menu buttons to select
+    switch ( KeyHandler.Code )
+    {
+      case Core::KeyCode.Left  : dir = Core::Direction.Left;
+      case Core::KeyCode.Right : dir = Core::Direction.Right;
+      case Core::KeyCode.Up    : dir = Core::Direction.Top;
+      case Core::KeyCode.Down  : dir = Core::Direction.Bottom;
+      default :;
+    }
+
+    // Look for the button in the determined direction
+    view = FindViewInDirection( view, dir, Core::ViewState[ Visible, Enabled, Focusable ]);
+
+    // If found - select the button
+    if ( view != null )
+      Focus = view;
+  }
+
+  // This method is invoked after the user has activated one of the menu buttons. \
+  // Thereupon an animation starts to fade-out the menu and show the corresponding \
+  // example application.
+  $rect <10,820,200,860>
+  method void StartAnimation( arg Application::MenuButton aItem )
+  {
+    // Create an animation view for the fade out effect
+    fadeOutView = new Views::WarpGroup;
+
+    // Prepare an image view to display the faded item
+    fadeOutView.Group        = aItem;
+    fadeOutView.SourceAnchor = point( aItem.Bounds.w / 2, aItem.Bounds.h / 2 );
+    Add( fadeOutView, 0 );
+
+    // Start the animation sequence
+    fadeOutEffect.Enabled = true;
+
+    // Supress event dispatching durring the animation. 
+    Enabled = false;
+  }
+
+  // The key handler to react to user keyboard inputs. It reacts to the cursor keys \
+  // up/down/left/right only. If such key is pressed, the associated @onPressKey \
+  // slot method is invoked.
+  $rect <10,760,200,800>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onPressKey;
+    preset Filter = Core::KeyCode.CursorKeys;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Mirror1
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Point4 = <60,225>;
+    preset Point3 = <359,225>;
+    preset Point2 = <359,454>;
+    preset Point1 = <60,454>;
+    preset Quality = false;
+    preset Opacity4 = 150;
+    preset Opacity3 = 150;
+    preset Opacity2 = 0;
+    preset Opacity1 = 0;
+    preset Group = Item1;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Mirror2
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Point4 = <440,225>;
+    preset Point3 = <739,225>;
+    preset Point2 = <739,454>;
+    preset Point1 = <440,454>;
+    preset Quality = false;
+    preset Opacity4 = 150;
+    preset Opacity3 = 150;
+    preset Opacity2 = 0;
+    preset Opacity1 = 0;
+    preset Group = Item2;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpGroup Mirror3
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Point4 = <254,480>;
+    preset Point3 = <553,480>;
+    preset Point2 = <553,709>;
+    preset Point1 = <254,709>;
+    preset Quality = false;
+    preset Opacity4 = 150;
+    preset Opacity3 = 150;
+    preset Opacity2 = 0;
+    preset Opacity1 = 0;
+    preset Group = Item3;
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuButton Item1
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Bounds = <60,1,360,231>;
+    preset Buffered = true;
+    preset Face = Application::Item1Icon;
+    preset OnActivate = Item1Slot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuButton Item2
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Bounds = <440,0,740,230>;
+    preset Buffered = true;
+    preset Face = Application::Item2Icon;
+    preset OnActivate = Item2Slot;
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuButton Item3
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Bounds = <254,260,554,490>;
+    preset Buffered = true;
+    preset Face = Application::Item3Icon;
+    preset OnActivate = Item3Slot;
+  }
+
+  // This property allows the menu to be connected to extern slot method. As soon \
+  // as the user has activated the corresponding menu button, the associated method \
+  // is invoked.
+  $rect <390,620,570,660>
+  property slot OnItem1 = null;
+
+  // This property allows the menu to be connected to extern slot method. As soon \
+  // as the user has activated the corresponding menu button, the associated method \
+  // is invoked.
+  $rect <390,660,570,700>
+  property slot OnItem2 = null;
+
+  // This property allows the menu to be connected to extern slot method. As soon \
+  // as the user has activated the corresponding menu button, the associated method \
+  // is invoked.
+  $rect <390,700,570,740>
+  property slot OnItem3 = null;
+}
+
+// Resource containing image for the back button
+$rect <30,430,230,470>
+$output false
+resource Resources::Bitmap BackItem
+{
+  attr bitmapfile FileName = .\MenuRes\BackItem.png;
+  attr framesize FrameSize = <60,60>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Resource containing the 'Embedded Wizard' logo
+$rect <240,310,440,350>
+$output false
+resource Resources::Bitmap EmWiLogo
+{
+  attr bitmapfile FileName = .\MenuRes\EmWiLogo.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This UI component implements a simple button
+$rect <30,200,230,240>
+$output false
+class MenuButton : Core::Group
+{
+  $rect <0,110,180,150>
+  inherited property Bounds = <0,0,70,70>;
+
+  $rect <0,150,180,190>
+  inherited method UpdateViewState()
+  {
+    // From the current state derive the corresponding image frame
+    // for the face.
+    if ( aState.contains( Core::ViewState[ Focused ]))
+      ButtonFace.FrameNumber = 1;
+    else
+      ButtonFace.FrameNumber = 0;
+
+    // If the user has pressed/released the button -> start an animation.
+    // The pressed button should appear smaller
+    if ( TouchHandler.Down && TouchHandler.Inside )
+    {
+      animationDirection = -0.05;
+      ScaleTimer.Enabled = true;
+    }
+
+    // Released buttons appear bigger
+    else
+    {
+      animationDirection = 0.05;
+      ScaleTimer.Enabled = true;
+    }
+
+    // Trigger the first animation step immediatelly
+    postsignal onAnimate;
+  }
+
+  $rect <190,390,370,430>
+  var float animationDirection;
+
+  $rect <190,430,370,470>
+  var float animationPhase = 1.0;
+
+  $rect <380,250,560,290>
+  var bool wasActivated;
+
+  // This method is invoked from the @TouchHandler when the user has moved in/out \
+  // the finger over the button area.
+  $rect <190,250,370,290>
+  slot enterLeaveSlot
+  {
+    // Reprocess the state of the button
+    InvalidateViewState();
+  }
+
+  // This method is invoked from the @TouchHandler when the user has pressed or released \
+  // the button.
+  $rect <190,290,370,330>
+  slot pressReleaseSlot
+  {
+    // releasing the finger outside the button area is ignored
+    if ( !TouchHandler.Down && TouchHandler.Inside )
+      wasActivated = true;
+
+    // Reprocess the state of the button
+    InvalidateViewState();
+  }
+
+  // This slot method is invoked from the @KeyHandlerOk when the user has pressed \
+  // the key 'OK'. The method activates the button.
+  $rect <190,210,370,250>
+  slot onOkSlot
+  {
+    animationPhase = 0.8;
+    wasActivated   = true;
+
+    // Reprocess the state of the button
+    InvalidateViewState();
+  }
+
+  // The slot method is triggered from the @ScaleTimer. Its job is to adapt the button \
+  // size.
+  $rect <190,350,370,390>
+  slot onAnimate
+  {
+    // Get the next scale factor
+    animationPhase = animationPhase + animationDirection;
+
+    // The end of animation reached
+    if ( animationPhase >= 1.0 )
+    {
+      animationPhase     = 1.0;
+      ScaleTimer.Enabled = false;
+    }
+
+    // The end of animation reached
+    if ( animationPhase <= 0.8 )
+    {
+      animationPhase     = 0.8;
+      ScaleTimer.Enabled = false;
+    }
+
+    // Nothing to show in the button
+    if ( Face == null )
+      return;
+
+    var float scaleFactor;
+
+    // Stretch factors to fill the entire width/height of the button
+    // with the button face.
+    var float factorX = float( Bounds.w ) / float( Face.FrameSize.x );
+    var float factorY = float( Bounds.h ) / float( Face.FrameSize.y );
+
+    // Select the factor, so the entire button face appears without be
+    // distorted
+    if ( factorX < factorY ) scaleFactor = factorX;
+    else                     scaleFactor = factorY;
+
+    // Calculate the scale factor accordingly to the current animation phase
+    scaleFactor = scaleFactor * animationPhase;
+
+    // Scale the content of the button
+    ButtonFace.RotateAndScale( point( Bounds.w / 2, Bounds.h / 2 ), 0.0, 
+                               scaleFactor, scaleFactor );
+
+    // At the end of the animation inform the owner about the interaction
+    if ( !ScaleTimer.Enabled && wasActivated )
+    {
+      idlesignal OnActivate;
+      wasActivated = false;
+    }
+  }
+
+  // The timer drives an animation. Durring the animation the button appears smaller.
+  $rect <0,350,180,390>
+  object Core::Timer ScaleTimer
+  {
+    preset OnTrigger = onAnimate;
+    preset Period = 16;
+  }
+
+  $rect <190,40,370,80>
+  onset Face
+  {
+    // Any changes? If no - nothing to do.
+    if ( pure Face == value )
+      return;
+
+    // Remember the new button face bitmap
+    pure Face = value;
+
+    ButtonFace.Bitmap = value;
+
+    // The button face should be scaled relatively to the center of the face image.
+    if ( value != null )
+      ButtonFace.SourceAnchor = point( value.FrameSize.x / 2, value.FrameSize.y / 2 );
+
+  }
+
+  // Handler for keyboard user inputs. It reacts to the 'OK' key and invokes the \
+  // attached @onOkSlot method.
+  $rect <0,210,180,250>
+  object Core::KeyPressHandler KeyHandlerOk
+  {
+    preset OnPress = onOkSlot;
+    preset Filter = Core::KeyCode.Ok;
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler TouchHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Point4 = <0,70>;
+    preset Point3 = <70,70>;
+    preset Point2 = <70,0>;
+    preset Point1 = <0,0>;
+    preset OnLeave = enterLeaveSlot;
+    preset OnEnter = enterLeaveSlot;
+    preset OnRelease = pressReleaseSlot;
+    preset OnPress = pressReleaseSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Views::WarpImage ButtonFace
+  {
+    preset Point4 = <0,70>;
+    preset Point3 = <70,70>;
+    preset Point2 = <70,0>;
+    preset Point1 = <0,0>;
+    preset SourceAnchor = <30,30>;
+    preset Bitmap = Application::BackItem;
+  }
+
+  // The property 'Face' determines the face of the button by assigning a bitmap \
+  // resource.
+  $rect <190,0,370,40>
+  property Resources::Bitmap Face = Application::BackItem;
+
+  // The property 'OnActivate' can refer to a slot method, which will receive a signal \
+  // as soon as the user has pressed the button. Thereupon the method's logic will \
+  // be executed.
+  $rect <370,0,560,40>
+  property slot OnActivate = null;
+}
+
+// This is a variant of the main application component. This variant handles the \
+// automatic size adjustment according to the screen size.
+$rect <60,90,260,130>
+vclass Application_AutoSize : Application::Application
+{
+  $rect <10,640,210,680>
+  inherited property Bounds = rect(<0,0>, $ScreenSize );
+}
+
+// Resources
+note group Note
+{
+  attr Bounds = <10,270,460,490>;
+}
+
+// Menu components
+note group Note1
+{
+  attr Bounds = <10,160,460,260>;
+}
+
+// Application Class
+note group Note2
+{
+  attr Bounds = <10,10,460,150>;
+}

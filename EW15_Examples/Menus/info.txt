@@ -1,0 +1,1 @@
+The Menus demo application shows the implementation of a classic menu system with several submenus and language selection.

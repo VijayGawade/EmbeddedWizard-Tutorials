@@ -1,0 +1,1 @@
+The AviationDemo shows the implementation and appearance of different analog instruments. In order to display some realistic data, the application contains a very simple flight simulator, which can be controlled easily with the arrow keys.

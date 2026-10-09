@@ -1,0 +1,227 @@
+﻿$version 15.00
+
+// Background bitmap of the heading indicator (gyro).
+$rect <10,210,210,250>
+$output false
+resource Resources::Bitmap Gyro_Background
+{
+  attr bitmapfile FileName = .\Res\Gyro_Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Foreground bitmap of the heading indicator (gyro).
+$rect <440,210,640,250>
+$output false
+resource Resources::Bitmap Gyro_Foreground
+{
+  attr bitmapfile FileName = .\Res\Gyro_Foreground.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Face bitmap of the heading indicator (gyro).
+$rect <220,210,420,250>
+$output false
+resource Resources::Bitmap Gyro_Face
+{
+  attr bitmapfile FileName = .\Res\Gyro_Face.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Background bitmap of the airspeed indicator.
+$rect <10,0,210,40>
+$output false
+resource Resources::Bitmap Airspeed_Background
+{
+  attr bitmapfile FileName = .\Res\Airspeed_Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Needle bitmap of the airspeed indicator.
+$rect <220,0,420,40>
+$output false
+resource Resources::Bitmap Airspeed_Needle
+{
+  attr bitmapfile FileName = .\Res\Airspeed_Needle.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Background bitmap of the altimeter.
+$rect <10,70,210,110>
+$output false
+resource Resources::Bitmap Altimeter_Background
+{
+  attr bitmapfile FileName = .\Res\Altimeter_Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// 100 feet needle bitmap of the altimeter.
+$rect <220,70,420,110>
+$output false
+resource Resources::Bitmap Altimeter_Needle100
+{
+  attr bitmapfile FileName = .\Res\Altimeter_Needle100.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// 1000 feet needle bitmap of the altimeter.
+$rect <440,70,640,110>
+$output false
+resource Resources::Bitmap Altimeter_Needle1000
+{
+  attr bitmapfile FileName = .\Res\Altimeter_Needle1000.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Background bitmap of the variometer.
+$rect <10,350,210,390>
+$output false
+resource Resources::Bitmap Vario_Background
+{
+  attr bitmapfile FileName = .\Res\Vario_Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Needle bitmap of the variometer.
+$rect <220,350,420,390>
+$output false
+resource Resources::Bitmap Vario_Needle
+{
+  attr bitmapfile FileName = .\Res\Vario_Needle.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Background bitmap of the attitude indicator.
+$rect <10,140,210,180>
+$output false
+resource Resources::Bitmap Attitude_Background
+{
+  attr bitmapfile FileName = .\Res\Attitude_Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Inner face bitmap of the attitude indicator.
+$rect <220,140,420,180>
+$output false
+resource Resources::Bitmap Attitude_InnerFace
+{
+  attr bitmapfile FileName = .\Res\Attitude_InnerFace.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Outer face bitmap of the attitude indicator.
+$rect <440,140,640,180>
+$output false
+resource Resources::Bitmap Attitude_OuterFace
+{
+  attr bitmapfile FileName = .\Res\Attitude_OuterFace.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Fore ground bitmap of the attitude indicator.
+$rect <660,140,860,180>
+$output false
+resource Resources::Bitmap Attitude_Foreground
+{
+  attr bitmapfile FileName = .\Res\Attitude_Foreground.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Background bitmap of the turn coordinator.
+$rect <10,280,210,320>
+$output false
+resource Resources::Bitmap Turn_Background
+{
+  attr bitmapfile FileName = .\Res\Turn_Background.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Needle bitmap of the turn coordinator.
+$rect <220,280,420,320>
+$output false
+resource Resources::Bitmap Turn_Needle
+{
+  attr bitmapfile FileName = .\Res\Turn_Needle.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// How to change the size of the aviation instruments?
+// 
+// Within the subdirectory /Res you will find different sets of bitmap resources \
+// to create the aviation instruments in different sizes (from 100x100 pixel up to \
+// 400x400 pixel).
+// 
+// If you want to change the size of the display and the size of the instruments, \
+// do the following:
+// - Replace the current set of bitmap resources with the desired set of bitmap resources \
+// (e.g. 240x240) - for this purpose a couple of *.bat files are provided.
+// - Change the size of the screen within the profile (e.g. 800x480)
+// 
+// => All instruments and the entire application will rearrange everything automatically.
+note legend Note4
+{
+  attr Bounds = <10,420,750,640>;
+}

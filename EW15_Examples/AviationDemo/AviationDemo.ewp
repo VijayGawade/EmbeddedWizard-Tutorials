@@ -1,0 +1,145 @@
+﻿$version 15.00
+
+// This is a unit.
+$rect <40,390,240,430>
+unit Application
+{
+  attr Directory = .\;
+}
+
+// This is a unit.
+$rect <40,430,240,470>
+unit Res
+{
+  attr Directory = .\;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,70,240,110>
+unit Core
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,110,240,150>
+unit Resources
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,150,240,190>
+unit Graphics
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,190,240,230>
+unit Effects
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,230,240,270>
+unit Views
+{
+  attr Directory = $Mosaic;
+}
+
+$rect <40,270,240,310>
+unit WidgetSet
+{
+  attr Directory = $Mosaic\;
+}
+
+// Mosaic Framework
+note group Note1
+{
+  attr Bounds = <20,20,260,330>;
+}
+
+// The 'default' Language. Each project has to contain at least one language brick \
+// called 'Default'
+$rect <540,70,740,110>
+language Default;
+
+// Profile Configuration
+note group Note2
+{
+  attr Bounds = <270,20,510,130>;
+}
+
+// Languages
+note group Note3
+{
+  attr Bounds = <520,20,760,130>;
+}
+
+// Project Units
+note group Note5
+{
+  attr Bounds = <20,340,260,480>;
+}
+
+// Welcome to Embedded Wizard Aviation Demo!
+// 
+// This demo application was designed to show the implementation and appearance of \
+// different analog instruments, each of them with its own specific characteristic.
+// 
+// In order to display some realistic data, the application contains a very simple \
+// flight simulator, which can be controlled easily with the four keys:
+// 'Left' - move aeroplane 5 degree to the left side.
+// 'Right' - move aeroplane 5 degree to the right side.
+// 'Up' - move nose down for 5 degree (descent flight).
+// 'Down' - move nose up for 5 degree (ascent flight).
+// If no key is pressed, the autopilot will start...
+// 
+// You can double-click on the 'Application' brick to open the unit within the Composer \
+// and to analyze the implementation.
+// 
+// To start the application within the Prototyper, press 'Ctrl'+'F5'.
+note legend Note
+{
+  attr Bounds = <270,140,760,480>;
+}
+
+// How to change the size of the aviation instruments?
+// 
+// Within the subdirectory /Res you will find different sets of bitmap resources \
+// to create the aviation instruments in different sizes (from 100x100 pixel up to \
+// 400x400 pixel).
+// 
+// If you want to change the size of the display and the size of the instruments, \
+// do the following:
+// - Replace the current set of bitmap resources with the desired set of bitmap resources \
+// (e.g. 240x240) - for this purpose a couple of *.bat files are provided.
+// - Change the size of the screen within the profile (e.g. 800x480)
+// 
+// => All instruments and the entire application will rearrange everything automatically.
+note legend Note4
+{
+  attr Bounds = <20,490,760,710>;
+}
+
+// This is the 'default' profile for the new project. This profile will be used for \
+// test, prototyping, etc.
+$rect <290,70,490,110>
+profile Win32 : Windows.Software.RGBA8888
+{
+  attr ScreenSize = <960,640>;
+  attr Optimization = High;
+  attr ApplicationClass = Application::Application;
+  attr ScreenOrientation = Normal;
+  attr FontConversion = Windows;
+  attr CleanOutputDirectories = false;
+  attr OutputFileNameExtension = c;
+  attr Verbose = false;
+  attr StorageOfResources = Code;
+  attr StorageOfConstants = Code;
+
+  $rect <10,10,154,50>
+  macro Author = "Dipl. Ing. Paul Banach and Dipl. Ing. Manfred Schweyer, Copyright (C) TARA Systems GmbH";
+}

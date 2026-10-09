@@ -1,0 +1,1 @@
+This sample demonstrates the usage of an imported Excel sheet string table and the language change during runtime. It shows the basics of string management, string table import and language selection.

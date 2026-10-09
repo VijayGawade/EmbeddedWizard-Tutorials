@@ -1,0 +1,967 @@
+﻿$version 15.00
+
+// This is the global instance of the interface to the power supply unit. In a real \
+// project it represents the real power supply device.
+$rect <240,300,440,340>
+$output false
+autoobject Application::PowerSupplyClass PowerSupply;
+
+// This is so-called controller class. It implements the interface to the underlying \
+// device, hardware, etc. In this sample, it provides an interface to the power supply \
+// unit. For prototyping purpose, the interface simulates the unit.
+$rect <30,300,230,340>
+$output false
+class PowerSupplyClass
+{
+  // This effect exists for demonstration purpose. It simulates a consumer connected \
+  // with the power supply unit. The effective load is from 0 to 120 percent of the \
+  // current. It is not needed in real devices.
+  $rect <430,460,630,500>
+  object Effects::Int32Effect SimulatedLoad
+  {
+    preset Symmetric = true;
+    preset Timing = Effects::Timing.EaseIn_EaseOut;
+    preset CycleDuration = 10000;
+    preset Enabled = true;
+    preset Value2 = 120;
+  }
+
+  $rect <430,140,630,180>
+  onset Current
+  {
+    // No changes - Nothing to do
+    if ( pure Current == value )
+      return;
+
+    // Remember the new state
+    pure Current = value;
+
+    $if !$prototyper
+      native ( value )
+      {
+        /*
+           Hier you can place the 'C' code to control your real device.
+           The variable 'value' can be evaluated directly in the code. In 
+           this sample, this variable contains the current in milliampere.
+        */
+      }
+    $endif
+
+    // Notify all associated property observers.
+    notifyobservers ^Voltage;
+
+  }
+
+  $rect <430,90,630,130>
+  onset Voltage
+  {
+    // No changes - Nothing to do
+    if ( pure Voltage == value )
+      return;
+
+    // Remember the new state
+    pure Voltage = value;
+
+    $if !$prototyper
+      native ( value )
+      {
+        /*
+           Hier you can place the 'C' code to control your real device.
+           The variable 'value' can be evaluated directly in the code. In 
+           this sample, this variable contains the voltage in millivolt.
+        */
+      }
+    $endif
+
+    // Notify all associated property observers.
+    notifyobservers ^Voltage;
+
+  }
+
+  $rect <430,40,630,80>
+  onset SwitchedOn
+  {
+    // No changes - Nothing to do
+    if ( pure SwitchedOn == value )
+      return;
+
+    // Remember the new state
+    pure SwitchedOn = value;
+
+    $if !$prototyper
+      native ( value )
+      {
+        /*
+           Hier you can place the 'C' code to control your real device.
+           The variable 'value' can be evaluated directly in the code. If 
+           it is != 0, the power supply should by activated.
+        */
+      }
+    $endif
+
+    // Notify all associated property observers.
+    notifyobservers ^SwitchedOn;
+
+  }
+
+  // This property 'MeasuredCurrent' reflects the currently measured current in the \
+  // power supply device expressed in milliampere.
+  $rect <220,350,420,390>
+  property int32 MeasuredCurrent = 0;
+
+  // This property 'MeasuredVoltage' reflects the currently measured voltage in the \
+  // power supply device expressed in millivolt.
+  $rect <220,300,420,340>
+  property int32 MeasuredVoltage = 0;
+
+  // The property 'Overload' reflects the current overload state in the power supply \
+  // device. If active, the voltage will be decrased to keep the current constant.
+  $rect <220,250,420,290>
+  property bool Overload = false;
+
+  // This property stores the pre-determined max. current in milliampere. Changing \
+  // of this property should by passed to the power supply device. Implement the \
+  // necessary logic in the corresponding onset method.
+  $rect <220,140,420,180>
+  property int32 Current = 3000;
+
+  // This property stores the pre-determined voltage in millivolt. Changing of this \
+  // property should by passed to the power supply device. Implement the necessary \
+  // logic in the corresponding onset method.
+  $rect <220,90,420,130>
+  property int32 Voltage = 5000;
+
+  // This property reflects the current state of the power supply unit. If this property \
+  // is changed, the power supply should be activated or deactivated. Implement the \
+  // necessary logic in the corresponding onset method.
+  $rect <220,40,420,80>
+  property bool SwitchedOn = false;
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <10,250,210,290>
+  $output true
+  method void UpdateOverload( arg bool aOverload )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aOverload != pure Overload )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure Overload = aOverload;
+
+      // Notify all associated property observers.
+      notifyobservers ^Overload;
+    }
+  }
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <10,300,210,340>
+  $output true
+  method void UpdateMeasuredVoltage( arg int32 aVoltage )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aVoltage != pure MeasuredVoltage )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure MeasuredVoltage = aVoltage;
+
+      // Notify all associated property observers.
+      notifyobservers ^MeasuredVoltage;
+    }
+  }
+
+  // This method is intended to be called by the device to notify the GUI application \
+  // about an alternation of its setting or state value.
+  $rect <10,350,210,390>
+  $output true
+  method void UpdateMeasuredCurrent( arg int32 aCurrent )
+  {
+    // Only if the reported value does differ from the one stored currently in the property.
+    if ( aCurrent != pure MeasuredCurrent )
+    {
+      // Remember the new value in the internal memory of the property.
+      pure MeasuredCurrent = aCurrent;
+
+      // Notify all associated property observers.
+      notifyobservers ^MeasuredCurrent;
+    }
+  }
+
+  // This is a timer object - just for simulation.
+  $rect <10,460,210,500>
+  object Core::Timer SimulationTimer
+  {
+    preset OnTrigger = SimulationSlot;
+    preset Period = 100;
+    preset Enabled = true;
+  }
+
+  // This is a slot method to simulate the activity of a 'real' power supply device. \
+  // It is not needed within a real device.
+  $rect <220,460,420,500>
+  slot SimulationSlot
+  {
+    var bool overload = false;
+    var int32 voltage = 0;
+    var int32 current = 0;
+     
+    if ( SwitchedOn )
+    {
+      current = SimulatedLoad.Value * Current / 100;
+
+      if ( current > Current )
+      {
+        overload = true;
+        voltage = Voltage * Current / current;
+        current = Current;
+      }
+      else
+        voltage = Voltage;
+    }
+
+    /* update all measured/provided values of the underlying device */ 
+    UpdateMeasuredVoltage( voltage );
+    UpdateMeasuredCurrent( current );
+    UpdateOverload( overload );
+
+  }
+
+  // Properties to control the device
+  note group Note1
+  {
+    attr Bounds = <0,0,640,200>;
+  }
+
+  // Data provided by the device
+  note group Note2
+  {
+    attr Bounds = <0,210,640,410>;
+  }
+
+  // Simulation of the power supply device
+  note group Note3
+  {
+    attr Bounds = <0,420,640,520>;
+  }
+
+  // These properties represent individual settings of the power supply device: an \
+  // on/off state, the selected voltage in millivolt and the selected current in \
+  // milliampere. Through the associated 'onset' method all write operations to a \
+  // property can be directed to the particular device API.
+  note legend Note
+  {
+    attr Bounds = <650,0,1000,200>;
+  }
+
+  // These properties represent states or measurement values provided by the power \
+  // supply device: an overload flag, the measured voltage in millivolt and the measured \
+  // current in milliampere. The different 'UpdateProperty' methods, are intended \
+  // to be called by the device to notify the GUI application about an alternation \
+  // of a setting or state value represented by the corresponding property. See inline \
+  // documentation inside the method.
+  note legend Note4
+  {
+    attr Bounds = <650,210,1000,410>;
+  }
+
+  // How to integrate your UI application with a real device?
+  // 
+  // https://doc.embedded-wizard.de/integrating-with-the-device
+  // https://doc.embedded-wizard.de/device-class-and-device-driver
+  note legend Note5
+  {
+    attr Bounds = <0,530,640,620>;
+  }
+}
+
+// This is a GUI component.
+$rect <240,180,440,220>
+$output false
+$multilingual true
+class Menu : Core::Group
+{
+  $rect <10,190,210,230>
+  inherited property Bounds = <0,0,280,168>;
+
+  // This slot method is invoked, when the user has selected the corresponding menu \
+  // item.
+  $rect <310,10,510,50>
+  slot onSelectEnglish
+  {
+    // Select the default english language
+    GetRoot().Language = Default;
+  }
+
+  // This slot method is invoked, when the user has selected the corresponding menu \
+  // item.
+  $rect <310,50,510,90>
+  slot onSelectGerman
+  {
+    // Select the german language
+    GetRoot().Language = German;
+  }
+
+  // This slot method is invoked, when the user has selected the corresponding menu \
+  // item.
+  $rect <310,90,510,130>
+  slot onSelectSpanish
+  {
+    // Select the spanish language
+    GetRoot().Language = Spanish;
+  }
+
+  // This slot method is invoked, when the user has selected the corresponding menu \
+  // item.
+  $rect <310,130,510,170>
+  slot onExit
+  {
+    // Inform the owner of the menu, that the 'exit' has been pressed.
+    idlesignal OnExitMenu;
+  }
+
+  // This slot method is connected to the KeyHandler. It will be invoked, when the \
+  // user has pressed the Left/Right/Up/Down keys.
+  $rect <10,280,210,320>
+  slot onKeyPressSlot
+  {
+    var Core::Direction direction = Core::Direction.None;
+    var Core::View      view;
+
+    // Depending on the pressed key, determine the direction to look for
+    // other menu items.
+    switch ( KeyHandler.Code )
+    {
+      case Core::KeyCode.Left  : direction = Core::Direction.Left;
+      case Core::KeyCode.Right : direction = Core::Direction.Right;
+      case Core::KeyCode.Up    : direction = Core::Direction.Top;
+      case Core::KeyCode.Down  : direction = Core::Direction.Bottom;
+      default :;
+    }
+
+    // Try to find another item in the given direction relative to the
+    // currently selected (Focus) item. Search for items able to handle
+    // keyboard inputs only (Enabled and Focusable).
+    view = FindViewInDirection( Focus, direction, 
+                                Core::ViewState[ Enabled, Focusable ]);
+
+    // Item found? Select this item then.
+    if ( view != null )
+      Focus = view;
+  }
+
+  // This property 'OnExitMenu' can refer to a slot method, which should be invoked \
+  // when the user has selected the last 'Exit' item.
+  $rect <510,130,710,170>
+  property slot OnExitMenu = null;
+
+  // This is a key press handler. It responds to the Up/Down/Left/Right key events \
+  // and passes them to the onPressKey slot method.
+  $rect <10,240,210,280>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onKeyPressSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = onKeyPressSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <2,2,278,166>;
+    preset Color = #3C3C3CFF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Wallpaper Background
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Bounds = <4,4,276,164>;
+    preset Bitmap = SteelWidgets::BackPanel;
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuItem ItemEnglish
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Bounds = <4,4,276,44>;
+    preset OnActivate = onSelectEnglish;
+    preset Icon = Application::FlagEngland;
+    preset Caption = "English";
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuItem ItemGerman
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Bounds = <4,44,276,84>;
+    preset OnActivate = onSelectGerman;
+    preset Icon = Application::FlagGermany;
+    preset Caption = "Deutsch";
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuItem ItemSpanish
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Bounds = <4,84,276,124>;
+    preset OnActivate = onSelectSpanish;
+    preset Icon = Application::FlagSpain;
+    preset Caption = "Español";
+  }
+
+  $rect <20,20,160,60>
+  object Application::MenuItem ItemExit
+  {
+    preset Layout = Core::Layout[ResizeHorz, ResizeVert];
+    preset Bounds = <4,124,276,164>;
+    preset OnActivate = onExit;
+    preset Icon = null;
+    preset Caption = Application::CloseMenuText;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Line Line
+  {
+    preset Layout = Core::Layout[ResizeHorz];
+    preset Point2 = <274,124>;
+    preset Point1 = <6,124>;
+    preset Color = #A2A2A2FF;
+  }
+}
+
+// This is a GUI component.
+$rect <30,180,230,220>
+$output false
+class MenuItem : Core::Group
+{
+  $rect <10,70,210,110>
+  inherited property Bounds = <0,0,300,40>;
+
+  $rect <10,110,210,150>
+  inherited method UpdateViewState()
+  {
+    // Is the item currently selected?
+    if ( aState.contains( Core::ViewState[ Focused ]))
+    {
+      // Then highlight the item
+      Background.Visible = true;
+      TextView2.Visible  = false;
+    }
+    else
+    {
+      // ... or de-highlight the item
+      Background.Visible = false;
+      TextView2.Visible  = true;
+    }
+  }
+
+  // This slot method is connected to the SimpleTouchHandler and to the KeyHandler. \
+  // It is invoked when the user has touched the item or pressed the OK key while \
+  // the item is highlighted (focused).
+  $rect <10,200,210,240>
+  slot onPressSlot
+  {
+    // Focus the selected item - in this manner the item appears highlighted
+    Owner.Focus = this;
+
+    // Finally, send a signal to the slot method connected with this item.
+    idlesignal OnActivate;
+  }
+
+  $rect <530,50,730,90>
+  onset Icon
+  {
+    // No changes - nothing to do.
+    if ( pure Icon == value )
+      return;
+
+    // Remember the new value
+    pure Icon = value;
+
+    // .. and show the new bitmap in image view
+    ImageView.Bitmap = value;
+  }
+
+  $rect <330,50,530,90>
+  onset Caption
+  {
+    // No changes - nothing to do.
+    if ( pure Caption == value )
+      return;
+
+    // Remember the new value
+    pure Caption = value;
+
+    // .. and show the new text in the both text views
+    TextView1.String = value;
+    TextView2.String = value;
+  }
+
+  // This property 'OnActivate' can refer to a slot method, which should be invoked \
+  // in response to user interaction.
+  $rect <330,100,530,140>
+  property slot OnActivate = null;
+
+  // The property 'Icon' stores the bitmap to display in the item.
+  $rect <530,10,730,50>
+  property Resources::Bitmap Icon = Resources::DefaultBitmap;
+
+  // The property 'Caption' stores the text to display in the item.
+  $rect <330,10,530,50>
+  property string Caption = "Caption";
+
+  // This is a key press handler. It responds to the OK key event and passes it to \
+  // the onPressSlot slot method.
+  $rect <10,160,210,200>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onPressSlot;
+    preset Filter = Core::KeyCode.Ok;
+  }
+
+  // This is a touch handler. It is connected with the onPressSlot method. Each time \
+  // the user touches the handler, the slot method is invoked.
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler SimpleTouchHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Point4 = <0,40>;
+    preset Point3 = <300,40>;
+    preset Point2 = <300,0>;
+    preset Point1 = <0,0>;
+    preset OnPress = onPressSlot;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Background
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <2,2,298,38>;
+    preset Color = #FFFFFF80;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text TextView1
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <40,0,300,39>;
+    preset String = "Caption";
+    preset Font = Resources::FontMedium;
+    preset Color = #4C4C4CFF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text TextView2
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <40,0,300,39>;
+    preset ScrollOffset = <1,1>;
+    preset String = "Caption";
+    preset Font = Resources::FontMedium;
+    preset Color = #E4E4E4FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image ImageView
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToTop, ResizeVert];
+    preset Bounds = <10,0,50,40>;
+    preset Bitmap = Resources::DefaultBitmap;
+  }
+}
+
+// The bitmap resource contains the Embedded Wizard logo.
+$rect <700,220,900,260>
+$output false
+resource Resources::Bitmap LogoOfEmWi
+{
+  attr bitmapfile FileName = .\Res\EmWiLogo.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// The bitmap resource contains the flag image.
+$rect <490,300,690,340>
+$output false
+resource Resources::Bitmap FlagEngland
+{
+  attr bitmapfile FileName = .\Res\FlagEngland.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// The bitmap resource contains the flag image.
+$rect <490,260,690,300>
+$output false
+resource Resources::Bitmap FlagSpain
+{
+  attr bitmapfile FileName = .\Res\FlagSpain.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// The bitmap resource contains the flag image.
+$rect <490,220,690,260>
+$output false
+resource Resources::Bitmap FlagGermany
+{
+  attr bitmapfile FileName = .\Res\FlagGermany.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This constant stores the multi-lingual variants of the text.
+$rect <700,100,900,140>
+$output false
+const string CloseMenuText =
+(
+  Default = "Exit";
+  German = "Verlassen";
+  Spanish = "Abandonar";
+);
+
+// This constant stores the multi-lingual variants of the text.
+$rect <700,60,900,100>
+$output false
+const string SettingsText =
+(
+  Default = "Settings";
+  German = "Einstellungen";
+  Spanish = "Preferencias";
+);
+
+// This constant stores the multi-lingual variants of the text.
+$rect <490,100,690,140>
+$output false
+const string CurrentText =
+(
+  Default = "Current";
+  German = "Strom";
+  Spanish = "Corriente";
+);
+
+// This constant stores the multi-lingual variants of the text.
+$rect <490,60,690,100>
+$output false
+const string VoltageText =
+(
+  Default = "Voltage";
+  German = "Spannung";
+  Spanish = "Voltaje";
+);
+
+// This is the root component of the entire GUI application.
+$rect <30,60,230,100>
+$output false
+$multilingual true
+class Application : Core::Root
+{
+  $rect <510,400,710,440>
+  inherited property Bounds = <0,0,640,384>;
+
+  // This variable stores the currently opened settings menu. It is 'null' if no \
+  // menu is visible.
+  $rect <270,520,470,560>
+  var Application::Menu menu = null;
+
+  // This variable refers to the device object of the power supply device. This is \
+  // the interface between the GUI application and the real device. This variable \
+  // is used to keep the device object within the memory and to prevent it from beeing \
+  // disposed by the Garbage Collector.
+  $rect <510,440,710,480>
+  var Application::PowerSupplyClass powerSupplyDevice = Application::PowerSupply;
+
+  // This slot method is connected to the ButtonSettings button. When the user has \
+  // pressed the button, the method shows a settings menu.
+  $rect <270,440,470,480>
+  slot onShowMenu
+  {
+    // Create a new menu instance
+    menu = new Application::Menu;
+
+    // Ensure, the menu appears in the center of the screen
+    menu.MoveView( Bounds.orect.center - menu.Bounds.center, false );
+
+    // Connect the onExitMenu slot method to the menu. This method is
+    // invoked, when the user has decided to close the menu.
+    menu.OnExitMenu = onExitMenu;
+
+    // Make the menu visible and modal. Modal GUI components grab all 
+    // user inputs.
+    Add( menu, 0 );
+    BeginModal( menu );
+  }
+
+  // This slot method is invoked, when the user has decided to close the settings \
+  // menu.
+  $rect <270,480,470,520>
+  slot onExitMenu
+  {
+    // Finish the modal (exclusive) state of the menu and hide it
+    EndModal( menu );
+    Remove( menu );
+
+    // Now, no menu is visible
+    menu = null;
+  }
+
+  // This slot method is connected to the KeyHandler. It will be invoked, when the \
+  // user has pressed the Left/Right/Up/Down keys.
+  $rect <20,480,220,520>
+  slot onKeyPressSlot
+  {
+    var Core::Direction direction = Core::Direction.None;
+    var Core::View      view;
+
+    // Depending on the pressed key, determine the direction to look for
+    // other widgets.
+    switch ( KeyHandler.Code )
+    {
+      case Core::KeyCode.Left  : direction = Core::Direction.Left;
+      case Core::KeyCode.Right : direction = Core::Direction.Right;
+      case Core::KeyCode.Up    : direction = Core::Direction.Top;
+      case Core::KeyCode.Down  : direction = Core::Direction.Bottom;
+      default :;
+    }
+
+    // Try to find another widget in the given direction relative to the
+    // currently selected (Focus) widget. Search for widgets able to handle
+    // keyboard inputs only (Enabled and Focusable).
+    view = FindViewInDirection( Focus, direction, 
+                                Core::ViewState[ Enabled, Focusable ]);
+
+    // Item found? Select this widget then.
+    if ( view != null )
+      Focus = view;
+  }
+
+  // This is a key press handler. It responds to the Up/Down/Left/Right key events \
+  // and passes them to the onPressKey slot method.
+  $rect <20,440,220,480>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onKeyPressSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = onKeyPressSlot;
+  }
+
+  $rect <20,20,160,60>
+  object SteelWidgets::Background Background
+  {
+    preset Bounds = <0,0,640,384>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text LabelVoltage
+  {
+    preset Bounds = <214,279,334,309>;
+    preset String = Application::VoltageText;
+    preset Font = Resources::FontMedium;
+    preset Color = #B7B7B7FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text LabelCurrent
+  {
+    preset Bounds = <446,279,566,309>;
+    preset String = Application::CurrentText;
+    preset Font = Resources::FontMedium;
+    preset Color = #B7B7B7FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text LabelSettings
+  {
+    preset Bounds = <26,278,155,308>;
+    preset String = Application::SettingsText;
+    preset Font = Resources::FontMedium;
+    preset Color = #B7B7B7FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text LabelPower
+  {
+    preset Bounds = <26,156,155,186>;
+    preset String = "Power";
+    preset Font = Resources::FontMedium;
+    preset Color = #B7B7B7FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Image ImageEmWiLogo
+  {
+    preset Bounds = <20,330,200,370>;
+    preset Alignment = Views::ImageAlignment[AlignHorzLeft, AlignVertCenter];
+    preset Bitmap = Application::LogoOfEmWi;
+    preset Opacity = 128;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::Gauge GaugeVoltage
+  {
+    preset Bounds = <190,48,362,170>;
+    preset Outlet = ^Application::PowerSupply.MeasuredVoltage;
+    preset MaxValue = 15000;
+    preset Appearance = SteelWidgets::GaugeVoltageConfig;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::Gauge GaugeCurrent
+  {
+    preset Bounds = <420,48,592,170>;
+    preset Outlet = ^Application::PowerSupply.MeasuredCurrent;
+    preset MaxValue = 5000;
+    preset Appearance = SteelWidgets::GaugeCurrentConfig;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton SwitchPower
+  {
+    preset Layout = Core::Layout[AlignToLeft, AlignToTop];
+    preset Bounds = <46,107,136,157>;
+    preset Outlet = ^Application::PowerSupply.SwitchedOn;
+    preset Appearance = SteelWidgets::SwitchConfig;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RotaryKnob RotaryKnobVoltage
+  {
+    preset Bounds = <224,192,324,292>;
+    preset Outlet = ^Application::PowerSupply.Voltage;
+    preset MaxValue = 15000;
+    preset CurrentValue = 0;
+    preset Appearance = SteelWidgets::RotaryKnobConfig;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RotaryKnob RotaryKnobCurrent
+  {
+    preset Bounds = <455,192,555,292>;
+    preset Outlet = ^Application::PowerSupply.Current;
+    preset MaxValue = 5000;
+    preset CurrentValue = 0;
+    preset Appearance = SteelWidgets::RotaryKnobConfig;
+  }
+
+  $rect <20,20,160,60>
+  object SteelWidgets::Indicator IndicatorPower
+  {
+    preset Bounds = <66,47,116,97>;
+    preset Type = SteelWidgets::LedType.Green;
+    preset Outlet = ^Application::PowerSupply.SwitchedOn;
+  }
+
+  $rect <20,20,160,60>
+  object SteelWidgets::Indicator IndicatorOverload
+  {
+    preset Bounds = <365,215,415,265>;
+    preset Type = SteelWidgets::LedType.Red;
+    preset Flashing = true;
+    preset Outlet = ^Application::PowerSupply.Overload;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton ButtonSettings
+  {
+    preset Bounds = <56,209,126,279>;
+    preset OnActivate = onShowMenu;
+    preset Appearance = SteelWidgets::PushButtonConfig;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text LabelCaption
+  {
+    preset Bounds = <420,340,620,370>;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = "Power Supply Demo";
+    preset Font = Resources::FontMedium;
+    preset Color = #B7B7B7FF;
+  }
+
+  // Keyboard handling
+  note group Note
+  {
+    attr Bounds = <0,400,230,540>;
+  }
+
+  // Settings menu
+  note group Note1
+  {
+    attr Bounds = <250,400,490,580>;
+  }
+
+  // How to process keyboard input events?
+  // 
+  // https://doc.embedded-wizard.de/using-key-press-handler
+  note legend Note5
+  {
+    attr Bounds = <0,590,490,660>;
+  }
+
+  // How to compose the appearance of a GUI component?
+  // 
+  // https://doc.embedded-wizard.de/compositing-component-appearance
+  note legend Note6
+  {
+    attr Bounds = <0,670,490,740>;
+  }
+}
+
+// Bitmap resources
+note group Note3
+{
+  attr Bounds = <470,170,920,360>;
+}
+
+// String constants
+note group Note4
+{
+  attr Bounds = <470,10,920,160>;
+}
+
+// Settings menu
+note group Note5
+{
+  attr Bounds = <10,130,460,240>;
+}
+
+// Device class
+note group Note6
+{
+  attr Bounds = <10,250,460,360>;
+}
+
+// Application
+note group Note7
+{
+  attr Bounds = <10,10,460,120>;
+}
+
+// How to structure new projects?
+// 
+// https://doc.embedded-wizard.de/structuring-projects
+note legend Note8
+{
+  attr Bounds = <10,370,460,440>;
+}
+
+// How to manage resources and constants?
+// 
+// https://doc.embedded-wizard.de/managing-resource-data
+note legend Note9
+{
+  attr Bounds = <470,370,920,440>;
+}

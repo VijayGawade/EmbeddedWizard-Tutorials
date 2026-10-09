@@ -1,0 +1,1 @@
+This WaveformGenerator demo application combines waveforms with different amplitudes and frequencies. The implementation shows the usage of vector graphics to draw a curve based on a list of coordinates.

@@ -1,0 +1,1 @@
+The sample application AnimatedWatch implements a 3D animation with a different clock faces. This demo makes intensive usage of the Warp3D functionality.

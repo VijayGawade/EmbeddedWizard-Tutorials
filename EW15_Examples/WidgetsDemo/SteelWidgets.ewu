@@ -1,0 +1,344 @@
+﻿$version 15.00
+
+$rect <850,60,1050,100>
+$output false
+resource Resources::Bitmap SteelBackground
+{
+  attr bitmapfile FileName = .\SteelRes\SteelBackground.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <450,60,650,100>
+$output false
+resource Resources::Bitmap SteelPushButton
+{
+  attr bitmapfile FileName = .\SteelRes\SteelPushButton.png;
+  attr framesize FrameSize = <70,70>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <450,100,650,140>
+$output false
+resource Resources::Bitmap SteelSwitch
+{
+  attr bitmapfile FileName = .\SteelRes\SteelSwitch.png;
+  attr framesize FrameSize = <90,50>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <450,140,650,180>
+$output false
+resource Resources::Bitmap SteelHorzSliderTrack
+{
+  attr bitmapfile FileName = .\SteelRes\SteelHorzSliderTrack.png;
+  attr framesize FrameSize = <120,20>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <650,140,850,180>
+$output false
+resource Resources::Bitmap SteelHorzSliderThumb
+{
+  attr bitmapfile FileName = .\SteelRes\SteelHorzSliderThumb.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <450,180,650,220>
+$output false
+resource Resources::Bitmap SteelVertSliderTrack
+{
+  attr bitmapfile FileName = .\SteelRes\SteelVertSliderTrack.png;
+  attr framesize FrameSize = <20,120>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <650,180,850,220>
+$output false
+resource Resources::Bitmap SteelVertSliderThumb
+{
+  attr bitmapfile FileName = .\SteelRes\SteelVertSliderThumb.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <450,220,650,260>
+$output false
+resource Resources::Bitmap SteelRotaryKnobBack
+{
+  attr bitmapfile FileName = .\SteelRes\SteelRotaryKnob.png;
+  attr framesize FrameSize = <100,100>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <650,220,850,260>
+$output false
+resource Resources::Bitmap SteelRotaryKnobMark
+{
+  attr bitmapfile FileName = .\SteelRes\SteelRotaryMark.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <40,60,450,100>
+$output false
+autoobject WidgetSet::PushButtonConfig PushButton
+{
+  preset LabelColorActive = #FFFFFFFF;
+  preset LabelColorFocused = #FFFFFFFF;
+  preset LabelColorDisabled = #A8ABABFF;
+  preset LabelColorDefault = #FFFFFFFF;
+  preset LabelMarginTop = 70;
+  preset IconTintDisabled = #FFFFFF88;
+  preset LabelAlignment = Views::TextAlignment[AlignHorzCenter, AlignVertTop];
+  preset LabelFont = Resources::FontMedium;
+  preset FaceLayout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop];
+  preset FaceFrameActive = 4;
+  preset FaceFrameFocused = 3;
+  preset FaceFrameDisabled = 0;
+  preset FaceFrameDefault = 1;
+  preset FaceBitmapActive = SteelWidgets::SteelPushButton;
+  preset FaceBitmapFocused = SteelWidgets::SteelPushButton;
+  preset FaceBitmapDisabled = SteelWidgets::SteelPushButton;
+  preset FaceBitmapDefault = SteelWidgets::SteelPushButton;
+  preset WidgetMinSize = <70,70>;
+}
+
+$rect <40,100,450,140>
+$output false
+autoobject WidgetSet::ToggleButtonConfig Switch
+{
+  preset LabelOnColorActive = #6C6E70FF;
+  preset LabelOnColorFocused = #6C6E70FF;
+  preset LabelOnColorDisabled = #A8ABABFF;
+  preset LabelOnColorDefault = #6C6E70FF;
+  preset LabelOffColorActive = #6C6E70FF;
+  preset LabelOffColorFocused = #6C6E70FF;
+  preset LabelOffColorDisabled = #A8ABABFF;
+  preset LabelOffColorDefault = #6C6E70FF;
+  preset LabelMarginTop = 50;
+  preset LabelAlignment = Views::TextAlignment[AlignHorzCenter, AlignVertTop];
+  preset LabelOnFont = Resources::FontMedium;
+  preset LabelOffFont = Resources::FontMedium;
+  preset FaceLayout = Core::Layout[AlignToLeft, AlignToRight, AlignToTop];
+  preset FaceOnFrameActive = 7;
+  preset FaceOnFrameFocused = 5;
+  preset FaceOnFrameDisabled = 1;
+  preset FaceOnFrameDefault = 3;
+  preset FaceOnBitmapActive = SteelWidgets::SteelSwitch;
+  preset FaceOnBitmapFocused = SteelWidgets::SteelSwitch;
+  preset FaceOnBitmapDisabled = SteelWidgets::SteelSwitch;
+  preset FaceOnBitmapDefault = SteelWidgets::SteelSwitch;
+  preset FaceOffFrameActive = 6;
+  preset FaceOffFrameFocused = 4;
+  preset FaceOffFrameDisabled = 0;
+  preset FaceOffFrameDefault = 2;
+  preset FaceOffBitmapActive = SteelWidgets::SteelSwitch;
+  preset FaceOffBitmapFocused = SteelWidgets::SteelSwitch;
+  preset FaceOffBitmapDisabled = SteelWidgets::SteelSwitch;
+  preset FaceOffBitmapDefault = SteelWidgets::SteelSwitch;
+  preset WidgetMinSize = <90,50>;
+}
+
+$rect <40,180,450,220>
+$output false
+autoobject WidgetSet::VerticalSliderConfig VerticalSlider
+{
+  preset ThumbMarginTop = -3;
+  preset ThumbMarginBottom = -3;
+  preset ThumbBitmapActive = SteelWidgets::SteelVertSliderThumb;
+  preset ThumbBitmapFocused = SteelWidgets::SteelVertSliderThumb;
+  preset ThumbBitmapDisabled = SteelWidgets::SteelVertSliderThumb;
+  preset ThumbBitmapDefault = SteelWidgets::SteelVertSliderThumb;
+  preset TrackAboveFrameActive = 2;
+  preset TrackAboveFrameFocused = 2;
+  preset TrackAboveFrameDisabled = 0;
+  preset TrackAboveFrameDefault = 1;
+  preset TrackAboveBitmapActive = SteelWidgets::SteelVertSliderTrack;
+  preset TrackAboveBitmapFocused = SteelWidgets::SteelVertSliderTrack;
+  preset TrackAboveBitmapDisabled = SteelWidgets::SteelVertSliderTrack;
+  preset TrackAboveBitmapDefault = SteelWidgets::SteelVertSliderTrack;
+  preset TrackBelowFrameActive = 2;
+  preset TrackBelowFrameFocused = 2;
+  preset TrackBelowFrameDisabled = 0;
+  preset TrackBelowFrameDefault = 1;
+  preset TrackBelowBitmapActive = SteelWidgets::SteelVertSliderTrack;
+  preset TrackBelowBitmapFocused = SteelWidgets::SteelVertSliderTrack;
+  preset TrackBelowBitmapDisabled = SteelWidgets::SteelVertSliderTrack;
+  preset TrackBelowBitmapDefault = SteelWidgets::SteelVertSliderTrack;
+  preset FaceBitmapActive = SteelWidgets::SteelVertSliderFace;
+  preset FaceBitmapFocused = SteelWidgets::SteelVertSliderFace;
+  preset FaceBitmapDefault = SteelWidgets::SteelVertSliderFace;
+  preset WidgetMinSize = <20,90>;
+}
+
+$rect <40,140,450,180>
+$output false
+autoobject WidgetSet::HorizontalSliderConfig HorizontalSlider
+{
+  preset ThumbMarginRight = -3;
+  preset ThumbMarginLeft = -3;
+  preset ThumbBitmapActive = SteelWidgets::SteelHorzSliderThumb;
+  preset ThumbBitmapFocused = SteelWidgets::SteelHorzSliderThumb;
+  preset ThumbBitmapDisabled = SteelWidgets::SteelHorzSliderThumb;
+  preset ThumbBitmapDefault = SteelWidgets::SteelHorzSliderThumb;
+  preset TrackRightFrameActive = 2;
+  preset TrackRightFrameFocused = 2;
+  preset TrackRightFrameDisabled = 0;
+  preset TrackRightFrameDefault = 1;
+  preset TrackRightBitmapActive = SteelWidgets::SteelHorzSliderTrack;
+  preset TrackRightBitmapFocused = SteelWidgets::SteelHorzSliderTrack;
+  preset TrackRightBitmapDisabled = SteelWidgets::SteelHorzSliderTrack;
+  preset TrackRightBitmapDefault = SteelWidgets::SteelHorzSliderTrack;
+  preset TrackLeftFrameActive = 2;
+  preset TrackLeftFrameFocused = 2;
+  preset TrackLeftFrameDisabled = 0;
+  preset TrackLeftFrameDefault = 1;
+  preset TrackLeftBitmapActive = SteelWidgets::SteelHorzSliderTrack;
+  preset TrackLeftBitmapFocused = SteelWidgets::SteelHorzSliderTrack;
+  preset TrackLeftBitmapDisabled = SteelWidgets::SteelHorzSliderTrack;
+  preset TrackLeftBitmapDefault = SteelWidgets::SteelHorzSliderTrack;
+  preset FaceBitmapActive = SteelWidgets::SteelHorzSliderFace;
+  preset FaceBitmapFocused = SteelWidgets::SteelHorzSliderFace;
+  preset FaceBitmapDefault = SteelWidgets::SteelHorzSliderFace;
+  preset WidgetMinSize = <120,50>;
+}
+
+$rect <850,140,1050,180>
+$output false
+resource Resources::Bitmap SteelHorzSliderFace
+{
+  attr bitmapfile FileName = .\SteelRes\SteelHorzSliderFace.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <850,180,1050,220>
+$output false
+resource Resources::Bitmap SteelVertSliderFace
+{
+  attr bitmapfile FileName = .\SteelRes\SteelVertSliderFace.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <40,220,450,260>
+$output false
+autoobject WidgetSet::RotaryKnobConfig RotaryKnob
+{
+  preset ThumbMaxAngle = -135;
+  preset ThumbMinAngle = 135;
+  preset ThumbPivot = <2,25>;
+  preset ThumbBitmapActive = SteelWidgets::SteelRotaryKnobMark;
+  preset ThumbBitmapFocused = SteelWidgets::SteelRotaryKnobMark;
+  preset ThumbBitmapDefault = SteelWidgets::SteelRotaryKnobMark;
+  preset ScaleFrameActive = 2;
+  preset ScaleFrameFocused = 2;
+  preset ScaleFrameDisabled = 0;
+  preset ScaleFrameDefault = 1;
+  preset ScaleBitmapActive = SteelWidgets::SteelRotaryKnobBack;
+  preset ScaleBitmapFocused = SteelWidgets::SteelRotaryKnobBack;
+  preset ScaleBitmapDisabled = SteelWidgets::SteelRotaryKnobBack;
+  preset ScaleBitmapDefault = SteelWidgets::SteelRotaryKnobBack;
+}
+
+// Steel Widgets as customized default widgets
+note group NoteGroup3
+{
+  attr Bounds = <20,10,1070,320>;
+}
+
+$rect <40,260,450,300>
+$output false
+autoobject WidgetSet::GaugeConfig Gauge
+{
+  preset SwingElastic = false;
+  preset SwingDuration = 1000;
+  preset CoverBitmap = SteelWidgets::SteelGaugeFront;
+  preset NeedleMaxAngle = -50;
+  preset NeedleMinAngle = 50;
+  preset NeedlePivot = <3,89>;
+  preset NeedleBitmap = SteelWidgets::SteelGaugeNeedle;
+  preset CenterOffset = <0,42>;
+  preset ScaleBitmap = SteelWidgets::SteelGaugeBack;
+  preset WidgetMaxSize = <172,122>;
+  preset WidgetMinSize = <172,122>;
+}
+
+$rect <450,260,650,300>
+$output false
+resource Resources::Bitmap SteelGaugeBack
+{
+  attr bitmapfile FileName = .\SteelRes\SteelGaugeBack.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <650,260,850,300>
+$output false
+resource Resources::Bitmap SteelGaugeFront
+{
+  attr bitmapfile FileName = .\SteelRes\SteelGaugeFront.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <850,260,1050,300>
+$output false
+resource Resources::Bitmap SteelGaugeNeedle
+{
+  attr bitmapfile FileName = .\SteelRes\SteelGaugeNeedle.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// How to use and customize widgets?
+// 
+// https://doc.embedded-wizard.de/using-widgets
+note legend Note9
+{
+  attr Bounds = <20,330,470,400>;
+}

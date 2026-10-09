@@ -1,0 +1,1066 @@
+﻿$version 15.00
+
+$rect <440,230,690,270>
+$output false
+resource Resources::Font Font
+{
+  attr fontname FontName = Roboto;
+  attr fontheight Height = 32;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0xFF;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+$rect <440,170,690,210>
+$output false
+autoobject Effects::FadeInOutTransition FadeInOutTabPage
+{
+  preset Buffered = true;
+  preset Duration = 200;
+}
+
+$rect <690,130,940,170>
+$output false
+autoobject Effects::SlideTransition SlideRightCentered
+{
+  preset Buffered = true;
+  preset Timing = Effects::Timing.EaseIn_EaseOut;
+  preset Duration = 300;
+  preset Direction = Core::Direction.Right;
+}
+
+$rect <440,130,690,170>
+$output false
+autoobject Effects::SlideTransition SlideLeftCentered
+{
+  preset Buffered = true;
+  preset Timing = Effects::Timing.EaseIn_EaseOut;
+  preset Duration = 300;
+  preset Direction = Core::Direction.Left;
+}
+
+$rect <690,90,940,130>
+$output false
+autoobject Effects::SlideTransition SlideOutPopup
+{
+  preset Duration = 250;
+  preset Direction = Core::Direction.Top;
+}
+
+$rect <440,90,690,130>
+$output false
+autoobject Effects::SlideTransition SlideInPopup
+{
+  preset Timing = Effects::Timing.Back_Out;
+  preset Duration = 250;
+  preset Direction = Core::Direction.Bottom;
+}
+
+$rect <690,50,940,90>
+$output false
+autoobject Effects::ScaleTransition FadeOutAlert
+{
+  preset Timing = Effects::Timing.Back_In;
+  preset Duration = 250;
+}
+
+$rect <440,50,690,90>
+$output false
+autoobject Effects::ScaleTransition FadeInAlert
+{
+  preset Timing = Effects::Timing.Back_Out;
+  preset Duration = 250;
+}
+
+$rect <440,10,690,50>
+$output false
+autoobject Effects::FadeInOutTransition FadeInOutScrim
+{
+  preset Duration = 250;
+}
+
+$rect <20,360,220,400>
+$output false
+class Application : Core::Root
+{
+  $rect <330,70,530,110>
+  inherited property Bounds = <0,0,300,450>;
+
+  $rect <330,30,530,70>
+  inherited method Init()
+  {
+    // Just in the moment when application is started present the main Dialog.
+    PresentDialog( new Application::MainDialog, null, null, null, null, null, null, null, null, false );
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,300,450>;
+    preset Color = #E8E8E8FF;
+  }
+
+  // This example demonstrates how to create applications consisting of several Dialogs.
+  // 
+  // Just press the key F5 to start the Prototyper and play with application. Every \
+  // time you activate a button, a new Dialog appears or the actually visible Dialog \
+  // is dismissed again.
+  // 
+  // Every transition between the Dialogs is performed with an animation.
+  note legend Note
+  {
+    attr Bounds = <330,170,860,340>;
+  }
+}
+
+$rect <20,310,220,350>
+$output false
+class MainDialog : Core::Group
+{
+  $rect <10,480,210,520>
+  inherited property Bounds = <0,0,300,450>;
+
+  $rect <10,520,210,560>
+  inherited property Focus = null;
+
+  $rect <330,60,530,100>
+  slot onNext
+  {
+    // Present a new Tab-Dialog
+    if ( IsActiveDialog( true ))
+      GetRoot().PresentDialog( new Application::TabDialog, Application::SlideLeftCentered, Application::SlideRightCentered, null, null, Application::SlideLeftCentered, Application::SlideRightCentered, null, null, false );
+  }
+
+  $rect <330,380,530,420>
+  slot onShowAlert
+  {
+    // Present a new alert Dialog together with the scrim Dialog lying behind it
+    if ( IsActiveDialog( true ))
+    {
+      GetRoot().PresentDialog( new Application::Scrim, Application::FadeInOutScrim, null, null, null, null, null, null, null, false );
+      GetRoot().PresentDialog( new Application::Alert, Application::FadeInAlert, Application::FadeOutAlert, null, null, null, null, null, null, true );
+    }
+  }
+
+  $rect <330,20,530,60>
+  slot onInfo
+  {
+    // Present a new Dialog together with the scrim Dialog lying behind it
+    if ( IsActiveDialog( true ))
+    {
+      GetRoot().PresentDialog( new Application::Scrim, Application::FadeInOutScrim, null, null, null, null, null, null, null, false );
+      GetRoot().PresentDialog( new Application::Popup, Application::SlideInPopup, Application::SlideOutPopup, null, null, null, null, null, null, true );
+    }
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,300,450>;
+    preset Color = #E8E8E8FF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton ButtonInfo
+  {
+    preset Bounds = <0,0,120,50>;
+    preset OnActivate = onInfo;
+    preset Label = "INFO";
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton ButtonNext
+  {
+    preset Bounds = <180,0,300,50>;
+    preset OnActivate = onNext;
+    preset Label = "NEXT";
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton ButtonShowAlert
+  {
+    preset Bounds = <30,380,270,430>;
+    preset OnActivate = onShowAlert;
+    preset Label = "Show alert ...";
+  }
+
+  $rect <20,20,160,60>
+  object Core::SlideTouchHandler SlideTouchHandler
+  {
+    preset Bounds = <10,85,290,345>;
+    preset SnapNext = <0,32>;
+    preset SlideHorz = false;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <10,85,290,345>;
+    preset SlideHandler = SlideTouchHandler;
+    preset WrapText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertTop];
+    preset String = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est.";
+    preset Font = Application::Font;
+    preset Color = #5C5C5CFF;
+  }
+
+  // This component implements a kind of 'main' Dialog. This Dialog appears as the \
+  // first one, when the application is started.
+  // 
+  // From this Dialog the user can present other Dialogs:
+  // 
+  // - If the user activates the button 'Info', an Info-Dialog apears overlying this \
+  // Dialog.
+  // 
+  // - If the user activates the button 'Next', a new Dialog is presented replacing \
+  // the actual one.
+  // 
+  // - If the user presses the button 'Show alert ...' an alert Dialog is shown overlying \
+  // this Dialog.
+  note legend Note
+  {
+    attr Bounds = <330,130,850,350>;
+  }
+}
+
+$rect <220,230,420,270>
+$output false
+class Scrim : Core::Group
+{
+  $rect <10,480,210,520>
+  inherited property Bounds = <0,0,300,450>;
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,300,450>;
+    preset Color = #00000081;
+  }
+
+  // This component implements a Dialog intended to serve as 'scrim' behind another \
+  // Dialog.
+  // 
+  // Except to darkened and blurring the background, it has no particular functionality.
+  note legend Note
+  {
+    attr Bounds = <340,10,760,120>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::FilterScreen FilterScreen
+  {
+    preset Bounds = <0,0,300,450>;
+    preset BlurClampToEdges = true;
+    preset BlurRadius = 5;
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Bounds
+  $member Rectangle
+  $member FilterScreen
+  $member Note
+}
+
+$rect <20,250,220,290>
+$output false
+class Popup : Core::Group
+{
+  $rect <330,200,530,240>
+  inherited property Bounds = <0,0,300,450>;
+
+  $rect <330,260,530,300>
+  slot onOk
+  {
+    // Dismiss the Dialog together with the scrim Dialog lying behind it
+    if ( IsDialog( false ))
+    {
+      GetRoot().DismissDialog( this, null, null, null, null, null, false );
+      GetRoot().DismissDialog( GetRoot().FindActiveDialogByClass( Application::Scrim ), null, null, null, null, null, true );
+    }
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <10,200,290,440>;
+    preset Color = #6D99B4C5;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Border Border
+  {
+    preset Bounds = <10,200,290,440>;
+    preset Width = 3;
+    preset Color = #F5FFF7FF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton LabelButton
+  {
+    preset Bounds = <70,370,230,420>;
+    preset OnActivate = onOk;
+    preset Label = "Ok";
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <20,210,280,360>;
+    preset WrapText = true;
+    preset String = "Lorem ipsum dolor sit amet ...";
+    preset Font = Application::Font;
+    preset Color = #F0F0F0FF;
+  }
+
+  // This component implements a simple 'Info' Dialog.
+  // 
+  // For the sake of simplicity, the displayed message is fixed defined.
+  // 
+  // When the user activates the button, the Dialog is dimissed again.
+  note legend Note
+  {
+    attr Bounds = <330,340,750,440>;
+  }
+}
+
+$rect <20,210,220,250>
+$output false
+class Alert : Core::Group
+{
+  $rect <10,190,210,230>
+  inherited property Bounds = <0,0,240,160>;
+
+  $rect <270,100,470,140>
+  slot onOk
+  {
+    // Dismiss this alert Dialog together with the scrim Dialog lying behind it
+    if ( IsDialog( false ))
+    {
+      GetRoot().DismissDialog( this, null, null, null, null, null, false );
+      GetRoot().DismissDialog( GetRoot().FindActiveDialogByClass( Application::Scrim ), null, null, null, null, null, true );
+    }
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,240,160>;
+    preset Color = #E8A6AAFF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Border Border
+  {
+    preset Bounds = <0,0,240,160>;
+    preset Width = 3;
+    preset Color = #F5FFF7FF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton LabelButton
+  {
+    preset Bounds = <40,100,200,150>;
+    preset OnActivate = onOk;
+    preset Label = "Ok";
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <0,10,240,90>;
+    preset WrapText = true;
+    preset String = "Lorem ipsum dolor sit amet ...";
+    preset Font = Application::Font;
+    preset Color = #F0F0F0FF;
+  }
+
+  // This component implements a simple 'Alert' Dialog.
+  // 
+  // For the sake of simplicity, the displayed message is fixed defined.
+  // 
+  // When the user activates the button, the Dialog is dimissed again.
+  note legend Note
+  {
+    attr Bounds = <270,160,690,260>;
+  }
+}
+
+$rect <220,150,420,190>
+$output false
+class TabPage3 : Core::Group
+{
+  $rect <10,420,210,460>
+  inherited property Bounds = <0,0,300,350>;
+
+  $rect <10,380,210,420>
+  inherited property Focus = null;
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,300,350>;
+    preset Color = #E8E8E8FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <10,10,290,50>;
+    preset String = "Page 3 Component";
+    preset Font = Application::Font;
+    preset Color = #7F7F7FFF;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton ToggleButton1
+  {
+    preset Bounds = <20,70,170,120>;
+    preset Label = "Caption";
+    preset Appearance = WidgetSet::Switch_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton ToggleButton2
+  {
+    preset Bounds = <20,120,170,170>;
+    preset Label = "Caption";
+    preset Appearance = WidgetSet::Switch_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::ToggleButton ToggleButton3
+  {
+    preset Bounds = <20,170,170,220>;
+    preset Label = "Caption";
+    preset Appearance = WidgetSet::Switch_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorizontalSlider1
+  {
+    preset Bounds = <20,220,280,270>;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalSlider HorizontalSlider2
+  {
+    preset Bounds = <20,270,280,320>;
+    preset Appearance = WidgetSet::HorizontalSlider_Lime_Medium;
+  }
+
+  // This component implements a simple Dialog with few widgets inside it.
+  note legend Note
+  {
+    attr Bounds = <340,110,760,210>;
+  }
+}
+
+$rect <220,110,420,150>
+$output false
+class TabPage2 : Core::Group
+{
+  $rect <10,380,210,420>
+  inherited property Bounds = <0,0,300,350>;
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,300,350>;
+    preset Color = #E8E8E8FF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton LabelButton
+  {
+    preset Bounds = <30,160,270,210>;
+    preset OnActivate = onShowAlert;
+    preset Label = "Show alert ...";
+  }
+
+  $rect <330,160,530,200>
+  slot onShowAlert
+  {
+    // Present a new alert Dialog together with the scrim Dialog lying behind it
+    if ( IsActiveDialog( true ))
+    {
+      GetRoot().PresentDialog( new Application::Scrim, Application::FadeInOutScrim, null, null, null, null, null, null, null, false );
+      GetRoot().PresentDialog( new Application::Alert, Application::FadeInAlert, Application::FadeOutAlert, null, null, null, null, null, null, true );
+    }
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <10,10,290,50>;
+    preset String = "Page 2 Component";
+    preset Font = Application::Font;
+    preset Color = #7F7F7FFF;
+  }
+
+  // This component implements a simple Dialog.
+  // 
+  // When the user presses the button 'Show alert ...' a furter Dialog is presented.
+  note legend Note
+  {
+    attr Bounds = <330,240,750,340>;
+  }
+}
+
+$rect <220,70,420,110>
+$output false
+class TabPage1 : Core::Group
+{
+  $rect <10,420,210,460>
+  inherited property Bounds = <0,0,300,350>;
+
+  $rect <10,380,210,420>
+  inherited property Focus = null;
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,300,350>;
+    preset Color = #E8E8E8FF;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <10,10,290,50>;
+    preset String = "Page 1 Component";
+    preset Font = Application::Font;
+    preset Color = #7F7F7FFF;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::RotaryKnob RotaryKnob
+  {
+    preset Bounds = <40,50,256,248>;
+    preset Outlet = ^HorizontalValueBar.CurrentValue;
+    preset Appearance = WidgetSet::MiniRotaryKnob_Lime_Large;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::HorizontalValueBar HorizontalValueBar
+  {
+    preset Bounds = <20,270,280,320>;
+    preset Appearance = WidgetSet::HorizontalValueBar_Lime_Medium;
+  }
+
+  // This component implements a simple Dialog with few widgets inside it.
+  note legend Note
+  {
+    attr Bounds = <340,110,760,210>;
+  }
+}
+
+$rect <20,70,220,110>
+$output false
+class TabDialog : Core::Group
+{
+  $rect <10,480,210,520>
+  inherited property Bounds = <0,0,300,450>;
+
+  $rect <330,260,530,300>
+  inherited method Init()
+  {
+    // Just in the moment when this Tab-Dialog is created switch to the sub-ordinated Dialog representing the first page.
+    SwitchToDialog( TabPage1, Effects::ShowHideCentered, Application::FadeInOutTabPage, null, null, null, null, null, null, null, false );
+  }
+
+  $rect <10,520,210,560>
+  inherited property Focus = ButtonPage1;
+
+  $rect <330,20,530,60>
+  slot onBack
+  {
+    // Dismiss this Dialog
+    if ( IsActiveDialog( true ))
+      Owner.DismissDialog( this, null, null, null, null, null, true );
+
+  }
+
+  $rect <330,110,530,150>
+  slot onSwitchToPage1
+  {
+    // Switch to the Dialog representing the first page
+    if ( IsActiveDialog( true ))
+      SwitchToDialog( TabPage1, Application::FadeInOutTabPage, null, null, null, null, null, null, null, null, false );
+
+    // The just activated button should appear selected
+    Focus = ButtonPage1;
+  }
+
+  $rect <330,150,530,190>
+  slot onSwitchToPage2
+  {
+    // Switch to the Dialog representing the second page
+    if ( IsActiveDialog( true ))
+      SwitchToDialog( TabPage2, Application::FadeInOutTabPage, null, null, null, null, null, null, null, null, false );
+
+    // The just activated button should appear selected
+    Focus = ButtonPage2;
+  }
+
+  $rect <330,190,530,230>
+  slot onSwitchToPage3
+  {
+    // Switch to the Dialog representing the third page
+    if ( IsActiveDialog( true ))
+      SwitchToDialog( TabPage3, Application::FadeInOutTabPage, null, null, null, null, null, null, null, null, false );
+
+    // The just activated button should appear selected
+    Focus = ButtonPage3;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,300,450>;
+    preset Color = #E8E8E8FF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton ButtonPage3
+  {
+    preset Bounds = <200,400,300,450>;
+    preset OnActivate = onSwitchToPage3;
+    preset Label = "3";
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton ButtonPage2
+  {
+    preset Bounds = <100,400,200,450>;
+    preset OnActivate = onSwitchToPage2;
+    preset Label = "2";
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton ButtonPage1
+  {
+    preset Bounds = <0,400,100,450>;
+    preset OnActivate = onSwitchToPage1;
+    preset Label = "1";
+  }
+
+  $rect <20,20,160,60>
+  object Application::LabelButton ButtonBack
+  {
+    preset Bounds = <0,0,120,50>;
+    preset OnActivate = onBack;
+    preset Label = "BACK";
+  }
+
+  $rect <20,20,160,60>
+  object Application::TabPage3 TabPage3
+  {
+    preset Bounds = <0,50,300,400>;
+    preset Visible = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::TabPage2 TabPage2
+  {
+    preset Bounds = <0,50,300,400>;
+    preset Visible = false;
+  }
+
+  $rect <20,20,160,60>
+  object Application::TabPage1 TabPage1
+  {
+    preset Bounds = <0,50,300,400>;
+    preset Visible = false;
+  }
+
+  // This component implements a kind of 'tab-control' Dialog.
+  // 
+  // In the bottom area you see three buttons. Activating one of the buttons switches \
+  // the Dialog displayed actually within this Tab-Dialog.
+  // 
+  // If the user activates the button 'Back', the Tab-Dialog is dismissed and the \
+  // user returns to the previous Dialog.
+  note legend Note
+  {
+    attr Bounds = <330,320,840,470>;
+  }
+}
+
+// This class implements a 'push button' widget. When the user presses the button, \
+// a signal is sent to the slot method stored in its @OnActivate property.
+$rect <20,10,220,50>
+$output false
+class LabelButton : Templates::PushButton
+{
+  $rect <480,310,680,350>
+  inherited property Bounds = <0,0,150,50>;
+
+  $rect <710,190,910,230>
+  inherited method UpdateViewState()
+  {
+    // Always invoke the inherited method.
+    super( aState );
+
+    // Determine the new state of the push button.
+    //
+    // isEnabled  --> the button can react to user inputs.
+    // isSelected --> the button can receive keyboard events.
+    // isPressed  --> the button should appear pressed.
+    //
+    var bool isEnabled  = aState.contains( Core::ViewState[ Enabled  ]);
+    var bool isSelected = aState.contains( Core::ViewState[ Selected ]);
+    var bool isPressed  = ( TouchHandler.Down && TouchHandler.Inside ) || 
+                            FlashTimer.Enabled;
+
+    /*
+
+      TO DO:
+
+      Depending on your button design, you have surely added some new views
+      to your button. In the below code you should update the properties of
+      these views. For example, when your button has two images to appear
+      exclusively for released and pressed button state, following can be
+      done:
+
+        imagePressed.Visible  =  isPressed;
+        imageReleased.Visible = !isPressed;
+
+      Depending on the state of the button, you can alternate any property 
+      of your views. You can change their visibility, colors, opacity,
+      bitmaps shown in image views, fonts used to render text, the position
+      and the size the view, ...
+       
+
+      HINT:
+
+      Instead of instantly alternate the views properties you can here also
+      start effects to do this with an animation. Important: To decide when
+      to start an effect you should compare the current state of the button
+      (e.g. 'isPressed') with its preceding state (e.g. variable 'pressed').
+
+      Assuming you have already added to your button component a new effect
+      member, named it 'pressedEffect' and configured it to animate e.g. the
+      opacity of an image within the button. Then following is sufficient to
+      trigger the animation:
+
+        if ( isPressed && !pressed )
+        {
+          pressedEffect.Reversed = false;
+          pressedEffect.Enabled  = true;
+        }
+        else if ( !isPressed && pressed )
+        {
+          pressedEffect.Reversed = true;
+          pressedEffect.Enabled  = true;
+        }
+
+    */
+
+    if ( !isEnabled )
+    {
+      Background.Color = #AAAAAAFF;
+      Border.Color     = #CCCCCCFF;
+      Border.Width     = 1;
+      LabelView.Color  = #CCCCCCFF;
+    }
+
+    else if ( isPressed )
+    {
+      Background.Color = #FF0000FF;
+      Border.Color     = #000000FF;
+      Border.Width     = 3;
+      LabelView.Color  = #FFFFFFFF;
+    }
+
+    else if ( isSelected )
+    {
+      Background.Color = #FFFFFFFF;
+      Border.Color     = #444444FF;
+      Border.Width     = 3;
+      LabelView.Color  = #000000FF;
+    }
+
+    // Enabled but not pressed nor selected.
+    else
+    {
+      Background.Color = #FFFFFFFF;
+      Border.Color     = #444444FF;
+      Border.Width     = 1;
+      LabelView.Color  = #000000FF;
+    }
+
+    // Remember the current state. Next time when the UpdateViewState() is called
+    // you can compare the 'old' state with the 'new' state and perform more
+    // sophisticated update, e.g. you can start an animation effect for the
+    // pressed <<-->> not pressed transition.
+    enabled  = isEnabled;
+    selected = isSelected;
+    pressed  = isPressed;
+  }
+
+  // To do:
+  // 
+  // - Adjust the visible size of your button (the thick blue border). This will \
+  // be the button's default size.
+  // - Resize the member 'TouchHandler' so it still fills the button's new area.
+  // - Remove the 'Background' and 'Border' members if you want other views to be \
+  // shown instead these in your button.
+  // - According to your desired button design add and configure new views (e.g. \
+  // an image view to show the icon or a text view to show the button caption, etc.).
+  // - Adapt the implementation of the 'UpdateViewState()' method. This method should \
+  // update your views so they reflect the button's current state.
+  // - You can also add and configure animation effects to your button. See 'UpdateViewState()' \
+  // implementation for hint how to start the effects.
+  // - Arrange and resize the views so they appear correctly within the visible area \
+  // of your button.
+  // - Configure the property 'Layout' of the views. In this manner you can determine \
+  // for every view how it should move/resize when the button itself is resized.
+  // - Configure the property 'Filter' of the 'KeyHandler' member if you want the \
+  // button to be activated with key other than the 'Enter' key.
+  // - Alternatively remove the members 'KeyHandler' and 'onPressKey' if you don't \
+  // want any keyboard handling.
+  // - Configure the property 'Begin' of the 'FlashTimer' member to change the duration \
+  // of the feedback flash effect. The default duration is 50 millisec.
+  // - From the Gallery folder 'Chora' add properties to your button. One property \
+  // for every button specific setting (e.g. 'Caption', 'Icon', 'Color', 'Font', \
+  // ...)
+  // - Rename the properties accordingly their usage and remove their 'OnGet...' \
+  // methods.
+  // - For every newly added property adapt their 'OnSet...' method implementation. \
+  // Ensure in the method that the assigned value is correctly passed to the corresponding \
+  // view (e.g. a property 'Icon' should update the image view in your button where \
+  // the icon is shown).
+  // - Feel free to modify any other member in this component accordingly your needs. \
+  // Please note the member description and inline comments within methods.
+  note legend Note5
+  {
+    attr Bounds = <10,370,990,750>;
+  }
+
+  // State management
+  note group Note4
+  {
+    attr Bounds = <700,150,920,360>;
+  }
+
+  // Feedback flash effect
+  note group Note3
+  {
+    attr Bounds = <470,150,690,280>;
+  }
+
+  // Keyboard events
+  note group Note2
+  {
+    attr Bounds = <240,150,460,280>;
+  }
+
+  // Touch screen events
+  note group Note1
+  {
+    attr Bounds = <10,150,230,320>;
+  }
+
+  // This variable stores the current state of the button.
+  $rect <710,310,910,350>
+  var bool pressed;
+
+  // This variable stores the current state of the button.
+  $rect <710,270,910,310>
+  var bool selected;
+
+  // This variable stores the current state of the button.
+  $rect <710,230,910,270>
+  var bool enabled;
+
+  // This timer object is used to flash the button when the user has tapped it very \
+  // quickly or the button has been activated with the keyboard. This is just a visual \
+  // feedback effect.
+  $rect <480,190,680,230>
+  object Core::Timer FlashTimer
+  {
+    preset OnTrigger = onFlashTimer;
+    preset Period = 0;
+    preset Begin = 50;
+  }
+
+  // This key handler reacts to key press events. When the user presses the key specified \
+  // in the property 'Filter' of the key handler, the handler is activated and the \
+  // method '@onPressKey' is called.
+  $rect <250,190,450,230>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onPressKey;
+    preset Filter = Core::KeyCode.Enter;
+  }
+
+  // This internal slot method is called when the '@FlashTimer' is expired. It ends \
+  // the short flash feedback effect.
+  $rect <480,230,680,270>
+  slot onFlashTimer
+  {
+    // The feedback flash timer is finished. Request the button to update its
+    // appearance. The update will occur in the UpdateViewState() method.
+    InvalidateViewState();
+
+    // With the end of the feedback flash effect the button is activated.
+    postsignal OnActivate;
+  }
+
+  // This internal slot method is called when the '@KeyHandler' is activated (when \
+  // the user has pressed the key specified in the property 'Filter' of the key handler).
+  $rect <250,230,450,270>
+  slot onPressKey
+  {
+    // Ignore keyboard events when the user is interacting with the button via the
+    // touch screen.
+    if ( TouchHandler.Down )
+      return;
+
+    // Ignore repetitions of key events (e.g. when the user holds the key pressed)
+    if ( KeyHandler.Repetition )
+      return;
+
+    // Pressing the key flashes the button for a short period. This is a kind of 
+    // feedback effect. Request the button to update its appearance accordingly.
+    // The update will occur in the UpdateViewState() method.
+    InvalidateViewState();
+
+    // The button is still performing the feedback flash effect from the preceding
+    // tap/key event. This can occur when the user taps the button or presses the
+    // key in a very rapid succession. Thus complete this preceding tap (simulate
+    // the timer expiration) before starting a new button interaction.
+    if ( FlashTimer.Enabled )
+    {
+      postsignal OnActivate;
+      FlashTimer.Enabled = false;
+    }
+
+    // Start the feedback flash effect.
+    FlashTimer.Enabled = true;
+  }
+
+  // This internal slot method is called when the user drags the finger while pressing \
+  // the button. This only updates the button to appear pressed or released.
+  $rect <20,270,220,310>
+  slot onEnterLeaveTouch
+  {
+    // Every time the user touches the button or drags the finger inside/outside
+    // the button's area request the button update its appearance. The update will
+    // occur in the UpdateViewState() method.
+    InvalidateViewState();
+  }
+
+  // This internal slot method is called when the user releases the touch screen \
+  // after touching the button's area. This activates the button.
+  $rect <20,230,220,270>
+  slot onReleaseTouch
+  {
+    // Did the user moved the finger outside the button's area? In such case
+    // the button is not activated.
+    if ( !TouchHandler.Inside )
+      return;
+
+    // The user interaction has been passed over to the another touch handler
+    if ( TouchHandler.AutoDeflected )
+      return;
+
+    // The user has pressed and held the button for longer time. This was enough
+    // long to give a visual 'press' feedback to the user. The button can be
+    // activated immediately.
+    if ( TouchHandler.HoldPeriod >= FlashTimer.Begin )
+      postsignal OnActivate;
+
+    // The user has tapped the button very quickly. Defer the button activation
+    // to give the user first a short visual feedback that the button has been
+    // pressed.
+    else
+      FlashTimer.Enabled = true;
+  }
+
+  // This internal slot method is called when the user touches the button's area.
+  $rect <20,190,220,230>
+  slot onPressTouch
+  {
+    // The button is still performing the feedback flash effect from the preceding
+    // tap. This can occur when the user taps the button in a very rapid succession. 
+    // Thus complete this preceding tap (simulate the timer expiration) before 
+    // starting a new button interaction.
+    if ( FlashTimer.Enabled )
+    {
+      postsignal OnActivate;
+      FlashTimer.Enabled = false;
+    }
+  }
+
+  $rect <20,20,160,60>
+  object Views::Rectangle Background
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,150,50>;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Border Border
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,150,50>;
+  }
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler TouchHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Point4 = <0,50>;
+    preset Point3 = <150,50>;
+    preset Point2 = <150,0>;
+    preset Point1 = <0,0>;
+    preset OnLeave = onEnterLeaveTouch;
+    preset OnEnter = onEnterLeaveTouch;
+    preset OnRelease = onReleaseTouch;
+    preset OnPress = onPressTouch;
+    preset RetargetCondition = Core::RetargetReason[WipeDown, WipeLeft, WipeRight, WipeUp];
+    preset MaxStrikeCount = 100;
+  }
+
+  // The property 'OnActivate' can refer to a slot method, which will receive a signal \
+  // as soon as the user has activated the button. Thereupon the method's logic will \
+  // be executed.
+  $rect <250,10,450,50>
+  property slot OnActivate = null;
+
+  $rect <250,50,450,90>
+  property string Label = "Caption";
+
+  $rect <450,50,650,90>
+  onset Label
+  {
+    // The value doesn't change - nothing to do.
+    if ( pure Label == value )
+      return;
+
+    // Remember the property's new value.
+    pure Label = value;
+
+    LabelView.String = value;
+  }
+
+  $rect <20,20,160,60>
+  object Views::Text LabelView
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,2,150,50>;
+    preset String = "Caption";
+    preset Font = Application::Font;
+    preset Color = #000000FF;
+  }
+}

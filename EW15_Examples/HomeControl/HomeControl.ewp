@@ -1,0 +1,119 @@
+﻿$version 15.00
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,180,230,220>
+unit Core
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,220,230,260>
+unit Resources
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,260,230,300>
+unit Graphics
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,300,230,340>
+unit Effects
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <30,340,230,380>
+unit Views
+{
+  attr Directory = $Mosaic;
+}
+
+// The 'default' language. Each project has to contain at least one language brick \
+// called 'Default'
+$rect <280,180,480,220>
+language Default;
+
+// This is an example application unit.
+// Similar to this in your project you will implement your application.
+$rect <30,70,230,110>
+unit Application
+{
+  attr Directory = .\;
+}
+
+// Mosaic Framework
+note group Note1
+{
+  attr Bounds = <10,130,250,480>;
+}
+
+// Languages
+note group Note3
+{
+  attr Bounds = <260,130,500,280>;
+}
+
+// Example application
+note group Note10
+{
+  attr Bounds = <10,20,250,120>;
+}
+
+// Styles
+note group Note4
+{
+  attr Bounds = <260,290,500,430>;
+}
+
+// This is the light style.
+$rect <280,330,480,370>
+$autoreinit true
+style LightMode;
+
+// This is the dark style.
+$rect <280,370,480,410>
+$autoreinit true
+style DarkMode;
+
+// The 'German' language.
+$rect <280,220,480,260>
+language German;
+
+$rect <30,380,230,420>
+unit Templates
+{
+  attr Directory = $Mosaic\;
+}
+
+$rect <30,420,230,460>
+unit WidgetSet
+{
+  attr Directory = $Mosaic\;
+}
+
+// Profile Configuration
+note group Note12
+{
+  attr Bounds = <260,20,500,120>;
+}
+
+$rect <280,70,480,110>
+profile Win32 : Windows.Software.RGBA8888
+{
+  attr ScreenSize = <800,480>;
+  attr Optimization = High;
+  attr ApplicationClass = Application::Application;
+  attr CleanOutputDirectories = false;
+  attr Verbose = false;
+  attr OutputFileNameExtension = c;
+  attr ScreenOrientation = Normal;
+  attr FontConversion = Windows;
+}
+

@@ -1,0 +1,828 @@
+﻿$version 15.00
+
+$rect <350,60,630,100>
+$output false
+resource Resources::Bitmap OrangeButtonSmall
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeButtonSmall.png;
+  attr framesize FrameSize = <120,45>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <40,60,340,100>
+$output false
+autoobject WidgetSet::PushButtonConfig PushButton_Small
+{
+  preset LabelColorActive = #FFFFFFFF;
+  preset LabelColorFocused = #808080FF;
+  preset LabelColorDisabled = #FFFFFFFF;
+  preset LabelColorDefault = #808080FF;
+  preset IconTintActive = #FFFFFFFF;
+  preset IconTintFocused = #808080FF;
+  preset IconTintDisabled = #FFFFFFFF;
+  preset IconTintDefault = #808080FF;
+  preset LabelFont = Resources::FontMedium;
+  preset FaceLayout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop];
+  preset FaceFrameActive = 3;
+  preset FaceFrameFocused = 2;
+  preset FaceFrameDisabled = 0;
+  preset FaceFrameDefault = 1;
+  preset FaceBitmapActive = OrangeWidgets::OrangeButtonSmall;
+  preset FaceBitmapFocused = OrangeWidgets::OrangeButtonSmall;
+  preset FaceBitmapDisabled = OrangeWidgets::OrangeButtonSmall;
+  preset FaceBitmapDefault = OrangeWidgets::OrangeButtonSmall;
+  preset WidgetMaxSize = <120,45>;
+  preset WidgetMinSize = <120,45>;
+}
+
+// Orange Widgets as customized default widgets
+note group NoteGroup3
+{
+  attr Bounds = <20,10,650,1000>;
+}
+
+$rect <350,100,630,140>
+$output false
+resource Resources::Bitmap OrangeButtonMedium
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeButtonMedium.png;
+  attr framesize FrameSize = <180,45>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <40,100,340,140>
+$output false
+autoobject WidgetSet::PushButtonConfig PushButton_Medium
+{
+  preset LabelColorActive = #FFFFFFFF;
+  preset LabelColorFocused = #808080FF;
+  preset LabelColorDisabled = #FFFFFFFF;
+  preset LabelColorDefault = #808080FF;
+  preset IconTintActive = #FFFFFFFF;
+  preset IconTintFocused = #808080FF;
+  preset IconTintDisabled = #FFFFFFFF;
+  preset IconTintDefault = #808080FF;
+  preset LabelFont = Resources::FontMedium;
+  preset FaceLayout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop];
+  preset FaceFrameActive = 3;
+  preset FaceFrameFocused = 2;
+  preset FaceFrameDisabled = 0;
+  preset FaceFrameDefault = 1;
+  preset FaceBitmapActive = OrangeWidgets::OrangeButtonMedium;
+  preset FaceBitmapFocused = OrangeWidgets::OrangeButtonMedium;
+  preset FaceBitmapDisabled = OrangeWidgets::OrangeButtonMedium;
+  preset FaceBitmapDefault = OrangeWidgets::OrangeButtonMedium;
+  preset WidgetMaxSize = <180,45>;
+  preset WidgetMinSize = <180,45>;
+}
+
+$rect <350,140,630,180>
+$output false
+resource Resources::Bitmap OrangeButtonLarge
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeButtonLarge.png;
+  attr framesize FrameSize = <240,45>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <40,140,340,180>
+$output false
+autoobject WidgetSet::PushButtonConfig PushButton_Large
+{
+  preset LabelColorActive = #FFFFFFFF;
+  preset LabelColorFocused = #808080FF;
+  preset LabelColorDisabled = #FFFFFFFF;
+  preset LabelColorDefault = #808080FF;
+  preset IconTintActive = #FFFFFFFF;
+  preset IconTintFocused = #808080FF;
+  preset IconTintDisabled = #FFFFFFFF;
+  preset IconTintDefault = #808080FF;
+  preset LabelFont = Resources::FontMedium;
+  preset FaceLayout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop];
+  preset FaceFrameActive = 3;
+  preset FaceFrameFocused = 2;
+  preset FaceFrameDisabled = 0;
+  preset FaceFrameDefault = 1;
+  preset FaceBitmapActive = OrangeWidgets::OrangeButtonLarge;
+  preset FaceBitmapFocused = OrangeWidgets::OrangeButtonLarge;
+  preset FaceBitmapDisabled = OrangeWidgets::OrangeButtonLarge;
+  preset FaceBitmapDefault = OrangeWidgets::OrangeButtonLarge;
+  preset WidgetMaxSize = <240,45>;
+  preset WidgetMinSize = <240,45>;
+}
+
+$rect <40,220,340,260>
+$output false
+autoobject WidgetSet::ToggleButtonConfig CheckBox
+{
+  preset LabelMarginLeft = 50;
+  preset IconMarginLeft = 50;
+  preset LabelAlignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+  preset LabelOnFont = Resources::FontMedium;
+  preset LabelOffFont = Resources::FontMedium;
+  preset IconAlignment = Views::ImageAlignment[AlignHorzLeft, AlignVertCenter];
+  preset FaceLayout = Core::Layout[AlignToBottom, AlignToLeft, AlignToTop];
+  preset FaceOnFrameActive = 7;
+  preset FaceOnFrameFocused = 5;
+  preset FaceOnFrameDisabled = 1;
+  preset FaceOnFrameDefault = 3;
+  preset FaceOnBitmapActive = OrangeWidgets::OrangeCheckBox;
+  preset FaceOnBitmapFocused = OrangeWidgets::OrangeCheckBox;
+  preset FaceOnBitmapDisabled = OrangeWidgets::OrangeCheckBox;
+  preset FaceOnBitmapDefault = OrangeWidgets::OrangeCheckBox;
+  preset FaceOffFrameActive = 6;
+  preset FaceOffFrameFocused = 4;
+  preset FaceOffFrameDisabled = 0;
+  preset FaceOffFrameDefault = 2;
+  preset FaceOffBitmapActive = OrangeWidgets::OrangeCheckBox;
+  preset FaceOffBitmapFocused = OrangeWidgets::OrangeCheckBox;
+  preset FaceOffBitmapDisabled = OrangeWidgets::OrangeCheckBox;
+  preset FaceOffBitmapDefault = OrangeWidgets::OrangeCheckBox;
+  preset WidgetMinSize = <45,45>;
+}
+
+$rect <350,220,630,260>
+$output false
+resource Resources::Bitmap OrangeCheckBox
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeCheckBox.png;
+  attr framesize FrameSize = <45,45>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <350,260,630,300>
+$output false
+resource Resources::Bitmap OrangeRadioButton
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeRadioButton.png;
+  attr framesize FrameSize = <45,45>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <40,260,340,300>
+$output false
+autoobject WidgetSet::RadioButtonConfig RadioButton
+{
+  preset LabelMarginLeft = 50;
+  preset IconMarginLeft = 50;
+  preset LabelAlignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+  preset LabelOnFont = Resources::FontMedium;
+  preset LabelOffFont = Resources::FontMedium;
+  preset IconAlignment = Views::ImageAlignment[AlignHorzLeft, AlignVertCenter];
+  preset FaceLayout = Core::Layout[AlignToBottom, AlignToLeft, AlignToTop];
+  preset FaceOnFrameActive = 7;
+  preset FaceOnFrameFocused = 5;
+  preset FaceOnFrameDisabled = 1;
+  preset FaceOnFrameDefault = 3;
+  preset FaceOnBitmapActive = OrangeWidgets::OrangeRadioButton;
+  preset FaceOnBitmapFocused = OrangeWidgets::OrangeRadioButton;
+  preset FaceOnBitmapDisabled = OrangeWidgets::OrangeRadioButton;
+  preset FaceOnBitmapDefault = OrangeWidgets::OrangeRadioButton;
+  preset FaceOffFrameActive = 6;
+  preset FaceOffFrameFocused = 4;
+  preset FaceOffFrameDisabled = 0;
+  preset FaceOffFrameDefault = 2;
+  preset FaceOffBitmapActive = OrangeWidgets::OrangeRadioButton;
+  preset FaceOffBitmapFocused = OrangeWidgets::OrangeRadioButton;
+  preset FaceOffBitmapDisabled = OrangeWidgets::OrangeRadioButton;
+  preset FaceOffBitmapDefault = OrangeWidgets::OrangeRadioButton;
+  preset WidgetMinSize = <45,45>;
+}
+
+$rect <350,300,630,340>
+$output false
+resource Resources::Bitmap OrangeHorzSliderTrackSmall
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeHorzSliderTrackSmall.png;
+  attr framesize FrameSize = <180,21>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <350,620,630,660>
+$output false
+resource Resources::Bitmap OrangeThumb
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeThumb.png;
+  attr framesize FrameSize = <45,45>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This autoobject provides the default customization for the 'vertical slider' widget \
+// (WidgetSet::VerticalSlider) in its medium size variant.
+$rect <40,420,340,460>
+$output false
+autoobject WidgetSet::VerticalSliderConfig VerticalSlider_Small
+{
+  preset KeyRepeatPeriod = 100;
+  preset KeyRepeatDelay = 500;
+  preset ThumbMarginTop = -5;
+  preset ThumbMarginBottom = -5;
+  preset ThumbFrameActive = 3;
+  preset ThumbFrameFocused = 2;
+  preset ThumbFrameDisabled = 0;
+  preset ThumbFrameDefault = 1;
+  preset ThumbBitmapActive = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapFocused = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDisabled = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDefault = OrangeWidgets::OrangeThumb;
+  preset TrackAboveFrameActive = 0;
+  preset TrackAboveFrameFocused = 0;
+  preset TrackAboveFrameDisabled = 0;
+  preset TrackAboveFrameDefault = 0;
+  preset TrackAboveBitmapActive = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset TrackAboveBitmapFocused = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset TrackAboveBitmapDisabled = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset TrackAboveBitmapDefault = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset TrackBelowFrameActive = 1;
+  preset TrackBelowFrameFocused = 1;
+  preset TrackBelowFrameDisabled = 2;
+  preset TrackBelowFrameDefault = 1;
+  preset TrackBelowBitmapActive = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset TrackBelowBitmapFocused = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset TrackBelowBitmapDisabled = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset TrackBelowBitmapDefault = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset WidgetMaxSize = <45,180>;
+  preset WidgetMinSize = <45,180>;
+}
+
+// This autoobject provides the default customization for the 'horizontal slider' \
+// widget (WidgetSet::HorizontalSlider) in its medium size variant.
+$rect <40,300,340,340>
+$output false
+autoobject WidgetSet::HorizontalSliderConfig HorzSlider_Small
+{
+  preset KeyRepeatPeriod = 100;
+  preset KeyRepeatDelay = 500;
+  preset ThumbMarginRight = -5;
+  preset ThumbMarginLeft = -5;
+  preset ThumbFrameActive = 3;
+  preset ThumbFrameFocused = 2;
+  preset ThumbFrameDisabled = 0;
+  preset ThumbFrameDefault = 1;
+  preset ThumbBitmapActive = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapFocused = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDisabled = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDefault = OrangeWidgets::OrangeThumb;
+  preset TrackRightFrameActive = 0;
+  preset TrackRightFrameFocused = 0;
+  preset TrackRightFrameDisabled = 0;
+  preset TrackRightFrameDefault = 0;
+  preset TrackRightBitmapActive = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset TrackRightBitmapFocused = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset TrackRightBitmapDisabled = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset TrackRightBitmapDefault = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset TrackLeftFrameActive = 1;
+  preset TrackLeftFrameFocused = 1;
+  preset TrackLeftFrameDisabled = 2;
+  preset TrackLeftFrameDefault = 1;
+  preset TrackLeftBitmapActive = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset TrackLeftBitmapFocused = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset TrackLeftBitmapDisabled = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset TrackLeftBitmapDefault = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset WidgetMaxSize = <180,45>;
+  preset WidgetMinSize = <180,45>;
+}
+
+$rect <350,340,630,380>
+$output false
+resource Resources::Bitmap OrangeHorzSliderTrackMedium
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeHorzSliderTrackMedium.png;
+  attr framesize FrameSize = <240,21>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <350,380,630,420>
+$output false
+resource Resources::Bitmap OrangeHorzSliderTrackLarge
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeHorzSliderTrackLarge.png;
+  attr framesize FrameSize = <300,21>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This autoobject provides the default customization for the 'horizontal slider' \
+// widget (WidgetSet::HorizontalSlider) in its medium size variant.
+$rect <40,340,340,380>
+$output false
+autoobject WidgetSet::HorizontalSliderConfig HorzSlider_Medium
+{
+  preset KeyRepeatPeriod = 100;
+  preset KeyRepeatDelay = 500;
+  preset ThumbMarginRight = -5;
+  preset ThumbMarginLeft = -5;
+  preset ThumbFrameActive = 3;
+  preset ThumbFrameFocused = 2;
+  preset ThumbFrameDisabled = 0;
+  preset ThumbFrameDefault = 1;
+  preset ThumbBitmapActive = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapFocused = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDisabled = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDefault = OrangeWidgets::OrangeThumb;
+  preset TrackRightFrameActive = 0;
+  preset TrackRightFrameFocused = 0;
+  preset TrackRightFrameDisabled = 0;
+  preset TrackRightFrameDefault = 0;
+  preset TrackRightBitmapActive = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset TrackRightBitmapFocused = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset TrackRightBitmapDisabled = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset TrackRightBitmapDefault = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset TrackLeftFrameActive = 1;
+  preset TrackLeftFrameFocused = 1;
+  preset TrackLeftFrameDisabled = 2;
+  preset TrackLeftFrameDefault = 1;
+  preset TrackLeftBitmapActive = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset TrackLeftBitmapFocused = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset TrackLeftBitmapDisabled = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset TrackLeftBitmapDefault = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset WidgetMaxSize = <240,45>;
+  preset WidgetMinSize = <240,45>;
+}
+
+// This autoobject provides the default customization for the 'horizontal slider' \
+// widget (WidgetSet::HorizontalSlider) in its medium size variant.
+$rect <40,380,340,420>
+$output false
+autoobject WidgetSet::HorizontalSliderConfig HorzSlider_Large
+{
+  preset KeyRepeatPeriod = 100;
+  preset KeyRepeatDelay = 500;
+  preset ThumbMarginRight = -5;
+  preset ThumbMarginLeft = -5;
+  preset ThumbFrameActive = 3;
+  preset ThumbFrameFocused = 2;
+  preset ThumbFrameDisabled = 0;
+  preset ThumbFrameDefault = 1;
+  preset ThumbBitmapActive = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapFocused = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDisabled = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDefault = OrangeWidgets::OrangeThumb;
+  preset TrackRightFrameActive = 0;
+  preset TrackRightFrameFocused = 0;
+  preset TrackRightFrameDisabled = 0;
+  preset TrackRightFrameDefault = 0;
+  preset TrackRightBitmapActive = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset TrackRightBitmapFocused = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset TrackRightBitmapDisabled = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset TrackRightBitmapDefault = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset TrackLeftFrameActive = 1;
+  preset TrackLeftFrameFocused = 1;
+  preset TrackLeftFrameDisabled = 2;
+  preset TrackLeftFrameDefault = 1;
+  preset TrackLeftBitmapActive = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset TrackLeftBitmapFocused = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset TrackLeftBitmapDisabled = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset TrackLeftBitmapDefault = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset WidgetMaxSize = <300,45>;
+  preset WidgetMinSize = <300,45>;
+}
+
+$rect <350,420,630,460>
+$output false
+resource Resources::Bitmap OrangeVertSliderTrackSmall
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeVertSliderTrackSmall.png;
+  attr framesize FrameSize = <21,180>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <350,460,630,500>
+$output false
+resource Resources::Bitmap OrangeVertSliderTrackMedium
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeVertSliderTrackMedium.png;
+  attr framesize FrameSize = <21,240>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+$rect <350,500,630,540>
+$output false
+resource Resources::Bitmap OrangeVertSliderTrackLarge
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeVertSliderTrackLarge.png;
+  attr framesize FrameSize = <21,300>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This autoobject provides the default customization for the 'vertical slider' widget \
+// (WidgetSet::VerticalSlider) in its medium size variant.
+$rect <40,460,340,500>
+$output false
+autoobject WidgetSet::VerticalSliderConfig VerticalSlider_Medium
+{
+  preset KeyRepeatPeriod = 100;
+  preset KeyRepeatDelay = 500;
+  preset ThumbMarginTop = -5;
+  preset ThumbMarginBottom = -5;
+  preset ThumbFrameActive = 3;
+  preset ThumbFrameFocused = 2;
+  preset ThumbFrameDisabled = 0;
+  preset ThumbFrameDefault = 1;
+  preset ThumbBitmapActive = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapFocused = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDisabled = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDefault = OrangeWidgets::OrangeThumb;
+  preset TrackAboveFrameActive = 0;
+  preset TrackAboveFrameFocused = 0;
+  preset TrackAboveFrameDisabled = 0;
+  preset TrackAboveFrameDefault = 0;
+  preset TrackAboveBitmapActive = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset TrackAboveBitmapFocused = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset TrackAboveBitmapDisabled = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset TrackAboveBitmapDefault = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset TrackBelowFrameActive = 1;
+  preset TrackBelowFrameFocused = 1;
+  preset TrackBelowFrameDisabled = 2;
+  preset TrackBelowFrameDefault = 1;
+  preset TrackBelowBitmapActive = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset TrackBelowBitmapFocused = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset TrackBelowBitmapDisabled = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset TrackBelowBitmapDefault = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset WidgetMaxSize = <45,240>;
+  preset WidgetMinSize = <45,240>;
+}
+
+// This autoobject provides the default customization for the 'vertical slider' widget \
+// (WidgetSet::VerticalSlider) in its medium size variant.
+$rect <40,500,340,540>
+$output false
+autoobject WidgetSet::VerticalSliderConfig VerticalSlider_Large
+{
+  preset KeyRepeatPeriod = 100;
+  preset KeyRepeatDelay = 500;
+  preset ThumbMarginTop = -5;
+  preset ThumbMarginBottom = -5;
+  preset ThumbFrameActive = 3;
+  preset ThumbFrameFocused = 2;
+  preset ThumbFrameDisabled = 0;
+  preset ThumbFrameDefault = 1;
+  preset ThumbBitmapActive = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapFocused = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDisabled = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDefault = OrangeWidgets::OrangeThumb;
+  preset TrackAboveFrameActive = 0;
+  preset TrackAboveFrameFocused = 0;
+  preset TrackAboveFrameDisabled = 0;
+  preset TrackAboveFrameDefault = 0;
+  preset TrackAboveBitmapActive = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset TrackAboveBitmapFocused = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset TrackAboveBitmapDisabled = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset TrackAboveBitmapDefault = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset TrackBelowFrameActive = 1;
+  preset TrackBelowFrameFocused = 1;
+  preset TrackBelowFrameDisabled = 2;
+  preset TrackBelowFrameDefault = 1;
+  preset TrackBelowBitmapActive = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset TrackBelowBitmapFocused = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset TrackBelowBitmapDisabled = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset TrackBelowBitmapDefault = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset WidgetMaxSize = <45,300>;
+  preset WidgetMinSize = <45,300>;
+}
+
+$rect <350,540,630,580>
+$output false
+resource Resources::Bitmap OrangeRotaryKnobSmall
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeRotaryKnobSmall.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This autoobject provides the default customization for the 'rotary knob' widget \
+// (WidgetSet::RotaryKnob) in its medium size variant.
+$rect <40,540,340,580>
+$output false
+autoobject WidgetSet::RotaryKnobConfig RotaryKnob_Small
+{
+  preset KeyRepeatPeriod = 100;
+  preset KeyRepeatDelay = 500;
+  preset TrackLeftRoundedStart = true;
+  preset TrackLeftColorActive = #F15A24FF;
+  preset TrackLeftColorFocused = #F15A24FF;
+  preset TrackLeftColorDisabled = #B3B3B3FF;
+  preset TrackLeftColorDefault = #F15A24FF;
+  preset TrackLeftThicknessActive = 8.0;
+  preset TrackLeftThicknessFocused = 8.0;
+  preset TrackLeftThicknessDisabled = 8.0;
+  preset TrackLeftThicknessDefault = 8.0;
+  preset TrackLeftRadiusActive = 50.0;
+  preset TrackLeftRadiusFocused = 50.0;
+  preset TrackLeftRadiusDisabled = 50.0;
+  preset TrackLeftRadiusDefault = 50.0;
+  preset ThumbMaxAngle = -270;
+  preset ThumbMinAngle = 90;
+  preset ThumbPivot = <-28,22>;
+  preset ThumbFrameActive = 3;
+  preset ThumbFrameFocused = 2;
+  preset ThumbFrameDisabled = 0;
+  preset ThumbFrameDefault = 1;
+  preset ThumbBitmapActive = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapFocused = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDisabled = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDefault = OrangeWidgets::OrangeThumb;
+  preset ScaleBitmapActive = OrangeWidgets::OrangeRotaryKnobSmall;
+  preset ScaleBitmapFocused = OrangeWidgets::OrangeRotaryKnobSmall;
+  preset ScaleBitmapDisabled = OrangeWidgets::OrangeRotaryKnobSmall;
+  preset ScaleBitmapDefault = OrangeWidgets::OrangeRotaryKnobSmall;
+  preset WidgetMinSize = <150,150>;
+}
+
+$rect <350,580,630,620>
+$output false
+resource Resources::Bitmap OrangeRotaryKnobLarge
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeRotaryKnobLarge.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This autoobject provides the default customization for the 'rotary knob' widget \
+// (WidgetSet::RotaryKnob) in its medium size variant.
+$rect <40,580,340,620>
+$output false
+autoobject WidgetSet::RotaryKnobConfig RotaryKnob_Large
+{
+  preset KeyRepeatPeriod = 100;
+  preset KeyRepeatDelay = 500;
+  preset TrackLeftRoundedStart = true;
+  preset TrackLeftColorActive = #F15A24FF;
+  preset TrackLeftColorFocused = #F15A24FF;
+  preset TrackLeftColorDisabled = #B3B3B3FF;
+  preset TrackLeftColorDefault = #F15A24FF;
+  preset TrackLeftThicknessActive = 8.0;
+  preset TrackLeftThicknessFocused = 8.0;
+  preset TrackLeftThicknessDisabled = 8.0;
+  preset TrackLeftThicknessDefault = 8.0;
+  preset TrackLeftRadiusActive = 80.0;
+  preset TrackLeftRadiusFocused = 80.0;
+  preset TrackLeftRadiusDisabled = 80.0;
+  preset TrackLeftRadiusDefault = 80.0;
+  preset ThumbMaxAngle = -270;
+  preset ThumbMinAngle = 90;
+  preset ThumbPivot = <-58,22>;
+  preset ThumbFrameActive = 3;
+  preset ThumbFrameFocused = 2;
+  preset ThumbFrameDisabled = 0;
+  preset ThumbFrameDefault = 1;
+  preset ThumbBitmapActive = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapFocused = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDisabled = OrangeWidgets::OrangeThumb;
+  preset ThumbBitmapDefault = OrangeWidgets::OrangeThumb;
+  preset ScaleBitmapActive = OrangeWidgets::OrangeRotaryKnobLarge;
+  preset ScaleBitmapFocused = OrangeWidgets::OrangeRotaryKnobLarge;
+  preset ScaleBitmapDisabled = OrangeWidgets::OrangeRotaryKnobLarge;
+  preset ScaleBitmapDefault = OrangeWidgets::OrangeRotaryKnobLarge;
+  preset WidgetMinSize = <210,210>;
+}
+
+// This autoobject provides the default customization for the 'vertical value bar' \
+// widget (WidgetSet::VerticalValueBar) in its medium size variant.
+$rect <40,820,340,860>
+$output false
+autoobject WidgetSet::VerticalValueBarConfig VerticalValueBar_Small
+{
+  preset SwingElastic = true;
+  preset SwingDuration = 800;
+  preset TrackAboveFrame = 0;
+  preset TrackAboveBitmap = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset TrackBelowFrame = 1;
+  preset TrackBelowBitmap = OrangeWidgets::OrangeVertSliderTrackSmall;
+  preset WidgetMaxSize = <21,180>;
+  preset WidgetMinSize = <21,180>;
+}
+
+// This autoobject provides the default customization for the 'horizontal value bar' \
+// widget (WidgetSet::HorizontalValueBar) in its medium size variant.
+$rect <40,700,340,740>
+$output false
+autoobject WidgetSet::HorizontalValueBarConfig HorizontalValueBar_Small
+{
+  preset SwingElastic = true;
+  preset SwingDuration = 800;
+  preset TrackRightFrame = 0;
+  preset TrackRightBitmap = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset TrackLeftFrame = 1;
+  preset TrackLeftBitmap = OrangeWidgets::OrangeHorzSliderTrackSmall;
+  preset WidgetMaxSize = <180,21>;
+  preset WidgetMinSize = <180,21>;
+}
+
+// This autoobject provides the default customization for the 'value display' widget \
+// (WidgetSet::ValueDisplay) in its medium size variant. Widgets using this configuration \
+// display the value and unit aligned at the right widget edge.
+$rect <40,940,340,980>
+$output false
+autoobject WidgetSet::ValueDisplayConfig ValueDisplay
+{
+  preset ValueAlignment = Views::TextAlignment[AlignHorzCenter, AlignVertCenter];
+  preset ValueFont = Resources::FontExtraLarge;
+  preset FormatPlusSign = "";
+  preset Layout = WidgetSet::ValueDisplayLayout.AlignValueLeftToUnit;
+  preset WidgetMinSize = <60,45>;
+}
+
+// This autoobject provides the default customization for the 'analog gauge' widget \
+// (WidgetSet::Gauge) in its medium size variant.
+$rect <40,620,340,660>
+$output false
+autoobject WidgetSet::GaugeConfig Gauge_Small
+{
+  preset SwingElastic = false;
+  preset SwingDuration = 800;
+  preset TrackLeftRoundedEnd = true;
+  preset TrackLeftRoundedStart = true;
+  preset TrackLeftColor = #F15A24FF;
+  preset TrackLeftThickness = 8.0;
+  preset TrackLeftRadius = 50.0;
+  preset NeedleMaxAngle = -270;
+  preset NeedleMinAngle = 90;
+  preset ScaleBitmap = OrangeWidgets::OrangeRotaryKnobSmall;
+  preset WidgetMinSize = <120,120>;
+}
+
+// This autoobject provides the default customization for the 'analog gauge' widget \
+// (WidgetSet::Gauge) in its medium size variant.
+$rect <40,660,340,700>
+$output false
+autoobject WidgetSet::GaugeConfig Gauge_Large
+{
+  preset SwingElastic = false;
+  preset SwingDuration = 800;
+  preset TrackLeftRoundedEnd = true;
+  preset TrackLeftRoundedStart = true;
+  preset TrackLeftColor = #F15A24FF;
+  preset TrackLeftThickness = 8.0;
+  preset TrackLeftRadius = 80.0;
+  preset NeedleMaxAngle = -270;
+  preset NeedleMinAngle = 90;
+  preset ScaleBitmap = OrangeWidgets::OrangeRotaryKnobLarge;
+  preset WidgetMinSize = <180,180>;
+}
+
+// This autoobject provides the default customization for the 'horizontal value bar' \
+// widget (WidgetSet::HorizontalValueBar) in its medium size variant.
+$rect <40,740,340,780>
+$output false
+autoobject WidgetSet::HorizontalValueBarConfig HorizontalValueBar_Medium
+{
+  preset SwingElastic = true;
+  preset SwingDuration = 800;
+  preset TrackRightFrame = 0;
+  preset TrackRightBitmap = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset TrackLeftFrame = 1;
+  preset TrackLeftBitmap = OrangeWidgets::OrangeHorzSliderTrackMedium;
+  preset WidgetMaxSize = <240,21>;
+  preset WidgetMinSize = <240,21>;
+}
+
+// This autoobject provides the default customization for the 'horizontal value bar' \
+// widget (WidgetSet::HorizontalValueBar) in its medium size variant.
+$rect <40,780,340,820>
+$output false
+autoobject WidgetSet::HorizontalValueBarConfig HorizontalValueBar_Large
+{
+  preset SwingElastic = true;
+  preset SwingDuration = 800;
+  preset TrackRightFrame = 0;
+  preset TrackRightBitmap = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset TrackLeftFrame = 1;
+  preset TrackLeftBitmap = OrangeWidgets::OrangeHorzSliderTrackLarge;
+  preset WidgetMaxSize = <300,21>;
+  preset WidgetMinSize = <300,21>;
+}
+
+// This autoobject provides the default customization for the 'vertical value bar' \
+// widget (WidgetSet::VerticalValueBar) in its medium size variant.
+$rect <40,860,340,900>
+$output false
+autoobject WidgetSet::VerticalValueBarConfig VerticalValueBar_Medium
+{
+  preset SwingElastic = true;
+  preset SwingDuration = 800;
+  preset TrackAboveFrame = 0;
+  preset TrackAboveBitmap = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset TrackBelowFrame = 1;
+  preset TrackBelowBitmap = OrangeWidgets::OrangeVertSliderTrackMedium;
+  preset WidgetMaxSize = <21,240>;
+  preset WidgetMinSize = <21,240>;
+}
+
+// This autoobject provides the default customization for the 'vertical value bar' \
+// widget (WidgetSet::VerticalValueBar) in its medium size variant.
+$rect <40,900,340,940>
+$output false
+autoobject WidgetSet::VerticalValueBarConfig VerticalValueBar_Large
+{
+  preset SwingElastic = true;
+  preset SwingDuration = 800;
+  preset TrackAboveFrame = 0;
+  preset TrackAboveBitmap = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset TrackBelowFrame = 1;
+  preset TrackBelowBitmap = OrangeWidgets::OrangeVertSliderTrackLarge;
+  preset WidgetMaxSize = <21,300>;
+  preset WidgetMinSize = <21,300>;
+}
+
+$rect <350,180,630,220>
+$output false
+resource Resources::Bitmap OrangeSwitch
+{
+  attr bitmapfile FileName = .\OrangeRes\OrangeSwitch.png;
+  attr framesize FrameSize = <70,45>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This autoobject provides one of the default customizations for the 'toggle' widget \
+// (WidgetSet::ToggleButton) in its medium size variant. With this customization \
+// the toggle button appears as a 'switch'.
+$rect <40,180,340,220>
+$output false
+autoobject WidgetSet::ToggleButtonConfig Switch
+{
+  preset LabelMarginRight = 75;
+  preset IconOnTintActive = #6C6E70FF;
+  preset IconOnTintFocused = #6C6E70FF;
+  preset IconOnTintDisabled = #A8ABABAA;
+  preset IconOnTintDefault = #6C6E70FF;
+  preset IconOffTintActive = #6C6E70FF;
+  preset IconOffTintFocused = #6C6E70FF;
+  preset IconOffTintDisabled = #A8ABABAA;
+  preset IconOffTintDefault = #6C6E70FF;
+  preset IconMarginRight = 75;
+  preset LabelAlignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+  preset LabelOnFont = Resources::FontMedium;
+  preset LabelOffFont = Resources::FontMedium;
+  preset IconAlignment = Views::ImageAlignment[AlignHorzLeft, AlignVertCenter];
+  preset FaceLayout = Core::Layout[AlignToRight];
+  preset FaceOnFrameActive = 7;
+  preset FaceOnFrameFocused = 5;
+  preset FaceOnFrameDisabled = 1;
+  preset FaceOnFrameDefault = 3;
+  preset FaceOnBitmapActive = OrangeWidgets::OrangeSwitch;
+  preset FaceOnBitmapFocused = OrangeWidgets::OrangeSwitch;
+  preset FaceOnBitmapDisabled = OrangeWidgets::OrangeSwitch;
+  preset FaceOnBitmapDefault = OrangeWidgets::OrangeSwitch;
+  preset FaceOffFrameActive = 6;
+  preset FaceOffFrameFocused = 4;
+  preset FaceOffFrameDisabled = 0;
+  preset FaceOffFrameDefault = 2;
+  preset FaceOffBitmapActive = OrangeWidgets::OrangeSwitch;
+  preset FaceOffBitmapFocused = OrangeWidgets::OrangeSwitch;
+  preset FaceOffBitmapDisabled = OrangeWidgets::OrangeSwitch;
+  preset FaceOffBitmapDefault = OrangeWidgets::OrangeSwitch;
+  preset WidgetMinSize = <70,45>;
+}
+
+// How to use and customize widgets?
+// 
+// https://doc.embedded-wizard.de/using-widgets
+note legend Note9
+{
+  attr Bounds = <660,10,1110,80>;
+}

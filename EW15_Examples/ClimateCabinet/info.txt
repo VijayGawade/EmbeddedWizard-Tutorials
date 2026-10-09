@@ -1,0 +1,1 @@
+The ClimateCabinet demo shows the implementation of a control panel for a climatic exposure test cabinent. The user can define a heating time, a nominal temperature and humidity, a dwell time and the final cooling time.

@@ -1,0 +1,1 @@
+This demo shows the implementation of some fancy scrollable list widgets to set a time and a day of the week. The speciality of this sample application is the magnification effect of the centered list items and the soft fade-in/fade-out effects.

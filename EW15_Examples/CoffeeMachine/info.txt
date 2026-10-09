@@ -1,0 +1,1 @@
+The 'CoffeeMachine' sample application shows the implementation of a GUI application to choose and to configure a product like Espresso, Cappuccino, Coffee or Hot Water. The product selection is done by a slide gesture. An animated brewing progress screen and a welcome screen completes the sample.

@@ -1,0 +1,247 @@
+﻿$version 15.00
+
+// This is the root component of the entire GUI application.
+$rect <40,40,440,80>
+$output false
+class Application : Core::Root
+{
+  $rect <660,220,860,260>
+  inherited property Bounds = <0,0,640,480>;
+
+  // This slot method is invoked when the first button is pressed.
+  $rect <680,50,880,90>
+  slot onClickButtonRed
+  {
+    Application::ExternBitmap.Name = "Red";
+
+    Title.String = "Extern Bitmap: \"Red\"";
+
+    Focus = ButtonRed;
+  }
+
+  // This slot method is invoked when the second button is pressed.
+  $rect <680,90,880,130>
+  slot onClickButtonGreen
+  {
+    Application::ExternBitmap.Name = "Green";
+
+    Title.String = "Extern Bitmap: \"Green\"";
+
+    Focus = ButtonGreen;
+  }
+
+  // This slot method is invoked when the second button is pressed.
+  $rect <680,130,880,170>
+  slot onClickButtonBlue
+  {
+    Application::ExternBitmap.Name = "Blue";
+
+    Title.String = "Extern Bitmap: \"Blue\"";
+
+    Focus = ButtonBlue;
+
+  }
+
+  // This is a filled rectangle view.
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,640,480>;
+    preset Color = #E9E9E9FF;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <20,370,170,470>;
+    preset Bitmap = Application::ExternBitmap;
+  }
+
+  // This is a 2D/3D warp image view.
+  $rect <20,20,160,60>
+  object Views::WarpImage WarpImage
+  {
+    preset Point4 = <420,280>;
+    preset Point3 = <570,380>;
+    preset Point2 = <620,190>;
+    preset Point1 = <420,210>;
+    preset Bitmap = Application::ExternBitmap;
+  }
+
+  // This is a 2D/3D warp image view.
+  $rect <20,20,160,60>
+  object Views::WarpImage WarpImage0
+  {
+    preset Point4 = <190,340>;
+    preset Point3 = <380,300>;
+    preset Point2 = <370,200>;
+    preset Point1 = <230,240>;
+    preset Bitmap = Application::ExternBitmap;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Title
+  {
+    preset Bounds = <20,10,400,50>;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertTop];
+    preset String = "Extern Bitmap: -";
+    preset Font = Resources::FontLarge;
+    preset Color = #000000FF;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Descr
+  {
+    preset Bounds = <200,70,570,160>;
+    preset WrapText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertTop];
+    preset String = "A click on each button changes the property 'Name' of the extern bitmap and reloads the content by using the external bitmap loader.\nAll views are updated automatically.";
+    preset Font = Resources::FontSmall;
+    preset Color = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton ButtonRed
+  {
+    preset Bounds = <20,70,170,120>;
+    preset OnActivate = onClickButtonRed;
+    preset Label = "Red";
+    preset Appearance = WidgetSet::PushButton_Lime_Medium;
+  }
+
+  // How to use the extern bitmap interface?
+  // https://doc.embedded-wizard.de/extern-bitmap-loader
+  note legend Note8
+  {
+    attr Bounds = <660,310,1040,390>;
+  }
+
+  // How to display dynamically loaded images?
+  // https://doc.embedded-wizard.de/using-extern-bitmap
+  note legend Note9
+  {
+    attr Bounds = <660,400,1040,480>;
+  }
+
+  // The sample application 'ExternBitmap' demonstrates the integration of an external \
+  // bitmap decoder and the usage of the loaded images.
+  // 
+  // An extern bitmap loader can be used to provide your GUI application with dynamically \
+  // loaded images from an external image decoder (e.g. a PNG or JPG decoder).
+  // In order to simplify this example and to reduce it to the fundamental aspects, \
+  // the external bitmap decoder is just a dummy decoder returning a color pattern \
+  // according the given name.
+  // Please have a look into the file externbitmaploader.c which is part of this \
+  // example.
+  // 
+  // A click on a button changes the property 'Name' of the extern bitmap and reloads \
+  // the content by using the external bitmap loader. All views are updated automatically.
+  note legend Note
+  {
+    attr Bounds = <0,500,650,750>;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton ButtonGreen
+  {
+    preset Bounds = <20,130,170,180>;
+    preset OnActivate = onClickButtonGreen;
+    preset Label = "Green";
+    preset Appearance = WidgetSet::PushButton_Lime_Medium;
+  }
+
+  $rect <20,20,160,60>
+  object WidgetSet::PushButton ButtonBlue
+  {
+    preset Bounds = <20,190,170,240>;
+    preset OnActivate = onClickButtonBlue;
+    preset Label = "Blue";
+    preset Appearance = WidgetSet::PushButton_Lime_Medium;
+  }
+
+  // This is a 2D/3D warp image view.
+  $rect <20,20,160,60>
+  object Views::WarpImage WarpImage1
+  {
+    preset Point4 = <220,440>;
+    preset Point3 = <450,465>;
+    preset Point2 = <500,275>;
+    preset Point1 = <260,340>;
+    preset Bitmap = Application::ExternBitmap;
+  }
+
+  // This slot method is connected to the KeyHandler. It will be invoked, when the \
+  // user has pressed the Left/Right/Up/Down keys.
+  $rect <930,90,1130,130>
+  slot onKeyPressSlot
+  {
+    var Core::Direction direction = Core::Direction.None;
+    var Core::View      view;
+
+    // Depending on the pressed key, determine the direction to look for
+    // other widgets.
+    switch ( KeyHandler.Code )
+    {
+      case Core::KeyCode.Left  : direction = Core::Direction.Left;
+      case Core::KeyCode.Right : direction = Core::Direction.Right;
+      case Core::KeyCode.Up    : direction = Core::Direction.Top;
+      case Core::KeyCode.Down  : direction = Core::Direction.Bottom;
+      default :;
+    }
+
+    // Try to find another widget in the given direction relative to the
+    // currently selected (Focus) widget. Search for widgets able to handle
+    // keyboard inputs only (Enabled and Focusable).
+    view = FindViewInDirection( Focus, direction, 
+                                Core::ViewState[ Enabled, Focusable ]);
+
+    // Item found? Select this widget then.
+    if ( view != null )
+      Focus = view;
+  }
+
+  // This is a key press handler. It responds to the Up/Down/Left/Right key events \
+  // and passes them to the onPressKey slot method.
+  $rect <930,50,1130,90>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onKeyPressSlot;
+    preset Filter = Core::KeyCode.CursorKeys;
+    preset OnHold = onKeyPressSlot;
+  }
+
+  // Keyboard handling
+  note group Note1
+  {
+    attr Bounds = <910,10,1140,150>;
+  }
+
+  // Button action
+  note group Note2
+  {
+    attr Bounds = <660,10,900,190>;
+  }
+}
+
+// This is an extern bitmap.
+$rect <40,150,440,190>
+$output false
+autoobject Resources::ExternBitmap ExternBitmap
+{
+  preset Name = "Empty";
+}
+
+// Application class of the example
+note group Note4
+{
+  attr Bounds = <20,0,460,100>;
+}
+
+// Extern Bitmap object 
+note group Note5
+{
+  attr Bounds = <20,110,460,210>;
+}

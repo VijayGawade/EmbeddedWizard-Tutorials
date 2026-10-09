@@ -1,0 +1,691 @@
+﻿$version 15.00
+
+$rect <30,170,230,210>
+$output false
+class Button : Core::Group
+{
+  $rect <0,90,200,130>
+  inherited property Bounds = <0,0,140,30>;
+
+  $rect <0,130,200,170>
+  inherited method UpdateViewState()
+  {
+    /* colorize button according current state */
+    if ( aState.contains( Core::ViewState[ Enabled ]))
+    {
+      if ( TouchHandler.Down && TouchHandler.Inside )
+        Frame.Color = Application::ButtonPressed;
+      else if ( Active )
+        Frame.Color = Application::ButtonActive;
+      else
+        Frame.Color = Application::ButtonEnabled;
+    }
+    else
+      Frame.Color = Application::ButtonDisabled;
+    Text.Color = Frame.Color;
+  }
+
+  // This internal slot method is used to receive the corresponding signals form \
+  // the touch handler.
+  $rect <200,130,400,170>
+  slot enterLeaveSlot
+  {
+    InvalidateViewState();
+  }
+
+  // This internal slot method is used to receive the corresponding signals form \
+  // the touch handler.
+  $rect <200,170,400,210>
+  slot pressReleaseSlot
+  {
+    /* releasing the finger outside the button area is ignored */
+    if ( !TouchHandler.Down && TouchHandler.Inside )
+    {
+      if ( ToggleSwitch )
+        Active = !Active;
+      else
+        Active = false;
+
+      /* inform the OnChange slot method */
+      signal OnChange;
+    }
+  }
+
+  // The property 'OnChange' can refer to a slot method, which will receive a signal \
+  // as soon the user has pressed the button. Thereupon the method's logic will be \
+  // executed.
+  $rect <400,170,600,210>
+  property slot OnChange = null;
+
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler TouchHandler
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Point4 = <0,30>;
+    preset Point3 = <140,30>;
+    preset Point2 = <140,0>;
+    preset Point1 = <0,0>;
+    preset OnLeave = enterLeaveSlot;
+    preset OnEnter = enterLeaveSlot;
+    preset OnRelease = pressReleaseSlot;
+    preset OnPress = pressReleaseSlot;
+  }
+
+  // This is a bitmap frame view.
+  $rect <20,20,160,60>
+  object Views::Frame Frame
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,140,30>;
+    preset Color = Application::ButtonDisabled;
+    preset Bitmap = Application::ButtonBorder;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Layout = Core::Layout[AlignToBottom, AlignToLeft, AlignToRight, AlignToTop, ResizeHorz, ResizeVert];
+    preset Bounds = <0,0,140,30>;
+    preset String = "Text";
+    preset Font = Application::ButtonFont;
+  }
+
+  // The property 'Caption' contains the caption text of the button.
+  $rect <200,0,400,40>
+  property string Caption = "";
+
+  $rect <200,40,400,80>
+  onset Caption
+  {
+    pure Caption = value;
+
+    /* forward the text */
+    Text.String = value;
+  }
+
+  $rect <600,40,800,80>
+  onset ToggleSwitch
+  {
+    /* check if the given value differs from the current value */
+    if ( pure ToggleSwitch == value )
+      return;
+
+    /* store the new value */// Rember the new state ...
+    pure ToggleSwitch = value;
+
+    /* monostable button can not appear pressed */
+    if ( !value )
+      Active = false;
+  }
+
+  $rect <400,40,600,80>
+  onset Active
+  {
+    /* check if the given value differs from the current value */
+    if ( pure Active == value )
+      return;
+
+    /* store the new value */
+    pure Active = value;
+
+    /* ...and finally, force an update */
+    InvalidateViewState();
+  }
+
+  // The property 'ToggleSwitch' determines whether the button is bistable or monostable. \
+  // Bistable buttons have two states: pressed and released. Each time the button \
+  // is activated by the user, its state is toggled between pressed and released. \
+  // In contrast, monostable buttons restore the released state immediately as soon \
+  // the user has released 'his finger from the button's face'.
+  $rect <600,0,800,40>
+  property bool ToggleSwitch = false;
+
+  // The property 'Active' stores the current state of the button. As long as the \
+  // property is 'false', the widget represents the status switched-off and should \
+  // appear released. As long as the property is 'true', the widget represents the \
+  // status switched-on and should appear pressed.
+  // Usually this property is used by bistable buttons only, which can toggle its \
+  // state. Whether the button is bistable or monostable is determined by the button's \
+  // property @ToggleSwitch.
+  $rect <400,0,600,40>
+  property bool Active = false;
+
+  // The class 'Button' implements a simple push button to start a certain action.
+  // Each time the user has pressed the button a signal is sent to the slot method \
+  // 'OnChange'.
+  note legend Note
+  {
+    attr Bounds = <0,220,550,310>;
+  }
+}
+
+// This is a bitmap resource.
+$rect <480,50,680,90>
+$output false
+resource Resources::Bitmap ButtonBorder
+{
+  attr bitmapfile FileName = .\Res\ButtonBorder.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a font resource.
+$rect <280,170,480,210>
+$output false
+resource Resources::Font SystemFont
+{
+  attr fontname FontName =
+  (
+    Default = Noto Sans;
+    Arabic = Noto Sans Arabic;
+    Chinese = Noto Sans SC;
+    Hebrew = Noto Sans Hebrew;
+    Japanese = Noto Sans JP;
+    Korean = Noto Sans KR;
+  );
+
+  attr fontheight Height =
+  (
+    Default = 36;
+    Arabic = 48;
+  );
+
+  attr fontquality Quality = High;
+  attr fontranges Ranges =
+  (
+    Default = .\FontRangeDefault.txt;
+    Arabic = .\FontRangeArabic.txt;
+    Chinese = .\FontRangeChinese.txt;
+    Hebrew = .\FontRangeHebrew.txt;
+    Japanese = .\FontRangeJapanese.txt;
+    Korean = .\FontRangeKorean.txt;
+  );
+
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// This is the root component of the entire GUI application.
+$rect <30,50,230,90>
+$output false
+class Application : Core::Root
+{
+  $rect <0,300,180,340>
+  inherited property Bounds = <0,0,480,272>;
+
+  $rect <0,340,180,380>
+  inherited method Init()
+  {
+    /* update the state of all buttons */
+    signal UpdateButtons;
+
+
+  }
+
+  // This is a filled rectangle view.
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,480,272>;
+    preset Color = #0B0B20FF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonEN
+  {
+    preset Bounds = <5,165,115,195>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::English;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonDE
+  {
+    preset Bounds = <5,200,115,230>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::German;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonES
+  {
+    preset Bounds = <5,235,115,265>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Spanish;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonAR
+  {
+    preset Bounds = <125,165,235,195>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Arabic;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonIL
+  {
+    preset Bounds = <125,200,235,230>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Hebrew;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonGR
+  {
+    preset Bounds = <125,235,235,265>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Greek;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonRU
+  {
+    preset Bounds = <245,165,355,195>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Russian;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonTR
+  {
+    preset Bounds = <245,200,355,230>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Turkish;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonJP
+  {
+    preset Bounds = <245,235,355,265>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Japanese;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonKR
+  {
+    preset Bounds = <365,165,475,195>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Korean;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonCN
+  {
+    preset Bounds = <365,200,475,230>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Chinese;
+    preset ToggleSwitch = true;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Button ButtonVN
+  {
+    preset Bounds = <365,235,475,265>;
+    preset OnChange = LangButtonPressed;
+    preset Caption = GenStrings::Vietnamese;
+    preset ToggleSwitch = true;
+  }
+
+  // Slot method to change the language after the user has pressed a language button.
+  $rect <190,300,370,340>
+  slot LangButtonPressed
+  {
+    /* restart timer */
+    AutoTimer.Enabled = false;
+    AutoTimer.Enabled = true;
+
+    /* determine the button that sends the signal */
+    if      ( sender == ButtonDE ) language = German;
+    else if ( sender == ButtonES ) language = Spanish;
+    else if ( sender == ButtonAR ) language = Arabic;
+    else if ( sender == ButtonIL ) language = Hebrew;
+    else if ( sender == ButtonGR ) language = Greek;
+    else if ( sender == ButtonRU ) language = Russian;
+    else if ( sender == ButtonTR ) language = Turkish;
+    else if ( sender == ButtonJP ) language = Japanese;
+    else if ( sender == ButtonKR ) language = Korean;
+    else if ( sender == ButtonCN ) language = Chinese;
+    else if ( sender == ButtonVN ) language = Vietnamese;
+    else language = Default;
+
+    /* update the state of all buttons */
+    postsignal UpdateButtons;
+
+
+
+  }
+
+  // Slot method to select/deselect the buttons according currently selected language.
+  $rect <190,340,370,380>
+  slot UpdateButtons
+  {
+    /* set the active status of all language bottons according currently selected language */
+    ButtonEN.Active = ( language == Default );
+    ButtonDE.Active = ( language == German );
+    ButtonES.Active = ( language == Spanish );
+    ButtonAR.Active = ( language == Arabic );
+    ButtonIL.Active = ( language == Hebrew );
+    ButtonGR.Active = ( language == Greek );
+    ButtonRU.Active = ( language == Russian );
+    ButtonTR.Active = ( language == Turkish );
+    ButtonJP.Active = ( language == Japanese );
+    ButtonKR.Active = ( language == Korean );
+    ButtonCN.Active = ( language == Chinese );
+    ButtonVN.Active = ( language == Vietnamese );
+
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Monday
+  {
+    preset Bounds = <0,6,150,42>;
+    preset EnableBidiText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = GenStrings::Monday;
+    preset Font = Application::SystemFont;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Tuesday
+  {
+    preset Bounds = <0,33,150,69>;
+    preset EnableBidiText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = GenStrings::Tuesday;
+    preset Font = Application::SystemFont;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Wednesday
+  {
+    preset Bounds = <0,60,150,96>;
+    preset EnableBidiText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = GenStrings::Wednesday;
+    preset Font = Application::SystemFont;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Thursday
+  {
+    preset Bounds = <0,87,150,123>;
+    preset EnableBidiText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = GenStrings::Thursday;
+    preset Font = Application::SystemFont;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Friday
+  {
+    preset Bounds = <0,114,150,150>;
+    preset EnableBidiText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = GenStrings::Friday;
+    preset Font = Application::SystemFont;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Saturday
+  {
+    preset Bounds = <168,87,318,123>;
+    preset EnableBidiText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = GenStrings::Saturday;
+    preset Font = Application::SystemFont;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Sunday
+  {
+    preset Bounds = <168,114,318,150>;
+    preset EnableBidiText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzLeft, AlignVertCenter];
+    preset String = GenStrings::Sunday;
+    preset Font = Application::SystemFont;
+  }
+
+  // This is an ordinary text view.
+  $rect <20,20,160,60>
+  object Views::Text Weekday
+  {
+    preset Bounds = <163,6,463,42>;
+    preset EnableBidiText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzRight, AlignVertCenter];
+    preset String = GenStrings::DayOfWeek;
+    preset Font = Application::SystemFont;
+  }
+
+  // This is an image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <368,50,468,150>;
+    preset AutoSize = false;
+    preset Color = #1A2C7EFF;
+    preset Bitmap = Application::Calendar;
+  }
+
+  // This is a timer object to trigger the automatical language change.
+  $rect <380,300,560,340>
+  object Core::Timer AutoTimer
+  {
+    preset OnTrigger = AutoChange;
+    preset Period = 3000;
+    preset Begin = 15000;
+    preset Enabled = true;
+  }
+
+  // Slot method to change the language automatically.
+  $rect <380,340,560,380>
+  slot AutoChange
+  {
+    /* select the next language */
+    if      ( language == Default )  language = German;
+    else if ( language == German )   language = Spanish;
+    else if ( language == Spanish )  language = Arabic;
+    else if ( language == Arabic )   language = Hebrew;
+    else if ( language == Hebrew )   language = Greek;
+    else if ( language == Greek )    language = Russian;
+    else if ( language == Russian )  language = Turkish;
+    else if ( language == Turkish )  language = Japanese;
+    else if ( language == Japanese ) language = Korean;
+    else if ( language == Korean )   language = Chinese;
+    else if ( language == Chinese )  language = Vietnamese;
+    else language = Default;
+
+    /* update the state of all buttons */
+    postsignal UpdateButtons;
+
+
+
+  }
+
+  // The application class of this example just contains a couple of text items to \
+  // show the days of the week by using multi-lingual string constants.
+  // Furthermore, a couple of buttons are placed within the application in order \
+  // to change the currently active language during runtime.
+  note legend Note
+  {
+    attr Bounds = <0,400,550,510>;
+  }
+
+  // How to develop multi-lingual applications?
+  // https://doc.embedded-wizard.de/managing-localization
+  note legend Note8
+  {
+    attr Bounds = <0,520,380,580>;
+  }
+
+  // Directives to adapt the order of the above members according to how these members 
+  // where arranged when the project content was stored. In this manner the storage 
+  // and the expected order of the members don't depend. Merging of changes in the 
+  // project files is simplified.
+  $member Init
+  $member Bounds
+  $member Rectangle
+  $member ButtonEN
+  $member ButtonDE
+  $member ButtonES
+  $member ButtonAR
+  $member ButtonIL
+  $member ButtonGR
+  $member ButtonRU
+  $member ButtonTR
+  $member ButtonJP
+  $member ButtonKR
+  $member ButtonCN
+  $member ButtonVN
+  $member LangButtonPressed
+  $member UpdateButtons
+  $member Monday
+  $member Tuesday
+  $member Wednesday
+  $member Thursday
+  $member Friday
+  $member Saturday
+  $member Sunday
+  $member Weekday
+  $member Image
+  $member AutoTimer
+  $member AutoChange
+  $member Note
+  $member Note8
+}
+
+// Color constant used to colorize the button according current status.
+$rect <680,50,880,90>
+$output false
+const color ButtonDisabled = #9FA29DFF;
+
+// Color constant used to colorize the button according current status.
+$rect <680,90,880,130>
+$output false
+const color ButtonEnabled = #D35B21FF;
+
+// Color constant used to colorize the button according current status.
+$rect <680,130,880,170>
+$output false
+const color ButtonPressed = #F2BC1BFF;
+
+// Color constant used to colorize the button according current status.
+$rect <680,170,880,210>
+$output false
+const color ButtonActive = #3ACE38FF;
+
+// This is a bitmap resource.
+$rect <480,90,680,130>
+$output false
+resource Resources::Bitmap Calendar
+{
+  attr bitmapfile FileName = .\Res\Calendar.png;
+  attr framesize FrameSize;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Alpha8;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is a font resource.
+$rect <280,50,480,90>
+$output false
+resource Resources::Font ButtonFont
+{
+  attr fontname FontName = Segoe UI;
+  attr fontheight Height = 24;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = 0x20-0x7F;
+  attr fontaspectratio AspectRatio = 1.0;
+  attr fontbold Bold = false;
+  attr fontitalic Italic = false;
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// Fonts, Bitmaps and Colors
+note group Note3
+{
+  attr Bounds = <260,0,900,230>;
+}
+
+// Application
+note group Note4
+{
+  attr Bounds = <10,0,250,110>;
+}
+
+// Button
+note group Note5
+{
+  attr Bounds = <10,120,250,230>;
+}
+
+note arrow Note6
+{
+  attr Point1 = <380,210>;
+  attr Point2 = <380,290>;
+}
+
+// The font resource 'SystemFont' is used to display all multi-lingual strings within \
+// this application.
+// 
+// In order to reduce the constant memory footprint (= to save ROM/FLASH) this font \
+// resource contains only those characters, that are needed to display all strings \
+// of the application.
+// 
+// The glyphs of several TrueType fonts are combined in one virtual font resource. \
+// Due to the fact that several TrueType fonts are used, the glyph ranges of the \
+// font resource have to be managed carefully in order to ensure that all required \
+// glyphs are provided within the font resource!
+// 
+// If you want to avoid that glyph range management, you can choose a TrueType font \
+// that contains already all glyphs that you need in your application.
+// In this more simple case, the attribute 'Ranges' of the font resource can refer \
+// to the file 'FontRange.txt' which is generated by an Excel macro.
+// This macro is implemented in Visual Basic Script and stored within the Excel sheet.
+// You will find the file 'GenStrings.xls' included in the project directory.
+// 
+// However, in this example we have combined several TrueType fonts into one font \
+// resource - there we have to manage the 'Ranges' individually. The file 'FontRange.txt' \
+// was split manually into several files.
+note legend Note7
+{
+  attr Bounds = <260,290,1340,580>;
+}
+
+// In order to support shaping for Arabic, the character range '\xFE70'-'\xFEFF' \
+// is added.
+// For more details concerning bidirectional text and shaping, please see Unicode \
+// Standard Annex #9.
+note legend Note
+{
+  attr Bounds = <260,590,900,660>;
+}

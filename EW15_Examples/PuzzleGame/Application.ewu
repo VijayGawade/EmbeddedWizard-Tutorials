@@ -1,0 +1,882 @@
+﻿$version 15.00
+
+// This class implements a single field of the game.
+$rect <40,160,240,200>
+$output false
+class Field : Core::Group
+{
+  $rect <10,120,210,160>
+  inherited property Bounds = <0,0,100,100>;
+
+  $rect <10,160,210,200>
+  inherited method UpdateViewState()
+  {
+    super( aState );
+
+    if ( aState.contains( Core::ViewState[ Selected ]))
+      Border.FrameNumber = 1;
+    else
+      Border.FrameNumber = 0;
+  }
+
+  // The onset method updates the view, each time the value of the @ImageNumber property \
+  // changes.
+  $rect <150,40,350,80>
+  onset ImageNumber
+  {
+    // Ensure, the passed value is valid.
+    if ( value < 0 )  value = 0;
+    if ( value > 15 ) value = 15;
+
+    // No changes - Nothing to do.
+    if ( pure ImageNumber == value )
+      return;
+
+    // Remember the new value and force the update
+    pure ImageNumber  = value;
+    Image.FrameNumber = value;
+    Text.String       = string( value + 1 );
+    TextShadow.String = Text.String;
+
+    // Image 15 responds to the empry field - Hide the image in this case.
+    Image.Visible      = value != 15;
+    Text.Visible       = value != 15;
+    TextShadow.Visible = value != 15;
+
+  }
+
+  $rect <350,40,550,80>
+  onset Bitmap
+  {
+    Image.Bitmap = value;
+    pure Bitmap  = value;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Image
+  {
+    preset Bounds = <0,0,100,100>;
+    preset Bitmap = Application::Picture2;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image Border
+  {
+    preset Bounds = <0,0,100,100>;
+    preset Bitmap = Application::Borders;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text TextShadow
+  {
+    preset Bounds = <2,2,102,102>;
+    preset String = "1";
+    preset Font = Application::DigitFont;
+    preset Color = #000000FF;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text Text
+  {
+    preset Bounds = <0,0,100,100>;
+    preset String = "1";
+    preset Font = Application::DigitFont;
+  }
+
+  // ImageNumber stores the number of the image to display within the field. Only \
+  // values in range 0 .. 15 are allowed here. If the ImageNumber == 15, no image \
+  // is displayed -> This is the empty field.
+  $rect <150,0,350,40>
+  property int32 ImageNumber = 0;
+
+  // Bitmap stores the bitmap resource, which contains all the images.
+  $rect <350,0,550,40>
+  property Resources::Bitmap Bitmap = Application::Picture2;
+}
+
+// This class implements the game consisting of 16 fields.
+$rect <240,160,440,200>
+$output false
+class Game : Core::Group
+{
+  $rect <10,420,210,460>
+  inherited property Bounds = <0,0,400,400>;
+
+  // The variable is 'true' if the user is pressing the finger on the screen (or \
+  // the mouse button) and scrolling the selection.
+  $rect <820,360,1020,400>
+  var bool scrolling;
+
+  // The onset method reacts to the changes of the @Bitmap property and assigns the \
+  // passed bitmap resource to all 16 fields.
+  $rect <420,50,620,90>
+  onset Bitmap
+  {
+    // No changes - Nothing to do.
+    if ( pure Bitmap == value )
+      return;
+
+    // Remember the new value.
+    pure Bitmap = value;
+
+    // Update all 16 fields.
+    Field0.Bitmap = value;
+    Field1.Bitmap = value;
+    Field2.Bitmap = value;
+    Field3.Bitmap = value;
+    Field4.Bitmap = value;
+    Field5.Bitmap = value;
+    Field6.Bitmap = value;
+    Field7.Bitmap = value;
+    Field8.Bitmap = value;
+    Field9.Bitmap = value;
+    Field10.Bitmap = value;
+    Field11.Bitmap = value;
+    Field12.Bitmap = value;
+    Field13.Bitmap = value;
+    Field14.Bitmap = value;
+    Field15.Bitmap = value;
+    animImage.Bitmap = value;
+  }
+
+  // This method determinates the field, which is currently empty and returns it.
+  $rect <820,110,1020,150>
+  method Application::Field GetEmptyField()
+  {
+    // Start with the first field ...
+    var Application::Field field = (Application::Field)FindNextView( null, Core::ViewState[ Focusable, Enabled ]);
+
+    // ... and repeat until a field with the ImageNumber == 15 -> empty field
+    // was found.
+    while (( field != null ) && ( field.ImageNumber != 15 ))
+      field = (Application::Field)FindNextView( field, Core::ViewState[ Focusable, Enabled ]);
+
+    return field;
+  }
+
+  // This method verifies, whether the both fields aField1 and aField2 do contact \
+  // themseves.
+  $rect <820,150,1020,190>
+  method bool AreNeighbors( arg Application::Field aField1, arg Application::Field aField2 )
+  {
+    // Get the coordinates of the both fields.
+    var rect r1 = aField1.Bounds;
+    var rect r2 = aField2.Bounds;
+
+    if ( r1.point2 == point( r2.x1, r2.y2 )) return true;
+    if ( r1.point1 == point( r2.x1, r2.y2 )) return true;
+    if ( r2.point2 == point( r1.x1, r1.y2 )) return true;
+    if ( r2.point1 == point( r1.x1, r1.y2 )) return true;
+
+    return false;
+
+
+  }
+
+  // This method starts the movement animation. Durring the animation the image from \
+  // aField1 is moved to the empty field aField2.
+  // The animation is performed by using the effects @animEffect1, @animEffect2 and \
+  // @animEffect3.
+  $rect <820,190,1020,230>
+  method void Animate( arg Application::Field aField1, arg Application::Field aField2 )
+  {
+    // The start and the end field are stored in these variables.
+    // Later, when the animation is performed, these filed are accessible.
+    animField1 = aField1;
+    animField2 = aField2;
+
+    // Durring the animation a small image view is moved over the screen. Initialize
+    // this view with the image and the bounds of the start field.
+    animImageNumber       = aField1.ImageNumber;
+    animImage.FrameNumber = animImageNumber;
+    animImage.Opacity     = 0;
+    animImage.Bounds      = aField1.Bounds;
+
+    // Prepare and start the animation effects
+    animEffect2.Value1    = aField1.Bounds;
+    animEffect2.Value2    = aField2.Bounds;
+    animEffect1.Enabled   = true;
+  }
+
+  // The key handler reacts to the corresponding key press event.  The corresponding \
+  // slot method is called then.
+  $rect <420,110,620,150>
+  object Core::KeyPressHandler KeyLeftHandler
+  {
+    preset OnPress = goLeft;
+    preset Filter = Core::KeyCode.Left;
+    preset OnHold = goLeft;
+  }
+
+  // The key handler reacts to the corresponding key press event.  The corresponding \
+  // slot method is called then.
+  $rect <420,150,620,190>
+  object Core::KeyPressHandler KeyRightHandler
+  {
+    preset OnPress = goRight;
+    preset Filter = Core::KeyCode.Right;
+    preset OnHold = goRight;
+  }
+
+  // The key handler reacts to the corresponding key press event.  The corresponding \
+  // slot method is called then.
+  $rect <420,190,620,230>
+  object Core::KeyPressHandler KeyUpHandler
+  {
+    preset OnPress = goUp;
+    preset Filter = Core::KeyCode.Up;
+    preset OnHold = goUp;
+  }
+
+  // The key handler reacts to the corresponding key press event.  The corresponding \
+  // slot method is called then.
+  $rect <420,230,620,270>
+  object Core::KeyPressHandler KeyDownHandler
+  {
+    preset OnPress = goDown;
+    preset Filter = Core::KeyCode.Down;
+    preset OnHold = goDown;
+  }
+
+  // The key handler reacts to the corresponding key press event.  The corresponding \
+  // slot method is called then.
+  $rect <420,270,620,310>
+  object Core::KeyPressHandler KeyOkHandler
+  {
+    preset OnPress = moveSelected;
+    preset Filter = Core::KeyCode.Ok;
+  }
+
+  // This slot method is called when the user touches the screen with a finger or \
+  // clicks with the mouse. The method determines which field is affected by the \
+  // operation and selects it.
+  $rect <620,320,820,360>
+  slot onPress
+  {
+    // The single click should activate the affected field
+    var Core::View theView = FindViewAtPosition( SimpleTouchHandler, SimpleTouchHandler.CurrentPos, 
+                                                 Core::ViewState[ Touchable, Enabled ]);
+
+    // If a control could be found - scroll to it immediately.
+    if ( theView != null )
+      Focus = theView;
+
+    // Remember, we are in the scrolling mode now.
+    scrolling = true;
+  }
+
+  // This slot method is called when the user releases the screen or the mouse button. \
+  // The method terminates the scrolling operation.
+  $rect <620,360,820,400>
+  slot onRelease
+  {
+    scrolling = false;
+
+  }
+
+  // This slot method is called when the user drags the finger or the mouse pointer \
+  // after touching the screen or clicking with the mouse button. The method determines \
+  // which field is affected by the operation and selects it or drags the field to \
+  // its empty neighbour.
+  $rect <620,400,820,440>
+  slot onDrag
+  {
+    // Animation in progress
+    if (( animField1 != null ) || ( animField2 != null ))
+      return;
+        
+    // Determine the fileds where the user has taped and dragged the finger
+    var Application::Field field1 = (Application::Field)FindViewAtPosition( SimpleTouchHandler, SimpleTouchHandler.HittingPos, Core::ViewState[ Touchable, Enabled ]);
+    var Application::Field field2 = (Application::Field)FindViewAtPosition( SimpleTouchHandler, SimpleTouchHandler.CurrentPos, Core::ViewState[ Touchable, Enabled ]);
+
+    // If the user has dragged one field to the empty area -> perform the
+    // animation and the movement of this field. 
+    if (( field2 == GetEmptyField()) && ( field1 != field2 ) && 
+          AreNeighbors( field1, field2 ))
+      Animate( field1, field2 );
+
+    // Otherwise scroll to the field beolw the finger
+    else if ( field2 != null )
+      Focus = field2;
+  }
+
+  // This slot method is called when the user presses the key 'Left'. It moves the \
+  // selection to the previous column.
+  $rect <620,110,820,150>
+  slot goLeft
+  {
+    // Animation in progress. Ignore the event.
+    if ( animField1 != null )
+      return;
+
+    // Which is the preceding view?
+    var Core::View theView = FindPrevView( Focus, Core::ViewState[ Focusable, Enabled ]);
+
+    // If it does exist -> focus to this view.
+    if ( theView != null )
+      Focus = theView;
+
+
+  }
+
+  // This slot method is called when the user presses the key 'Right'. It moves the \
+  // selection to the next column.
+  $rect <620,150,820,190>
+  slot goRight
+  {
+    // Animation in progress. Ignore the event.
+    if ( animField1 != null )
+      return;
+
+    // Which is the next following view?
+    var Core::View theView = FindNextView( Focus, Core::ViewState[ Focusable, Enabled ]);
+
+    // If it does exist -> focus to this view.
+    if ( theView != null )
+      Focus = theView;
+
+
+  }
+
+  // This slot method is called when the user presses the key 'Up'. It moves the \
+  // selection to the previous row.
+  $rect <620,190,820,230>
+  slot goUp
+  {
+    // Animation in progress. Ignore the event.
+    if ( animField1 != null )
+      return;
+
+    // From the index of the currently selected field calculate the index of the
+    // field above.
+    var int32 inx = GetIndexOfView( Focus ) - 4;
+
+    // The last field has been reached.
+    if ( inx == -4 )
+      return;
+
+    // The currently selected field lies in the first row. Therefore skip to the
+    // last row.
+    if ( inx < 0 )
+      inx = 15 + inx;
+
+    // ... and select this field.
+    Focus = GetViewAtIndex( inx );
+  }
+
+  // This slot method is called when the user presses the key 'Down'. It moves the \
+  // selection to the next row.
+  $rect <620,230,820,270>
+  slot goDown
+  {
+    // Animation in progress. Ignore the event.
+    if ( animField1 != null )
+      return;
+
+    // From the index of the currently selected field calculate the index of the
+    // field below.
+    var int32 inx = GetIndexOfView( Focus ) + 4;
+
+    // The last field has been reached.
+    if ( inx == 19 )
+      return;
+
+    // The currently selected field lies in the last row. Therefore skip to the
+    // first row.
+    if ( inx > 15 )
+      inx = ( inx % 16 ) + 1;
+
+    // ... and select this field.
+    Focus = GetViewAtIndex( inx );
+  }
+
+  // This method is called when the user presses the key 'Ok'. It verifies whether \
+  // the currently selected field can be moved to its empty neighbour field and performs \
+  // the operation.
+  $rect <620,270,820,310>
+  slot moveSelected
+  {
+    // Animation in progress. Ignore the event.
+    if ( animField1 != null )
+      return;
+
+    // Which field is selected and where is the empty field now?
+    var Application::Field field1 = (Application::Field)Focus;
+    var Application::Field field2 = GetEmptyField();
+
+    // The fields can be swap if their borders contact themselves only.
+    // In this case start a movement animation.
+    if ( AreNeighbors( field1, field2 ))
+      Animate( field1, field2 );
+
+  }
+
+  // This variable referes to the field, the movement animation starts with.
+  $rect <10,480,210,520>
+  var Application::Field animField1;
+
+  // This variable referes to the field, the movement animation will end with.
+  $rect <10,520,210,560>
+  var Application::Field animField2;
+
+  // The number of the image from the bitmap resource @Bitmap, which is displayed \
+  // durring the movement animation.
+  $rect <10,560,210,600>
+  var int32 animImageNumber;
+
+  // The first effect fades in the @animImage over the start field. After the effect \
+  // is done, a signal is sent to the @animSlot1 method.
+  $rect <210,480,410,520>
+  object Effects::Int32Effect animEffect1
+  {
+    preset OnFinished = animSlot1;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 100;
+    preset Outlet = ^animImage.Opacity;
+  }
+
+  // The third effect fades out the @animImage over the end field. After the effect \
+  // is done, a signal is sent to the @animSlot3 method.
+  $rect <210,560,410,600>
+  object Effects::Int32Effect animEffect3
+  {
+    preset OnFinished = animSlot3;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 100;
+    preset Value2 = 0;
+    preset Value1 = 255;
+    preset Outlet = ^animImage.Opacity;
+  }
+
+  // The second effect moves the @animImage from the start field to the position \
+  // of the end field. After the effect is done, a signal is sent to the @animSlot2 \
+  // method.
+  $rect <210,520,410,560>
+  object Effects::RectEffect animEffect2
+  {
+    preset OnFinished = animSlot2;
+    preset NoOfCycles = 1;
+    preset CycleDuration = 100;
+    preset Outlet = ^animImage.Bounds;
+  }
+
+  // This method will receive a signal from @animEffect1, when this effect is done. \
+  // The method hides the selection and starts the second effect @animEffect2.
+  $rect <410,480,610,520>
+  slot animSlot1
+  {
+    animField1.ImageNumber = 15;
+    Focus = null;
+    animEffect2.Enabled = true;
+  }
+
+  // This method will receive a signal from @animEffect2, when this effect is done. \
+  // The method selects the end field and starts the third effect @animEffect3.
+  $rect <410,520,610,560>
+  slot animSlot2
+  {
+    animField2.ImageNumber = animImageNumber;
+    Focus = animField2;
+    animEffect3.Enabled = true;
+  }
+
+  // This method will receive a signal from @animEffect3, when this effect is done. \
+  // The method clears the temporary used variables @animField1 and @animField2 only.
+  $rect <410,560,610,600>
+  slot animSlot3
+  {
+    animField1 = null;
+    animField2 = null;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field0
+  {
+    preset Bounds = <0,0,100,100>;
+    preset ImageNumber = 6;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field1
+  {
+    preset Bounds = <100,0,200,100>;
+    preset ImageNumber = 4;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field2
+  {
+    preset Bounds = <200,0,300,100>;
+    preset ImageNumber = 1;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field3
+  {
+    preset Bounds = <300,0,400,100>;
+    preset ImageNumber = 3;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field4
+  {
+    preset Bounds = <0,100,100,200>;
+    preset ImageNumber = 0;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field5
+  {
+    preset Bounds = <100,100,200,200>;
+    preset ImageNumber = 2;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field6
+  {
+    preset Bounds = <200,100,300,200>;
+    preset ImageNumber = 14;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field7
+  {
+    preset Bounds = <300,100,400,200>;
+    preset ImageNumber = 7;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field8
+  {
+    preset Bounds = <0,200,100,300>;
+    preset ImageNumber = 12;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field9
+  {
+    preset Bounds = <100,200,200,300>;
+    preset ImageNumber = 8;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field10
+  {
+    preset Bounds = <200,200,300,300>;
+    preset ImageNumber = 5;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field11
+  {
+    preset Bounds = <300,200,400,300>;
+    preset ImageNumber = 10;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field12
+  {
+    preset Bounds = <0,300,100,400>;
+    preset ImageNumber = 9;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field13
+  {
+    preset Bounds = <100,300,200,400>;
+    preset ImageNumber = 13;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field14
+  {
+    preset Bounds = <200,300,300,400>;
+    preset ImageNumber = 11;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Field Field15
+  {
+    preset Bounds = <300,300,400,400>;
+    preset ImageNumber = 15;
+  }
+
+  // This is an simple image view.
+  $rect <20,20,160,60>
+  object Views::Image animImage
+  {
+    preset Bounds = <300,300,400,400>;
+    preset AutoSize = true;
+    preset Bitmap = Application::Picture2;
+    preset Opacity = 0;
+  }
+
+  // This is a generic touch handler.
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler SimpleTouchHandler
+  {
+    preset Point4 = <0,400>;
+    preset Point3 = <400,400>;
+    preset Point2 = <400,0>;
+    preset Point1 = <0,0>;
+    preset OnDrag = onDrag;
+    preset OnRelease = onRelease;
+    preset OnPress = onPress;
+  }
+
+  // Bitmap stores the bitmap resource, which contains all the images.
+  $rect <420,10,620,50>
+  property Resources::Bitmap Bitmap = Application::Picture2;
+}
+
+// The font resource contains large the digit 0-9.
+$rect <30,320,230,360>
+$output false
+resource Resources::Font DigitFont
+{
+  attr fontname FontName = Roboto;
+  attr fontheight Height = 40;
+  attr fontquality Quality = High;
+  attr fontranges Ranges = '0'-'9';
+  attr fontkerning Kerning = true;
+  attr fontheightmode HeightMode = Compatible;
+  attr fontrowdistance RowDistance;
+}
+
+// This the application root object.
+$rect <40,40,240,80>
+class Application : Core::Root
+{
+  $rect <10,430,210,470>
+  inherited property Bounds = <0,0,408,408>;
+
+  // Shortly after the application is started, a help message box appears. This is \
+  // caused by the @HelpTimer object.
+  $rect <640,30,840,70>
+  slot HelpSlot
+  {
+    Help.Visible = true;
+    Help.Enabled = true;
+
+    BeginModal( Help );
+  }
+
+  // This slot method is called when the user has pressed the key 1. It switches \
+  // the background image.
+  $rect <640,70,840,110>
+  slot onKey1
+  {
+    Game.Bitmap = Application::Picture1;
+  }
+
+  // This slot method is called when the user has pressed the key 2. It switches \
+  // the background image.
+  $rect <640,110,840,150>
+  slot onKey2
+  {
+    Game.Bitmap = Application::Picture2;
+  }
+
+  // This timer object expires only once after the application is started. It sends \
+  // a signal to the @HelpSlot method. This method displays then a help message box \
+  // with a short description.
+  $rect <440,30,640,70>
+  object Core::Timer HelpTimer
+  {
+    preset OnTrigger = HelpSlot;
+    preset Period = 0;
+    preset Begin = 500;
+    preset Enabled = true;
+  }
+
+  // This is a key press handler reacts to the key 1 press events. It calls the corresponding \
+  // slot method.
+  $rect <440,70,640,110>
+  object Core::KeyPressHandler Key1Handler
+  {
+    preset OnPress = onKey1;
+    preset Filter = Core::KeyCode.Key1;
+  }
+
+  // This is a key press handler reacts to the key 2 press events. It calls the corresponding \
+  // slot method.
+  $rect <440,110,640,150>
+  object Core::KeyPressHandler Key2Handler
+  {
+    preset OnPress = onKey2;
+    preset Filter = Core::KeyCode.Key2;
+  }
+
+  // This is a filled rectangle view.
+  $rect <20,20,160,60>
+  object Views::Rectangle Background
+  {
+    preset Bounds = <0,0,410,410>;
+    preset Color = #EEEEEEFF;
+  }
+
+  // This an 3D bevel view.
+  $rect <20,20,160,60>
+  object Views::Bevel Bevel
+  {
+    preset Bounds = <0,0,408,408>;
+    preset Width = 4;
+    preset ColorL = #BBBBBBFF;
+    preset ColorR = #333333FF;
+    preset ColorB = #333333FF;
+    preset ColorT = #BBBBBBFF;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Game Game
+  {
+    preset Bounds = <4,4,404,404>;
+    preset Bitmap = Application::Picture2;
+  }
+
+  $rect <20,20,160,60>
+  object Application::Help Help
+  {
+    preset Bounds = <20,80,390,330>;
+    preset Enabled = false;
+    preset Visible = false;
+  }
+}
+
+// The Help box, which appears shortly after the game is started.
+$rect <440,160,640,200>
+$output false
+class Help : Core::Group
+{
+  $rect <10,320,210,360>
+  inherited property Bounds = <0,0,370,250>;
+
+  // This method is called in response to user touch or key press events. The event \
+  // will cause the help box to be hidden.
+  $rect <210,270,410,310>
+  slot onPressKeyOrTouch
+  {
+    // Hide help panel and restore the event flow
+    Visible = false;
+    Enabled = false;
+
+    GetRoot().EndModal( this );
+  }
+
+  // This is a key press handler.
+  $rect <10,270,210,310>
+  object Core::KeyPressHandler KeyHandler
+  {
+    preset OnPress = onPressKeyOrTouch;
+  }
+
+  // This is a generic touch handler.
+  $rect <20,20,160,60>
+  object Core::SimpleTouchHandler SimpleTouchHandler
+  {
+    preset Point4 = <0,249>;
+    preset Point3 = <369,249>;
+    preset Point2 = <369,0>;
+    preset Point1 = <0,0>;
+    preset OnPress = onPressKeyOrTouch;
+    preset MaxStrikeCount = 100;
+  }
+
+  // This is a simple filled rectangle object.
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,369,249>;
+    preset Color = #4B4B4BFF;
+  }
+
+  // This is a multiline text object.
+  $rect <20,20,160,60>
+  object Views::Text Message
+  {
+    preset Bounds = <20,50,350,210>;
+    preset WrapText = true;
+    preset Alignment = Views::TextAlignment[AlignHorzCenter, AlignVertTop];
+    preset String = "Bring the image fields in the right order!\n\nTo navigate between the fields use the keys 'Up', 'Down', 'Left' and 'Right'. The selected field is always bordered by a thick, blue frame.\nTo swap a selected field with the empty field press the key 'Ok' (ENTER on the PC).\nTo switch between two different image sets use the keys '1' and '2'.";
+    preset Font = Resources::FontSmall;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text Caption
+  {
+    preset Bounds = <10,10,360,40>;
+    preset String = "Puzzle Game";
+    preset Font = Resources::FontMedium;
+  }
+
+  // This is a text object.
+  $rect <20,20,160,60>
+  object Views::Text Foot
+  {
+    preset Bounds = <10,220,350,240>;
+    preset String = "Press any key to close this help box";
+    preset Font = Resources::FontSmall;
+  }
+}
+
+// This is the first picture used by the game.
+$rect <30,270,230,310>
+$output false
+resource Resources::Bitmap Picture1
+{
+  attr bitmapfile FileName = .\Res\Pic1.png;
+  attr framesize FrameSize = <100,100>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This is the second picture used by the game.
+$rect <230,270,430,310>
+$output false
+resource Resources::Bitmap Picture2
+{
+  attr bitmapfile FileName = .\Res\Pic2.png;
+  attr framesize FrameSize = <100,100>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// This bitmap resource contains borders for selected and non-selected fields.
+$rect <430,270,630,310>
+$output false
+resource Resources::Bitmap Borders
+{
+  attr bitmapfile FileName = .\Res\Borders.png;
+  attr framesize FrameSize = <100,100>;
+  attr framedelay FrameDelay;
+  attr bitmapformat Format = Native;
+  attr bitmapdithering Dithering = Auto;
+  attr bitmapmode Mode = Default;
+}
+
+// Bitmaps and Font
+note group Note5
+{
+  attr Bounds = <20,230,660,380>;
+}
+
+// Game Components
+note group Note6
+{
+  attr Bounds = <20,110,660,220>;
+}
+
+// Application class of the example
+note group Note4
+{
+  attr Bounds = <20,0,660,100>;
+}

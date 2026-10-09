@@ -1,0 +1,2 @@
+The sample application 'PulseOximeter' shows the implementation of a medical device for monitoring a person's pulse frequency and peripheral oxygen saturation. The application demonstrates the usage of vector graphics within graphs and circular gauges. The data of the pulse oximeter application is accessed via a device class.
+

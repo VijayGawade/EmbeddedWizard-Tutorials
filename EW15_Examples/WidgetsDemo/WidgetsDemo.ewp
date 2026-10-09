@@ -1,0 +1,153 @@
+﻿$version 15.00
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,70,240,110>
+unit Core
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,110,240,150>
+unit Resources
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,150,240,190>
+unit Graphics
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,190,240,230>
+unit Effects
+{
+  attr Directory = $Mosaic;
+}
+
+// This unit is a part of the Embedded Wizard framework 'Mosaic'
+$rect <40,230,240,270>
+unit Views
+{
+  attr Directory = $Mosaic;
+}
+
+// The 'default' Language. Each project has to contain at least one language brick \
+// called 'Default'
+$rect <540,70,740,110>
+language Default;
+
+// This unit is intended to contain the application class and another GUI components.
+$rect <40,380,240,420>
+unit Application
+{
+  attr Directory = .\;
+}
+
+$rect <40,460,240,500>
+unit SteelWidgets
+{
+  attr Directory = .\;
+}
+
+$rect <40,270,240,310>
+unit WidgetSet
+{
+  attr Directory = $Mosaic;
+}
+
+$rect <40,420,240,460>
+unit FlatWidgets
+{
+  attr Directory = .\;
+}
+
+$rect <40,500,240,540>
+unit OrangeWidgets
+{
+  attr Directory = .\;
+}
+
+// Mosaic Framework
+note group Note1
+{
+  attr Bounds = <20,20,260,330>;
+}
+
+// Profile Configuration
+note group Note2
+{
+  attr Bounds = <270,20,510,130>;
+}
+
+// Languages
+note group Note3
+{
+  attr Bounds = <520,20,760,130>;
+}
+
+// Project Units
+note group Note5
+{
+  attr Bounds = <20,340,260,560>;
+}
+
+// The sample application 'WidgetDemo' presents different sets of widgets with individual \
+// styles, based on the Mosaic widget classes.
+//                                                                
+// Each page of the demo contains an arrangement of different widgets, like PushButtons, \
+// ToggleButtons, CheckBoxes, RadioButtons, Sliders, Bars, Rotary Knobs or Gauges.
+// All widgets are connected with the same properties (int32 or bool) to show the \
+// automatic update of widgets as soon as their value (outlet) has changed.
+// The application itself does not represent a certain device or machine - it is \
+// just to showcase the widgets: 
+// The first page contains the default widgets - as they appear as soon as you take \
+// widgets from the Gallery.
+// The second page contains the widget design 'Flat'. The unit 'FlatWidgets' contains \
+// the necessary resources and configurations for this widget style.
+// The third page contains the widget design 'Steel'. The unit 'SteelWidgets' contains \
+// the necessary resources and configurations for this widget style.
+// The forth page contains the widget design 'Orange'. The unit 'orangeWidgets' contains \
+// the necessary resources and configurations for this widget style.
+// 
+// This demo application is implemented for a screen size of 640x480 pixel.
+// 
+// You can double-click on the 'Application' brick to open the unit within the Composer \
+// and to analyze the implementation.
+// 
+// To start the application within the Prototyper, press 'Ctrl'+'F5'.
+note legend Note
+{
+  attr Bounds = <270,140,1240,480>;
+}
+
+// How to use and customize widgets?
+// 
+// https://doc.embedded-wizard.de/using-widgets
+note legend Note9
+{
+  attr Bounds = <270,490,760,560>;
+}
+
+// This is a profile member for the project. This profile controls the code generation \
+// for the target system.
+$rect <290,70,490,110>
+profile Win32 : Windows.Software.RGBA8888
+{
+  attr ScreenSize = <640,480>;
+  attr Optimization = High;
+  attr ApplicationClass = Application::Application;
+  attr CleanOutputDirectories = false;
+  attr Verbose = false;
+  attr ScreenOrientation = Normal;
+  attr FontConversion = Windows;
+  attr OutputFileNameExtension = c;
+  attr StorageOfResources = Code;
+  attr StorageOfConstants = Code;
+
+  $rect <10,10,154,50>
+  macro Author = "Dipl. Ing. Paul Banach and Dipl. Ing. Manfred Schweyer, Copyright (C) TARA Systems GmbH";
+}

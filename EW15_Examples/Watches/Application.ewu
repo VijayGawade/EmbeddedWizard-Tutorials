@@ -1,0 +1,161 @@
+﻿$version 15.00
+
+// This is the root component of the entire GUI application.
+$rect <20,20,220,60>
+$output false
+class ApplicationLarge : Core::Root
+{
+  $rect <750,0,950,40>
+  inherited property Bounds = <0,0,720,480>;
+
+  // This application class assumes a display with 720x480 pixel so that all watches \
+  // can be arranged side-by-side on the screen.
+  note legend Note1
+  {
+    attr Bounds = <0,500,730,570>;
+  }
+
+  // This is a filled rectangle view.
+  $rect <20,20,160,60>
+  object Views::Rectangle Rectangle
+  {
+    preset Bounds = <0,0,720,480>;
+    preset Color = #000000FF;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch1 Watch1
+  {
+    preset Bounds = <0,0,240,240>;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch2 Watch2
+  {
+    preset Bounds = <240,0,480,240>;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch3 Watch3
+  {
+    preset Bounds = <480,0,720,240>;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch4 Watch4
+  {
+    preset Bounds = <0,240,240,480>;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch5 Watch5
+  {
+    preset Bounds = <240,240,480,480>;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch6 Watch6
+  {
+    preset Bounds = <480,240,720,480>;
+  }
+}
+
+// This is the root component of the entire GUI application.
+$rect <20,60,220,100>
+$output false
+class ApplicationSmall : Core::Root
+{
+  $rect <260,10,460,50>
+  inherited property Bounds = <0,0,240,240>;
+
+  // This application assumes a small display with 240x240 pixel.
+  // The application contains an outline object (class Views::Outline) which embeds \
+  // all analog watches from the unit Watch. The watches are arranged horizontally \
+  // by the outline object. A slide touch handler (class Core::SlideTouchHandler) \
+  // connected with the outline supports the horizontal sliding of the watches.
+  note legend Note1
+  {
+    attr Bounds = <260,60,690,250>;
+  }
+
+  // This is a filled rectangle view.
+  $rect <20,20,160,60>
+  object Views::Rectangle Background
+  {
+    preset Bounds = <0,0,240,240>;
+    preset Color = #000000FF;
+  }
+
+  // This is a slide gesture handler.
+  $rect <20,20,160,60>
+  object Core::SlideTouchHandler SlideTouchHandler
+  {
+    preset Bounds = <0,0,240,240>;
+    preset SnapNext = <240,0>;
+    preset SlideVert = false;
+  }
+
+  // This is an outline view to group other views together.
+  $rect <20,20,160,60>
+  object Core::Outline Outline
+  {
+    preset Bounds = <0,0,240,240>;
+    preset SlideHandler = SlideTouchHandler;
+    preset Formation = Core::Formation.LeftToRight;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch1 Watch1
+  {
+    preset Bounds = <0,0,240,240>;
+    preset Embedded = true;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch2 Watch2
+  {
+    preset Bounds = <40,30,280,270>;
+    preset Embedded = true;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch3 Watch3
+  {
+    preset Bounds = <70,50,310,290>;
+    preset Embedded = true;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch4 Watch4
+  {
+    preset Bounds = <100,80,340,320>;
+    preset Embedded = true;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch5 Watch5
+  {
+    preset Bounds = <130,100,370,340>;
+    preset Embedded = true;
+  }
+
+  $rect <20,20,160,60>
+  object Watch::Watch6 Watch6
+  {
+    preset Bounds = <170,130,410,370>;
+    preset Embedded = true;
+  }
+}
+
+// The unit 'Application' contains two different application classes:
+// 
+// ApplicationLarge assumes a display size of 720x480 pixels so that all anaolg watches \
+// are shown on the screen.
+// 
+// ApplicationSmall is implemented for a display size of 240x240 pixels so that exactly \
+// one watch can be shown. The actual analog watch can be exchanged by a horizontal \
+// slide gesture. 
+note legend Note
+{
+  attr Bounds = <230,20,770,180>;
+}
